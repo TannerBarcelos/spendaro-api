@@ -1,0 +1,438 @@
+{
+	"info": {
+		"_postman_id": "35849e04-4afb-46d4-a3d7-c57aaa0b2542",
+		"name": "Spendaro",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "24394174"
+	},
+	"item": [
+		{
+			"name": "dev",
+			"item": [
+				{
+					"name": "budget-apis",
+					"item": [
+						{
+							"name": "budget-categories",
+							"item": [
+								{
+									"name": "categories",
+									"item": [
+										{
+											"name": "Create Budget Category",
+											"request": {
+												"method": "POST",
+												"header": [],
+												"url": {
+													"raw": "{{host}}/api/v1/budgets/categories",
+													"host": [
+														"{{host}}"
+													],
+													"path": [
+														"api",
+														"v1",
+														"budgets",
+														"categories"
+													]
+												}
+											},
+											"response": []
+										},
+										{
+											"name": "Update Budget Category",
+											"request": {
+												"method": "PUT",
+												"header": [],
+												"url": {
+													"raw": "{{host}}/api/v1/budgets/categories/1",
+													"host": [
+														"{{host}}"
+													],
+													"path": [
+														"api",
+														"v1",
+														"budgets",
+														"categories",
+														"1"
+													]
+												}
+											},
+											"response": []
+										},
+										{
+											"name": "Delete Budget Category",
+											"request": {
+												"method": "DELETE",
+												"header": [],
+												"url": {
+													"raw": "{{host}}/api/v1/budgets/categories/1",
+													"host": [
+														"{{host}}"
+													],
+													"path": [
+														"api",
+														"v1",
+														"budgets",
+														"categories",
+														"1"
+													]
+												}
+											},
+											"response": []
+										},
+										{
+											"name": "Get Budget Category",
+											"request": {
+												"method": "GET",
+												"header": [],
+												"url": {
+													"raw": "{{host}}/api/v1/budgets/categories/1",
+													"host": [
+														"{{host}}"
+													],
+													"path": [
+														"api",
+														"v1",
+														"budgets",
+														"categories",
+														"1"
+													]
+												}
+											},
+											"response": []
+										},
+										{
+											"name": "Get All Budget Categories",
+											"request": {
+												"method": "GET",
+												"header": [],
+												"url": {
+													"raw": "{{host}}/api/v1/budgets/categories",
+													"host": [
+														"{{host}}"
+													],
+													"path": [
+														"api",
+														"v1",
+														"budgets",
+														"categories"
+													]
+												}
+											},
+											"response": []
+										}
+									]
+								},
+								{
+									"name": "category-items",
+									"item": [
+										{
+											"name": "Create Budget Category Item",
+											"request": {
+												"method": "POST",
+												"header": [],
+												"url": {
+													"raw": "{{host}}/api/v1/budgets/categories/<some_id>/items",
+													"host": [
+														"{{host}}"
+													],
+													"path": [
+														"api",
+														"v1",
+														"budgets",
+														"categories",
+														"<some_id>",
+														"items"
+													]
+												}
+											},
+											"response": []
+										},
+										{
+											"name": "Update Budget Category Item",
+											"request": {
+												"method": "PUT",
+												"header": [],
+												"url": {
+													"raw": "{{host}}/api/v1/budgets/categories/<some_id>/items/1",
+													"host": [
+														"{{host}}"
+													],
+													"path": [
+														"api",
+														"v1",
+														"budgets",
+														"categories",
+														"<some_id>",
+														"items",
+														"1"
+													]
+												}
+											},
+											"response": []
+										},
+										{
+											"name": "Delete Budget Category Item",
+											"request": {
+												"method": "DELETE",
+												"header": [],
+												"url": {
+													"raw": "{{host}}/api/v1/budgets/categories/<some_id>/items/1",
+													"host": [
+														"{{host}}"
+													],
+													"path": [
+														"api",
+														"v1",
+														"budgets",
+														"categories",
+														"<some_id>",
+														"items",
+														"1"
+													]
+												}
+											},
+											"response": []
+										},
+										{
+											"name": "Delete All Budget Category Items",
+											"request": {
+												"method": "DELETE",
+												"header": [],
+												"url": {
+													"raw": "{{host}}/api/v1/budgets/categories/<some_id>/items",
+													"host": [
+														"{{host}}"
+													],
+													"path": [
+														"api",
+														"v1",
+														"budgets",
+														"categories",
+														"<some_id>",
+														"items"
+													]
+												}
+											},
+											"response": []
+										},
+										{
+											"name": "Get Budget Category Item",
+											"request": {
+												"method": "GET",
+												"header": [],
+												"url": {
+													"raw": "{{host}}/api/v1/budgets/categories/<some_id>/items/1",
+													"host": [
+														"{{host}}"
+													],
+													"path": [
+														"api",
+														"v1",
+														"budgets",
+														"categories",
+														"<some_id>",
+														"items",
+														"1"
+													]
+												}
+											},
+											"response": []
+										},
+										{
+											"name": "Get All Budget Category Items",
+											"request": {
+												"method": "GET",
+												"header": [],
+												"url": {
+													"raw": "{{host}}/api/v1/budgets/categories/<some_id>/items",
+													"host": [
+														"{{host}}"
+													],
+													"path": [
+														"api",
+														"v1",
+														"budgets",
+														"categories",
+														"<some_id>",
+														"items"
+													]
+												}
+											},
+											"response": []
+										}
+									]
+								}
+							]
+						},
+						{
+							"name": "budgets",
+							"item": [
+								{
+									"name": "Get Budgets",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{host}}/api/v1/budgets",
+											"host": [
+												"{{host}}"
+											],
+											"path": [
+												"api",
+												"v1",
+												"budgets"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Get Budget",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{host}}/api/v1/budgets/10",
+											"host": [
+												"{{host}}"
+											],
+											"path": [
+												"api",
+												"v1",
+												"budgets",
+												"10"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Create Budget",
+									"request": {
+										"method": "POST",
+										"header": [],
+										"url": {
+											"raw": "{{host}}/api/v1/budgets",
+											"host": [
+												"{{host}}"
+											],
+											"path": [
+												"api",
+												"v1",
+												"budgets"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Update Budget",
+									"request": {
+										"method": "PUT",
+										"header": [],
+										"url": {
+											"raw": "{{host}}/api/v1/budgets/1",
+											"host": [
+												"{{host}}"
+											],
+											"path": [
+												"api",
+												"v1",
+												"budgets",
+												"1"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Delete Budget",
+									"request": {
+										"method": "DELETE",
+										"header": [],
+										"url": {
+											"raw": "{{host}}/api/v1/budgets/1",
+											"host": [
+												"{{host}}"
+											],
+											"path": [
+												"api",
+												"v1",
+												"budgets",
+												"1"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						}
+					]
+				},
+				{
+					"name": "auth-apis",
+					"item": [
+						{
+							"name": "Signup",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "{{host}}/api/v1/auth/signup",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"auth",
+										"signup"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Signin",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "{{host}}/api/v1/auth/signin",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"auth",
+										"signin"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "healthcheck",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/healthz",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"healthz"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

@@ -7,7 +7,7 @@
     "strict": true,
     "skipLibCheck": true,
     "baseUrl": "./src",
-    "outDir": "./dist",
+    "outDir": "./dist"
   },
   "extends": "@tsconfig/node20/tsconfig.json"
 }

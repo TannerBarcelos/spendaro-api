@@ -1,0 +1,26 @@
+# Ignore artifacts:
+build
+coverage
+
+# Ignore all HTML files:
+*.html
+
+# Ignore specific files:
+src/somefile.js
+
+# Ignore all files in a directory:
+logs/
+temp/
+
+**/*.json
+**/*.md
+**/*.yml
+**/*.yaml
+**/*.lock
+**/*.log
+**/*.txt
+
+node_modules/
+dist/
+
+.prettierrc
