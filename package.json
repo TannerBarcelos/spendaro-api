@@ -14,8 +14,10 @@
   "license": "ISC",
   "dependencies": {
     "config": "^3.3.12",
+    "dotenv": "^16.4.5",
     "drizzle-orm": "^0.33.0",
     "fastify": "^5.0.0",
+    "fastify-plugin": "^5.0.1",
     "postgres": "^3.4.4",
     "zod": "^3.23.8"
   },
