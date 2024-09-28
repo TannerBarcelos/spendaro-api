@@ -2,6 +2,7 @@ import { drizzle } from 'drizzle-orm/postgres-js';
 import postgres from 'postgres';
 import { FastifyPluginCallback } from 'fastify';
 import fp from 'fastify-plugin';
+import { migrate } from "drizzle-orm/postgres-js/migrator";
 
 const postgresConnector: FastifyPluginCallback = (fastify, _, done) => {
   const databaseUrl = process.env.DATABASE_URL;
@@ -18,6 +19,13 @@ const postgresConnector: FastifyPluginCallback = (fastify, _, done) => {
   fastify.decorate('db', db);
 
   console.log('Connected to the database');
+
+  // Run migrations, if not in production
+  if (process.env.NODE_ENV !== 'production') {
+    migrate(db, {
+      migrationsFolder: './src/db/migrations',
+    });
+  }
 
   // Close the database connection when the server closes
   fastify.addHook('onClose', async () => {
