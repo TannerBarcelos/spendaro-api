@@ -14,14 +14,8 @@ server.register(cors, {
   origin: '*',
   methods: ALLOWED_METHODS,
 })
+
 server.register(db);
-
-
-server.decorateRequest('user', '')
-server.addHook('preHandler', (req, reply, done) => {
-  req.user = 'Bob Dylan'
-  done()
-})
 
 server.get('/healthz', async (request:FastifyRequest) => {
   return { status: 'OK' + request.user };

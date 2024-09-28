@@ -38,11 +38,27 @@ To get started with the Spendaro API, follow these steps:
     ```bash
     pnpm install
     ```
-4. **Start the server:**
+
+4. **Set up environment variables:**
+    Create a `.env` file in the root of the project and add the following environment variables:
+
+    ```env
+    NODE_ENV=
+    DB_HOST=
+    DB_USER=
+    DB_PASSWORD=
+    DB_NAME=
+    ```
+    > Note: Replace the values with your own database connection details. 
+    > * You can use a local database or a cloud-hosted database like Supabase.
+    > * If you're using Supabase, you can find your database connection details in the "Settings" tab of your Supabase project.
+    > * **Docker support is coming soon so this can be automated**
+
+5. **Start the server:**
     ```bash
     pnpm dev
     ```
-5. **Test the API:**
+6. **Test the API:**
     Import the [Postman collection](Spendaro.postman_collection.json) into Postman to test the API endpoints and explore the available features.
 
 > Docker support is coming soon!
