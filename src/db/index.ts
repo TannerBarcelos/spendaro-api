@@ -5,8 +5,8 @@ import fp from 'fastify-plugin';
 import { migrate } from "drizzle-orm/postgres-js/migrator";
 
 const postgresConnector: FastifyPluginCallback = (fastify, _, done) => {
-  const databaseUrl = process.env.DATABASE_URL;
-
+  const databaseUrl = `postgresql://${process.env.DB_USER}:${process.env.DB_PASSWORD}@${process.env.DB_HOST}:5432/${process.env.DB_NAME}` || "postgresql://postgres@localhost:5432/postgres";
+  
   if (!databaseUrl) {
     throw new Error('DATABASE_URL must be set to connect to the database');
   }
