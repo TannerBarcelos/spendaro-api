@@ -1,62 +1,99 @@
+import { sql } from "drizzle-orm";
+import { timestamp } from "drizzle-orm/pg-core";
+import { date } from "drizzle-orm/pg-core";
 import { integer, pgTable, serial, text, varchar } from 'drizzle-orm/pg-core';
+import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
+
+const now = sql`now()`
+const createdTs = timestamp('created_at', { mode: 'string' }).default(now)
+const updatedTs = timestamp('updated_at', { mode: 'string' }).default(now)
 
 // This table is used to store the users of the application
 export const users = pgTable('users', {
   id: serial('id').primaryKey(),
-  fullName: text('full_name'),
-  email: varchar('email').unique(),
-  password_hash: text('password_hash'),
-  created_at: text('created_at'),
-  updated_at: text('updated_at'),
+  firstName: text('first_name').notNull(),
+  lastName: text('last_name').notNull(),
+  email: varchar('email').unique().notNull(),
+  password_hash: text('password_hash').notNull(),
+  created_at: createdTs,
+  updated_at: updatedTs,
 });
 
 // This table is used to store the budgets that belong to a user
 export const budgets = pgTable('budgets', {
   id: serial('id').primaryKey(),
   user_id: integer('user_id').references(() => users.id),
-  budget_name: text('budget_name'),
-  budget_description: text('budget_description'),
+  budget_name: text('budget_name').notNull(),
+  budget_description: text('budget_description').default(''),
   assigned_amount: integer('assigned_amount').default(0),
-  created_at: text('created_at'),
-  updated_at: text('updated_at'),
+  created_at: createdTs,
+  updated_at: updatedTs,
 });
 
 // This table is used to store the categories that belong to a budget
 export const budget_categories = pgTable('budget_categories', {
   id: serial('id').primaryKey(),
   budget_id: integer('budget_id').references(() => budgets.id),
-  category_name: text('category_name'),
-  category_description: text('category_description'),
-  created_at: text('created_at'),
-  updated_at: text('updated_at'),
+  category_name: text('category_name').notNull(),
+  category_description: text('category_description').default(''),
+  created_at: createdTs,
+  updated_at: updatedTs,
 });
 
 // This table is used to store the items that belong to a budget category
 export const budget_category_items = pgTable('budget_category_items', {
   id: serial('id').primaryKey(),
   category_id: integer('category_id').references(() => budget_categories.id),
-  item_name: text('item_name'),
-  item_description: text('item_description'),
+  item_name: text('item_name').notNull(),
+  item_description: text('item_description').default(''),
   item_amount: integer('item_amount').default(0),
-  created_at: text('created_at'),
-  updated_at: text('updated_at'),
+  created_at: createdTs,
+  updated_at: updatedTs,
 });
 
 // This table is used to store the transactions made and assign them to a budget category item
 export const budget_category_item_transactions = pgTable('budget_category_item_transactions', {
   id: serial('id').primaryKey(),
   item_id: integer('item_id').references(() => budget_category_items.id),
-  transaction_amount: integer('transaction_amount'),
-  transaction_date: text('transaction_date'),
-  transaction_description: text('transaction_description'),
-  created_at: text('created_at'),
-  updated_at: text('updated_at'),
+  transaction_amount: integer('transaction_amount').notNull(),
+  transaction_date: date('transaction_date').notNull(), // date of the transaction (can be different from the created_at date, so we need to store it separately)
+  transaction_description: text('transaction_description').default(''),
+  transaction_type_id: integer('transaction_type_id').references(() => budget_category_item_transaction_types.id),
+  created_at: createdTs,
+  updated_at: updatedTs,
 });
 
 // This table is used to store the types of transactions that can be made on a budget category item i.e. income, expense, etc. (not using enum as users can add their own transaction types)
 export const budget_category_item_transaction_types = pgTable('budget_category_item_transaction_types', {
   id: serial('id').primaryKey(),
   transaction_type: text('transaction_type'),
-  created_at: text('created_at'),
-  updated_at: text('updated_at'),
+  created_at: createdTs,
+  updated_at: updatedTs,
 });
+
+
+// Inferring Zod schemas from the tables so we can use it in application code
+
+// User schema
+export const insertUserSchema = createInsertSchema(users)
+export const selectUserSchema = createSelectSchema(users)
+
+// Budget schema
+export const insertBudgetSchema = createInsertSchema(budgets)
+export const selectBudgetSchema = createSelectSchema(budgets)
+
+// Budget category schema
+export const insertBudgetCategorySchema = createInsertSchema(budget_categories)
+export const selectBudgetCategorySchema = createSelectSchema(budget_categories)
+
+// Budget category item schema
+export const insertBudgetCategoryItemSchema = createInsertSchema(budget_category_items)
+export const selectBudgetCategoryItemSchema = createSelectSchema(budget_category_items)
+
+// Budget category item transaction schema
+export const insertBudgetCategoryItemTransactionSchema = createInsertSchema(budget_category_item_transactions)
+export const selectBudgetCategoryItemTransactionSchema = createSelectSchema(budget_category_item_transactions)
+
+// Budget category item transaction type schema
+export const insertBudgetCategoryItemTransactionTypeSchema = createInsertSchema(budget_category_item_transaction_types)
+export const selectBudgetCategoryItemTransactionTypeSchema = createSelectSchema(budget_category_item_transaction_types)

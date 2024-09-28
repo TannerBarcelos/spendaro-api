@@ -7,7 +7,8 @@
     "build": "tsc -p tsconfig.json",
     "start": "node index.js",
     "dev": "NODE_ENV=development tsnd --respawn --transpile-only --exit-child src/index.ts",
-    "format": "prettier --write \"**/*.ts\""
+    "format": "prettier --write \"**/*.ts\"",
+    "migrate": "drizzle-kit generate"
   },
   "keywords": [],
   "author": "",
@@ -16,6 +17,7 @@
     "config": "^3.3.12",
     "dotenv": "^16.4.5",
     "drizzle-orm": "^0.33.0",
+    "drizzle-zod": "^0.5.1",
     "fastify": "^5.0.0",
     "fastify-plugin": "^5.0.1",
     "postgres": "^3.4.4",
