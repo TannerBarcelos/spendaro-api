@@ -4,6 +4,7 @@ import routes from './routes';
 import dotenv from 'dotenv';
 import db from './db'
 
+
 dotenv.config();
 
 const server = fastify();
