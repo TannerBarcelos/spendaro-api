@@ -1,5 +1,10 @@
 {
     "server": {
         "port": 8010
+    },
+    "security": {
+        "jwt": {
+            "salt_rounds": 10
+        }
     }
 }

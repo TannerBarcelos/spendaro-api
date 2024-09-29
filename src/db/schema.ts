@@ -15,7 +15,7 @@ export const users = pgTable('users', {
   firstName: text('first_name').notNull(),
   lastName: text('last_name').notNull(),
   email: varchar('email').unique().notNull(),
-  password_hash: text('password_hash').notNull(),
+  password: text('password_hash').notNull(),
   created_at: createdTs,
   updated_at: updatedTs,
 });
@@ -111,47 +111,47 @@ export type SpendaroSchema = {
 
 // User schema
 export const insertUserSchema = createInsertSchema(users)
-type TUser = z.infer<typeof insertUserSchema>
+export type TUser = z.infer<typeof insertUserSchema>
 
 export const selectUserSchema = createSelectSchema(users)
-type TUserResult = z.infer<typeof selectUserSchema>
+export type TUserResult = z.infer<typeof selectUserSchema>
 
 
 // Budget schema
 export const insertBudgetSchema = createInsertSchema(budgets)
-type TBudget = z.infer<typeof insertBudgetSchema>
+export type TBudget = z.infer<typeof insertBudgetSchema>
 
 export const selectBudgetSchema = createSelectSchema(budgets)
-type TBudgetResult = z.infer<typeof selectBudgetSchema>
+export type TBudgetResult = z.infer<typeof selectBudgetSchema>
 
 
 // Budget category schema
 export const insertBudgetCategorySchema = createInsertSchema(budget_categories)
-type TBudgetCategory = z.infer<typeof insertBudgetCategorySchema>
+export type TBudgetCategory = z.infer<typeof insertBudgetCategorySchema>
 
 export const selectBudgetCategorySchema = createSelectSchema(budget_categories)
-type TBudgetCategoryResult = z.infer<typeof selectBudgetCategorySchema>
+export type TBudgetCategoryResult = z.infer<typeof selectBudgetCategorySchema>
 
 
 // Budget category item schema
 export const insertBudgetCategoryItemSchema = createInsertSchema(budget_category_items)
-type TBudgetCategoryItem = z.infer<typeof insertBudgetCategoryItemSchema>
+export type TBudgetCategoryItem = z.infer<typeof insertBudgetCategoryItemSchema>
 
 export const selectBudgetCategoryItemSchema = createSelectSchema(budget_category_items)
-type TBudgetCategoryItemResult = z.infer<typeof selectBudgetCategoryItemSchema>
+export type TBudgetCategoryItemResult = z.infer<typeof selectBudgetCategoryItemSchema>
 
 
 // Budget category item transaction schema
 export const insertBudgetCategoryItemTransactionSchema = createInsertSchema(budget_category_item_transactions)
-type TBudgetCategoryItemTransaction = z.infer<typeof insertBudgetCategoryItemTransactionSchema>
+export type TBudgetCategoryItemTransaction = z.infer<typeof insertBudgetCategoryItemTransactionSchema>
 
 export const selectBudgetCategoryItemTransactionSchema = createSelectSchema(budget_category_item_transactions)
-type TBudgetCategoryItemTransactionResult = z.infer<typeof selectBudgetCategoryItemTransactionSchema>
+export type TBudgetCategoryItemTransactionResult = z.infer<typeof selectBudgetCategoryItemTransactionSchema>
 
 
 // Budget category item transaction type schema
 export const insertBudgetCategoryItemTransactionTypeSchema = createInsertSchema(budget_category_item_transaction_types)
-type TBudgetCategoryItemTransactionType = z.infer<typeof insertBudgetCategoryItemTransactionTypeSchema>
+export type TBudgetCategoryItemTransactionType = z.infer<typeof insertBudgetCategoryItemTransactionTypeSchema>
 
 export const selectBudgetCategoryItemTransactionTypeSchema = createSelectSchema(budget_category_item_transaction_types)
-type TBudgetCategoryItemTransactionTypeResult = z.infer<typeof selectBudgetCategoryItemTransactionTypeSchema>
+export type TBudgetCategoryItemTransactionTypeResult = z.infer<typeof selectBudgetCategoryItemTransactionTypeSchema>
