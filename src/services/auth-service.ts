@@ -1,4 +1,4 @@
-import { users, type TUser, type TUserResult } from '@/db/schema';
+import type { TUser, TUserResult } from '@/db/schema';
 import { FastifyInstance } from 'fastify';
 import bcrypt from 'bcrypt';
 import config from 'config';
