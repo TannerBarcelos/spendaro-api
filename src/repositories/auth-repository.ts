@@ -8,7 +8,7 @@ export interface IAuthRepository {
   signin(user: TUser): TCommonUserResponse;
 }
 
-export class AuthRepository implements IAuthRepository {
+export default class AuthRepository implements IAuthRepository {
   private db: PostgresJsDatabase<SpendaroSchema>;
 
   constructor(db: PostgresJsDatabase<SpendaroSchema>) {
