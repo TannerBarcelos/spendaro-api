@@ -1,7 +1,7 @@
 import 'fastify';
 import { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
 import type {users, budget_categories, budget_category_item_transaction_types, budget_category_item_transactions, budget_category_items, budgets} from './schema'
-import { SpendaroSchema } from "db/schema";
+import { SpendaroSchema } from "./src/db/schema";
 
 declare module 'fastify' {
   interface FastifyInstance {
@@ -20,5 +20,6 @@ declare namespace NodeJS {
     DB_USER: string;
     DB_PASSWORD: string;
     DB_NAME: string;
+    JWT_SECRET: string;
   }
 }

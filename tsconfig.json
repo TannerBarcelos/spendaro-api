@@ -11,5 +11,5 @@
     "declaration": true,
   },
   "extends": "@tsconfig/node20/tsconfig.json",
-  "include": ["src/**/*.ts","*.d.ts"],
+  "include": ["src/**/*.ts","global.d.ts"],
 }

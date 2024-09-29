@@ -3,6 +3,7 @@ import { timestamp } from "drizzle-orm/pg-core";
 import { date } from "drizzle-orm/pg-core";
 import { integer, pgTable, serial, text, varchar } from 'drizzle-orm/pg-core';
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
+import { z } from 'zod';
 
 const now = sql`now()`
 const createdTs = timestamp('created_at', { mode: 'string' }).default(now)
@@ -105,28 +106,52 @@ export type SpendaroSchema = {
 }
 
 
-// Inferring Zod schemas from the tables so we can use it in application code
+// Inferring Zod schemas from the tables so we can use it in application code to validate data.
+// Also inferring the types so we can use them in function arguments and return types.
 
 // User schema
 export const insertUserSchema = createInsertSchema(users)
+type TUser = z.infer<typeof insertUserSchema>
+
 export const selectUserSchema = createSelectSchema(users)
+type TUserResult = z.infer<typeof selectUserSchema>
+
 
 // Budget schema
 export const insertBudgetSchema = createInsertSchema(budgets)
+type TBudget = z.infer<typeof insertBudgetSchema>
+
 export const selectBudgetSchema = createSelectSchema(budgets)
+type TBudgetResult = z.infer<typeof selectBudgetSchema>
+
 
 // Budget category schema
 export const insertBudgetCategorySchema = createInsertSchema(budget_categories)
+type TBudgetCategory = z.infer<typeof insertBudgetCategorySchema>
+
 export const selectBudgetCategorySchema = createSelectSchema(budget_categories)
+type TBudgetCategoryResult = z.infer<typeof selectBudgetCategorySchema>
+
 
 // Budget category item schema
 export const insertBudgetCategoryItemSchema = createInsertSchema(budget_category_items)
+type TBudgetCategoryItem = z.infer<typeof insertBudgetCategoryItemSchema>
+
 export const selectBudgetCategoryItemSchema = createSelectSchema(budget_category_items)
+type TBudgetCategoryItemResult = z.infer<typeof selectBudgetCategoryItemSchema>
+
 
 // Budget category item transaction schema
 export const insertBudgetCategoryItemTransactionSchema = createInsertSchema(budget_category_item_transactions)
+type TBudgetCategoryItemTransaction = z.infer<typeof insertBudgetCategoryItemTransactionSchema>
+
 export const selectBudgetCategoryItemTransactionSchema = createSelectSchema(budget_category_item_transactions)
+type TBudgetCategoryItemTransactionResult = z.infer<typeof selectBudgetCategoryItemTransactionSchema>
+
 
 // Budget category item transaction type schema
 export const insertBudgetCategoryItemTransactionTypeSchema = createInsertSchema(budget_category_item_transaction_types)
+type TBudgetCategoryItemTransactionType = z.infer<typeof insertBudgetCategoryItemTransactionTypeSchema>
+
 export const selectBudgetCategoryItemTransactionTypeSchema = createSelectSchema(budget_category_item_transaction_types)
+type TBudgetCategoryItemTransactionTypeResult = z.infer<typeof selectBudgetCategoryItemTransactionTypeSchema>
