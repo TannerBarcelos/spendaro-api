@@ -2,12 +2,21 @@ import { drizzle } from 'drizzle-orm/postgres-js';
 import postgres from 'postgres';
 import { FastifyPluginCallback } from 'fastify';
 import fp from 'fastify-plugin';
-import { migrate } from "drizzle-orm/postgres-js/migrator";
-import {users, budget_categories, budget_category_item_transaction_types, budget_category_item_transactions, budget_category_items, budgets} from './schema'
+import { migrate } from 'drizzle-orm/postgres-js/migrator';
+import {
+  users,
+  budget_categories,
+  budget_category_item_transaction_types,
+  budget_category_item_transactions,
+  budget_category_items,
+  budgets,
+} from './schema';
 
 const postgresConnector: FastifyPluginCallback = (fastify, _, done) => {
-  const databaseUrl = `postgresql://${process.env.DB_USER}:${process.env.DB_PASSWORD}@${process.env.DB_HOST}:5432/${process.env.DB_NAME}` || "postgresql://postgres@localhost:5432/postgres";
-  
+  const databaseUrl =
+    `postgresql://${process.env.DB_USER}:${process.env.DB_PASSWORD}@${process.env.DB_HOST}:5432/${process.env.DB_NAME}` ||
+    'postgresql://postgres@localhost:5432/postgres';
+
   if (!databaseUrl) {
     throw new Error('DATABASE_URL must be set to connect to the database');
   }
@@ -21,8 +30,8 @@ const postgresConnector: FastifyPluginCallback = (fastify, _, done) => {
       budget_categories,
       budget_category_items,
       budget_category_item_transactions,
-      budget_category_item_transaction_types
-    }
+      budget_category_item_transaction_types,
+    },
   });
 
   // Decorate the fastify instance with the database object so we can access it on the fastify instance
@@ -43,7 +52,7 @@ const postgresConnector: FastifyPluginCallback = (fastify, _, done) => {
     await client.end();
   });
 
-  done()
-}
+  done();
+};
 
 export default fp(postgresConnector);

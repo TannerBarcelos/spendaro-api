@@ -1,6 +1,6 @@
 import { defineConfig } from 'drizzle-kit';
 
-const dbBasePath = "./src/db/"
+const dbBasePath = './src/db/';
 
 //https://orm.drizzle.team/docs/migrations
 export default defineConfig({
