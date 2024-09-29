@@ -17,7 +17,7 @@ import {
     updateBudgetCategoryItemHandler,
     deleteBudgetCategoryItemHandler,
     deleteAllBudgetCategoryItemsHandler
-} from "../handlers/budget-handlers";
+} from "@/handlers/budget-handlers";
 
 export default async function(server: FastifyInstance) {
     

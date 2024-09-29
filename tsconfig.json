@@ -9,6 +9,9 @@
     "baseUrl": "./src",
     "outDir": "./dist",
     "declaration": true,
+    "paths": {
+      "@/*": ["*"]
+    }
   },
   "extends": "@tsconfig/node20/tsconfig.json",
   "include": ["src/**/*.ts","global.d.ts"],
