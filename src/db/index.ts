@@ -26,7 +26,7 @@ const postgresConnector: FastifyPluginCallback = (fastify, _, done) => {
   });
 
   // Decorate the fastify instance with the database object so we can access it on the fastify instance
-  fastify.decorate('db', db);
+  fastify.decorate<typeof db>('db', db);
 
   console.log('Connected to the database');
 
