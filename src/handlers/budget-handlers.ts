@@ -11,10 +11,8 @@ async function getBudgetHandler(request: FastifyRequest, reply: FastifyReply) {
   reply.send('getBudgetHandler');
 }
 
-// TODO: Move the test to the service layer and lift into a repository
 async function getBudgetsHandler(request: FastifyRequest, reply: FastifyReply) {
-  const data = await request.server.db.query.budgets.findMany();
-  reply.send(data);
+  reply.send('getBudgetsHandler');
 }
 
 async function updateBudgetHandler(
