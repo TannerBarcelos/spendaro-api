@@ -13,7 +13,7 @@ const server = fastify();
 registerServerPlugins(server);
 
 server.get('/healthz', async (request:FastifyRequest) => {
-  return { status: 'OK' + request.user };
+  return { status: 'OK' };
 });
 
 server.register(routes, { prefix: '/api/v1' });
