@@ -71,6 +71,15 @@ export const budget_category_item_transaction_types = pgTable('budget_category_i
   updated_at: updatedTs,
 });
 
+export type SpendaroSchema = {
+  users: typeof users,
+  budgets: typeof budgets,
+  budget_categories: typeof budget_categories,
+  budget_category_items: typeof budget_category_items,
+  budget_category_item_transactions: typeof budget_category_item_transactions,
+  budget_category_item_transaction_types: typeof budget_category_item_transaction_types,
+}
+
 
 // Inferring Zod schemas from the tables so we can use it in application code
 

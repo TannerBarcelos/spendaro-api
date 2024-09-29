@@ -8,7 +8,8 @@
     "start": "node index.js",
     "dev": "NODE_ENV=development tsnd --respawn --transpile-only --exit-child src/index.ts",
     "format": "prettier --write \"**/*.ts\"",
-    "migrate": "drizzle-kit generate"
+    "db:migrate": "drizzle-kit generate",
+    "db:seed": "src/db/seed.ts"
   },
   "keywords": [],
   "author": "",
