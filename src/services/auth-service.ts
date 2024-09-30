@@ -4,7 +4,7 @@ import bcrypt from 'bcrypt';
 import config from 'config';
 import { IAuthRepository } from '@/repositories/auth-repository';
 
-export default class AuthService {
+class AuthService {
   authRepo: IAuthRepository;
   server: FastifyInstance;
   constructor(server: FastifyInstance, authRepo: IAuthRepository) {
@@ -41,3 +41,5 @@ export default class AuthService {
     }
   }
 }
+
+export { AuthService };

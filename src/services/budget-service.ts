@@ -1,7 +1,7 @@
 import { TBudget } from '@/db/schema';
 import { IBudgetRepository } from '@/repositories/budget-repository';
 
-export default class BudgetService {
+class BudgetService {
   private budgetRepo: IBudgetRepository;
 
   constructor(budgetRepo: IBudgetRepository) {
@@ -112,3 +112,5 @@ export default class BudgetService {
     return this.budgetRepo.deleteTransactionType(transactionId);
   }
 }
+
+export { BudgetService };

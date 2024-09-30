@@ -1,9 +1,9 @@
 import { insertUserSchema, selectUserSchema } from '@/db/schema';
-import AuthService from '@/services/auth-service';
+import {AuthService} from '@/services/auth-service';
 import { FastifyReply, FastifyRequest, FastifyInstance } from 'fastify';
 import { prepareResponse, STATUS_CODES } from '@/util/http';
 
-export default class AuthHandlers {
+class AuthHandlers {
   private authService: AuthService;
 
   constructor(authService: AuthService) {
@@ -51,3 +51,5 @@ export default class AuthHandlers {
     server.post('/signin', this.signinUserHandler.bind(this));
   }
 }
+
+export { AuthHandlers };

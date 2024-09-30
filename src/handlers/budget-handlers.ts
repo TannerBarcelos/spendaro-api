@@ -1,8 +1,8 @@
-import BudgetService from '@/services/budget-service';
+import { BudgetService } from '@/services/budget-service';
 import { prepareResponse, STATUS_CODES } from '@/util/http';
 import { FastifyRequest, FastifyReply, FastifyInstance } from 'fastify';
 
-export default class BudgetHandlers {
+class BudgetHandlers {
   private budgetService: BudgetService;
 
   constructor(budgetService: BudgetService) {
@@ -604,3 +604,5 @@ export default class BudgetHandlers {
     );
   }
 }
+
+export { BudgetHandlers };
