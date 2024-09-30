@@ -17,7 +17,7 @@ export default class AuthService {
         Number(config.get('security.jwt.salt_rounds')) ?? 10
       );
       const hash = await bcrypt.hash(user.password, salt);
-      const newUser = await this.authRepo.signup({ ...user, password: hash });
+      const newUser = await this.authRepo.signup({ ...user, password: hash }); // send the hashed password, not the plain text password
       return newUser;
     } catch (error) {
       throw new Error('User already exists. Please use a different email');

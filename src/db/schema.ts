@@ -79,13 +79,13 @@ export const budgetCategoryItemsRelations = relations(
   budget_category_items,
   ({ one, many }) => ({
     category: one(budget_categories),
-    transactions: many(budget_category_item_transactions), // an item in a category can have N transactions, so we need to establish a one-to-many relationship for N transactions to one item
+    transactions: many(transactions), // an item in a category can have N transactions, so we need to establish a one-to-many relationship for N transactions to one item
   })
 );
 
 // This table is used to store the transactions made and assign them to a budget category item
-export const budget_category_item_transactions = pgTable(
-  'budget_category_item_transactions',
+export const transactions = pgTable(
+  'transactions',
   {
     id: serial('id').primaryKey(),
     item_id: integer('item_id').references(() => budget_category_items.id, {
@@ -95,7 +95,7 @@ export const budget_category_item_transactions = pgTable(
     transaction_date: date('transaction_date').notNull(), // date of the transaction (can be different from the created_at date, so we need to store it separately)
     transaction_description: text('transaction_description').default(''),
     transaction_type_id: integer('transaction_type_id').references(
-      () => budget_category_item_transaction_types.id,
+      () => transaction_types.id,
       { onDelete: 'set null' }
     ), // when a transaction type is deleted, we should set the transaction type id to null since transactions should still persist
     created_at: createdTs,
@@ -103,17 +103,17 @@ export const budget_category_item_transactions = pgTable(
   }
 );
 
-export const budgetCategoryItemTransactionsRelations = relations(
-  budget_category_item_transactions,
+export const transactionsRelations = relations(
+  transactions,
   ({ one }) => ({
     item: one(budget_category_items),
-    transaction_type: one(budget_category_item_transaction_types),
+    transaction_type: one(transaction_types),
   })
 );
 
 // This table is used to store the types of transactions that can be made on a budget category item i.e. income, expense, etc. (not using enum as users can add their own transaction types)
-export const budget_category_item_transaction_types = pgTable(
-  'budget_category_item_transaction_types',
+export const transaction_types = pgTable(
+  'transaction_types',
   {
     id: serial('id').primaryKey(),
     transaction_type: text('transaction_type'),
@@ -127,8 +127,8 @@ export type SpendaroSchema = {
   budgets: typeof budgets;
   budget_categories: typeof budget_categories;
   budget_category_items: typeof budget_category_items;
-  budget_category_item_transactions: typeof budget_category_item_transactions;
-  budget_category_item_transaction_types: typeof budget_category_item_transaction_types;
+  transactions: typeof transactions;
+  transaction_types: typeof transaction_types;
 };
 
 // Inferring Zod schemas from the tables so we can use it in application code to validate data.
@@ -171,31 +171,31 @@ export type TBudgetCategoryItemResult = z.infer<
 >;
 
 // Budget category item transaction schema
-export const insertBudgetCategoryItemTransactionSchema = createInsertSchema(
-  budget_category_item_transactions
+export const insertTransactionSchema = createInsertSchema(
+  transactions
 );
-export type TBudgetCategoryItemTransaction = z.infer<
-  typeof insertBudgetCategoryItemTransactionSchema
+export type TTransaction = z.infer<
+  typeof insertTransactionSchema
 >;
 
-export const selectBudgetCategoryItemTransactionSchema = createSelectSchema(
-  budget_category_item_transactions
+export const selectTransactionSchema = createSelectSchema(
+  transactions
 );
-export type TBudgetCategoryItemTransactionResult = z.infer<
-  typeof selectBudgetCategoryItemTransactionSchema
+export type TTransactionResult = z.infer<
+  typeof selectTransactionSchema
 >;
 
 // Budget category item transaction type schema
-export const insertBudgetCategoryItemTransactionTypeSchema = createInsertSchema(
-  budget_category_item_transaction_types
+export const insertTransactionTypeSchema = createInsertSchema(
+  transaction_types
 );
-export type TBudgetCategoryItemTransactionType = z.infer<
-  typeof insertBudgetCategoryItemTransactionTypeSchema
+export type TTransactionType = z.infer<
+  typeof insertTransactionTypeSchema
 >;
 
-export const selectBudgetCategoryItemTransactionTypeSchema = createSelectSchema(
-  budget_category_item_transaction_types
+export const selectTransactionTypeSchema = createSelectSchema(
+  transaction_types
 );
-export type TBudgetCategoryItemTransactionTypeResult = z.infer<
-  typeof selectBudgetCategoryItemTransactionTypeSchema
+export type TTransactionTypeResult = z.infer<
+  typeof selectTransactionTypeSchema
 >;

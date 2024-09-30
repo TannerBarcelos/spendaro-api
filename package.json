@@ -6,7 +6,7 @@
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "start": "node index.js",
-    "dev": "NODE_ENV=development tsnd --respawn --transpile-only --exit-child src/index.ts",
+    "dev": "NODE_ENV=development tsnd -r tsconfig-paths/register --respawn --transpile-only --exit-child src/index.ts",
     "format": "prettier --write \"**/*.ts\"",
     "db:migrate": "drizzle-kit generate",
     "db:seed": "src/db/seed.ts"
@@ -26,6 +26,7 @@
     "fastify": "^5.0.0",
     "fastify-plugin": "^5.0.1",
     "postgres": "^3.4.4",
+    "tsconfig-paths": "^4.2.0",
     "zod": "^3.23.8"
   },
   "devDependencies": {

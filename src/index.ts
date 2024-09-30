@@ -1,6 +1,6 @@
 import config from 'config'; // NODE_ENV this server is running in will resolve to the appropriate config file in the config folder
 import fastify, { FastifyInstance, FastifyRequest } from 'fastify';
-import routes from './routes';
+import { routes } from './routes';
 import dotenv from 'dotenv';
 import db from './db';
 import cors from '@fastify/cors';

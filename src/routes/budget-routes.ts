@@ -19,7 +19,7 @@ import {
   deleteAllBudgetCategoryItemsHandler,
 } from '@/handlers/budget-handlers';
 
-export default async function (server: FastifyInstance) {
+async function budgetRoutes(server: FastifyInstance) {
   // Budgets
   server.post('/', createBudgetHandler);
   server.get('/', getBudgetsHandler);
@@ -42,3 +42,5 @@ export default async function (server: FastifyInstance) {
   server.delete('/categories/:id/items/:id', deleteBudgetCategoryItemHandler);
   server.delete('/categories/:id/items', deleteAllBudgetCategoryItemsHandler);
 }
+
+export { budgetRoutes };
