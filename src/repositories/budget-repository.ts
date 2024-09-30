@@ -41,19 +41,19 @@ export interface IBudgetRepository {
   ): TCommonBudgetCategoryItemResponse;
 
   // Transactions
-  getBudgetCategoryItemTransactions(
+  getTransactions(
     itemId: number
   ): Array<TCommonTransactionResponse>;
-  getBudgetCategoryItemTransactionById(
+  getTransactionById(
     transactionId: number
   ): TCommonTransactionResponse;
-  createBudgetCategoryItemTransaction(
+  createTransaction(
     transaction: TBudget
   ): TCommonTransactionResponse;
-  updateBudgetCategoryItemTransaction(
+  updateTransaction(
     transaction: TBudget
   ): TCommonTransactionResponse;
-  deleteBudgetCategoryItemTransaction(
+  deleteTransaction(
     transactionId: number
   ): TCommonTransactionResponse;
 

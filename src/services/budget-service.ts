@@ -73,23 +73,23 @@ export default class BudgetService {
   }
 
   getTransactions(itemId: number) {
-    return this.budgetRepo.getBudgetCategoryItemTransactions(itemId);
+    return this.budgetRepo.getTransactions(itemId);
   }
 
   getTransactionById(transactionId: number) {
-    return this.budgetRepo.getBudgetCategoryItemTransactionById(transactionId);
+    return this.budgetRepo.getTransactionById(transactionId);
   }
 
   createTransaction(transaction: TBudget) {
-    return this.budgetRepo.createBudgetCategoryItemTransaction(transaction);
+    return this.budgetRepo.createTransaction(transaction);
   }
 
   updateTransaction(transaction: TBudget) {
-    return this.budgetRepo.updateBudgetCategoryItemTransaction(transaction);
+    return this.budgetRepo.updateTransaction(transaction);
   }
 
   deleteTransaction(transactionId: number) {
-    return this.budgetRepo.deleteBudgetCategoryItemTransaction(transactionId);
+    return this.budgetRepo.deleteTransaction(transactionId);
   }
 
   getTransactionTypes() {
