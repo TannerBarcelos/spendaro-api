@@ -10,11 +10,9 @@ class BudgetHandlers {
     this.budgetService = budgetService;
   }
 
-  async getBudgetsHandler(request: FastifyRequest<{
-    Params: { userId: number };
-  }>, reply: FastifyReply) {
+  async getBudgetsHandler(_:FastifyRequest, reply: FastifyReply) {
     try {
-      const userId = request.params.userId;
+      const userId = 1; // TODO: Replace with user from request when auth is implemented
       const budgets = await this.budgetService.getBudgets(userId);
       reply.send(
         prepareResponse(
@@ -36,6 +34,9 @@ class BudgetHandlers {
     try {
       const budgetId = request.params.budgetId;
       const budget = await this.budgetService.getBudgetById(budgetId);
+      if(!budget) {
+        reply.status(STATUS_CODES.NOT_FOUND).send(prepareResponse(null, STATUS_CODES.NOT_FOUND, 'Budget not found'));
+      }
       reply.send(
         prepareResponse(budget, STATUS_CODES.OK, 'Budget fetched successfully')
       );
@@ -61,7 +62,7 @@ class BudgetHandlers {
       );
     } catch (error) {
       reply.send(
-        prepareResponse(error, STATUS_CODES.BAD_REQUEST, 'Bad Request')
+        prepareResponse(error, STATUS_CODES.BAD_REQUEST, 'Bad Request. Ensure all required fields are provided')
       );
     }
   }
@@ -72,6 +73,11 @@ class BudgetHandlers {
     try {
       const budget = request.body;
       const updatedBudget = await this.budgetService.updateBudget(budget);
+
+      if(!updatedBudget) {
+        reply.status(STATUS_CODES.NOT_FOUND).send(prepareResponse(null, STATUS_CODES.NOT_FOUND, 'Budget not found'));
+      }
+
       reply.send(
         prepareResponse(
           updatedBudget,
@@ -572,29 +578,29 @@ class BudgetHandlers {
   }
 
   registerHandlers(server: FastifyInstance) {
-    server.get('/budgets', this.getBudgetsHandler.bind(this));
-    server.get('/budgets/:budgetId', this.getBudgetByIdHandler.bind(this));
-    server.post('/budgets', this.createBudgetHandler.bind(this));
-    server.put('/budgets', this.updateBudgetHandler.bind(this));
-    server.delete('/budgets/:budgetId', this.deleteBudgetHandler.bind(this));
+    server.get('', this.getBudgetsHandler.bind(this));
+    server.get('/:budgetId', this.getBudgetByIdHandler.bind(this));
+    server.post('', this.createBudgetHandler.bind(this));
+    server.put('', this.updateBudgetHandler.bind(this));
+    server.delete(':budgetId', this.deleteBudgetHandler.bind(this));
     server.get(
-      '/budgets/:budgetId/categories',
+      ':budgetId/categories',
       this.getBudgetCategoriesHandler.bind(this)
     );
     server.get(
-      '/budgets/categories/:categoryId',
+      'categories/:categoryId',
       this.getBudgetCategoryByIdHandler.bind(this)
     );
     server.post(
-      '/budgets/categories',
+      'categories',
       this.createBudgetCategoryHandler.bind(this)
     );
     server.put(
-      '/budgets/categories',
+      'categories',
       this.updateBudgetCategoryHandler.bind(this)
     );
     server.delete(
-      '/budgets/categories/:categoryId',
+      'categories/:categoryId',
       this.deleteBudgetCategoryHandler.bind(this)
     );
     server.get(
