@@ -132,7 +132,6 @@ class BudgetRepository implements IBudgetRepository {
     return deletedBudget;
   }
 
-  // Budget Categories
   async getBudgetCategories(
     budget_id: number
   ): Promise<Array<TBudgetCategoryResult>> {
@@ -157,11 +156,7 @@ class BudgetRepository implements IBudgetRepository {
   ): TCommonBudgetCategoryResponse {
     const [newCategory]: Array<TBudgetCategoryResult> = await this.db
       .insert(budget_categories)
-      .values({
-        budget_id: category.budget_id,
-        category_name: category.category_name,
-        category_description: category.category_description || '',
-      })
+      .values(category)
       .returning();
     return newCategory;
   }
@@ -171,10 +166,7 @@ class BudgetRepository implements IBudgetRepository {
   ): TCommonBudgetCategoryResponse {
     const [updatedCategory]: Array<TBudgetCategoryResult> = await this.db
       .update(budget_categories)
-      .set({
-        category_name: category.category_name,
-        category_description: category.category_description,
-      })
+      .set(category)
       .where(eq(budget_categories.id, category.id!))
       .returning();
     return updatedCategory;
@@ -214,12 +206,7 @@ class BudgetRepository implements IBudgetRepository {
   ): TCommonBudgetCategoryItemResponse {
     const [newItem]: Array<TBudgetCategoryItemResult> = await this.db
       .insert(budget_category_items)
-      .values({
-        category_id: item.category_id,
-        item_name: item.item_name,
-        item_description: item.item_description,
-        item_amount: item.item_amount,
-      })
+      .values(item)
       .returning();
     return newItem;
   }
@@ -229,12 +216,7 @@ class BudgetRepository implements IBudgetRepository {
   ): TCommonBudgetCategoryItemResponse {
     const [updatedItem]: Array<TBudgetCategoryItemResult> = await this.db
       .update(budget_category_items)
-      .set({
-        category_id: item.category_id, // users can re-assign items to different categories, so we need to update the category_id as well (if no update to the field, it will remain the same)
-        item_name: item.item_name,
-        item_description: item.item_description,
-        item_amount: item.item_amount,
-      })
+      .set(item)
       .where(eq(budget_category_items.id, item.id!))
       .returning();
     return updatedItem;
@@ -280,14 +262,7 @@ class BudgetRepository implements IBudgetRepository {
   ): TCommonTransactionResponse {
     const [newTransaction]: Array<TTransactionResult> = await this.db
       .insert(transactions)
-      .values({
-        item_id: transaction.item_id,
-        transaction_type_id: transaction.transaction_type_id,
-        transaction_amount: transaction.transaction_amount,
-        transaction_date: transaction.transaction_date,
-        transaction_description: transaction.transaction_description || '',
-        user_id: transaction.user_id,
-      })
+      .values(transaction)
       .returning();
     return newTransaction;
   }
@@ -297,13 +272,7 @@ class BudgetRepository implements IBudgetRepository {
   ): TCommonTransactionResponse {
     const [updatedTransaction]: Array<TTransactionResult> = await this.db
       .update(transactions)
-      .set({
-        transaction_type_id: transaction.transaction_type_id,
-        transaction_amount: transaction.transaction_amount,
-        transaction_date: transaction.transaction_date,
-        transaction_description: transaction.transaction_description || '',
-        item_id: transaction.item_id,
-      })
+      .set(transaction)
       .where(eq(transactions.id, transaction.id!))
       .returning();
     return updatedTransaction;
@@ -336,7 +305,7 @@ class BudgetRepository implements IBudgetRepository {
   ): TCommonTransactionTypeResponse {
     const [newTransactionType]: Array<TTransactionTypeResult> = await this.db
       .insert(transaction_types)
-      .values({ transaction_type: transaction.transaction_type }) // transaction_type is a string (the name of the transaction type)
+      .values(transaction)
       .returning();
     return newTransactionType;
   }
@@ -347,9 +316,7 @@ class BudgetRepository implements IBudgetRepository {
     const [updatedTransactionType]: Array<TTransactionTypeResult> =
       await this.db
         .update(transaction_types)
-        .set({
-          transaction_type: transaction.transaction_type,
-        })
+        .set(transaction)
         .where(eq(transaction_types.id, transaction.id!))
         .returning();
     return updatedTransactionType;
