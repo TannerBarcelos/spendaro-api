@@ -5,7 +5,7 @@ import dotenv from 'dotenv';
 import db from './db';
 import cors from '@fastify/cors';
 import { ALLOWED_METHODS } from './util/http';
-import jwt from '@fastify/jwt';
+import authenticate from "./plugins/authenticate";
 
 dotenv.config();
 
@@ -27,12 +27,10 @@ server.listen({ port: config.get('server.port') }, (err, address) => {
 });
 
 function registerServerPlugins(server: FastifyInstance) {
+  server.register(authenticate)
   server.register(cors, {
     origin: '*',
     methods: ALLOWED_METHODS,
   });
   server.register(db);
-  server.register(jwt, {
-    secret: process.env.JWT_SECRET ?? 'jwtsupersecretkey',
-  });
 }

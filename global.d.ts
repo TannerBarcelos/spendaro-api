@@ -14,6 +14,7 @@ import { AuthService } from '@/services/auth-service';
 declare module 'fastify' {
   interface FastifyInstance {
     db: PostgresJsDatabase<SpendaroSchema>;
+    authenticate: (request: FastifyRequest, reply: FastifyReply) => Promise<void>;
   }
   interface FastifyRequest {
     user: string;

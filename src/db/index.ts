@@ -12,7 +12,7 @@ import {
   budgets,
 } from './schema';
 
-const postgresConnector: FastifyPluginCallback = (fastify, _, done) => {
+const postgresConnector: FastifyPluginCallback = async (fastify, _) => {
   try {
     const databaseUrl =
       `postgresql://${process.env.DB_USER}:${process.env.DB_PASSWORD}@${process.env.DB_HOST}:5432/${process.env.DB_NAME}` ||
@@ -55,8 +55,6 @@ const postgresConnector: FastifyPluginCallback = (fastify, _, done) => {
   } catch (error) {
     console.error('Error connecting to the database', error);
     process.exit(1);
-  } finally {
-    done();
   }
 };
 

@@ -3,6 +3,7 @@ import { FastifyInstance } from 'fastify';
 import bcrypt from 'bcrypt';
 import config from 'config';
 import { IAuthRepository } from '@/repositories/auth-repository';
+import { is } from "drizzle-orm";
 
 class AuthService {
   authRepo: IAuthRepository;
@@ -23,17 +24,24 @@ class AuthService {
       throw new Error('User already exists. Please use a different email');
     }
   }
-  async signin(candidateUser: TUser): Promise<TUserResult> {
+  async signin(candidateUser: Pick<TUser, "email" | "password">): Promise<TUserResult> {
     try {
-      const foundUser = await this.authRepo.signin(candidateUser);
+      const signedInUser = await this.authRepo.signin(candidateUser);
+
+      if(!signedInUser) {
+        throw new Error('User does not exist');
+      }
+
       const isValid = await bcrypt.compare(
         candidateUser.password,
-        foundUser.password
+        signedInUser.password
       );
+
       if (!isValid) {
         throw new Error('Invalid password. Passwords do not match');
       }
-      return foundUser;
+      
+      return signedInUser;
     } catch (error) {
       throw new Error(
         'Failed to sign in user. Please check your email and password'

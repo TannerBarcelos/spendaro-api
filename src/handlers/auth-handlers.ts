@@ -1,4 +1,4 @@
-import { insertUserSchema, selectUserSchema } from '@/db/schema';
+import { insertUserSchema, selectUserSchema, TUser } from '@/db/schema';
 import {AuthService} from '@/services/auth-service';
 import { FastifyReply, FastifyRequest, FastifyInstance } from 'fastify';
 import { prepareResponse, STATUS_CODES } from '@/util/http';
@@ -14,9 +14,17 @@ class AuthHandlers {
     try {
       const user = insertUserSchema.parse(request.body);
       const signedUpUser = await this.authService.signup(user);
+      const token = request.server.jwt.sign({
+        payload: {
+          user_id: signedUpUser.id,
+          email: signedUpUser.email,
+          first_name: signedUpUser.firstName,
+          last_name: signedUpUser.lastName,
+        }
+      });
       reply.send(
         prepareResponse(
-          signedUpUser,
+          token,
           STATUS_CODES.CREATED,
           'User created successfully'
         )
@@ -28,19 +36,27 @@ class AuthHandlers {
     }
   }
 
-  signinUserHandler(request: FastifyRequest, reply: FastifyReply) {
+  async signinUserHandler(request: FastifyRequest, reply: FastifyReply) {
     try {
-      const user = selectUserSchema.parse(request.body);
-      const signedInUser = this.authService.signin(user);
+      const user = request.body as Pick<TUser, "email" | "password">
+      const signedInUser = await this.authService.signin(user);
+      const token = request.server.jwt.sign({
+        payload: {
+          user_id: signedInUser.id,
+          email: signedInUser.email,
+          first_name: signedInUser.firstName,
+          last_name: signedInUser.lastName,
+        }
+      });
       reply.send(
         prepareResponse(
-          signedInUser,
+          {token},
           STATUS_CODES.OK,
           'User signed in successfully'
         )
       );
     } catch (error) {
-      reply.send(
+      reply.status(STATUS_CODES.BAD_REQUEST).send(
         prepareResponse(error, STATUS_CODES.BAD_REQUEST, 'Bad Request')
       );
     }

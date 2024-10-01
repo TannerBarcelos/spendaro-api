@@ -1,4 +1,10 @@
-import { TBudget, TBudgetCategory, TBudgetCategoryItem, TTransaction, TTransactionType } from "@/db/schema";
+import {
+  TBudget,
+  TBudgetCategory,
+  TBudgetCategoryItem,
+  TTransaction,
+  TTransactionType,
+} from '@/db/schema';
 import { BudgetService } from '@/services/budget-service';
 import { prepareResponse, STATUS_CODES } from '@/util/http';
 import { FastifyRequest, FastifyReply, FastifyInstance } from 'fastify';
@@ -10,7 +16,7 @@ class BudgetHandlers {
     this.budgetService = budgetService;
   }
 
-  async getBudgetsHandler(_:FastifyRequest, reply: FastifyReply) {
+  async getBudgetsHandler(_: FastifyRequest, reply: FastifyReply) {
     try {
       const userId = 1; // TODO: Replace with user from request when auth is implemented
       const budgets = await this.budgetService.getBudgets(userId);
@@ -28,14 +34,21 @@ class BudgetHandlers {
     }
   }
 
-  async getBudgetByIdHandler(request: FastifyRequest<{
-    Params: { budgetId: number };
-  }>, reply: FastifyReply) {
+  async getBudgetByIdHandler(
+    request: FastifyRequest<{
+      Params: { budgetId: number };
+    }>,
+    reply: FastifyReply
+  ) {
     try {
       const budgetId = request.params.budgetId;
       const budget = await this.budgetService.getBudgetById(budgetId);
-      if(!budget) {
-        reply.status(STATUS_CODES.NOT_FOUND).send(prepareResponse(null, STATUS_CODES.NOT_FOUND, 'Budget not found'));
+      if (!budget) {
+        reply
+          .status(STATUS_CODES.NOT_FOUND)
+          .send(
+            prepareResponse(null, STATUS_CODES.NOT_FOUND, 'Budget not found')
+          );
       }
       reply.send(
         prepareResponse(budget, STATUS_CODES.OK, 'Budget fetched successfully')
@@ -47,9 +60,12 @@ class BudgetHandlers {
     }
   }
 
-  async createBudgetHandler(request: FastifyRequest<{
-    Body: TBudget;
-  }>, reply: FastifyReply) {
+  async createBudgetHandler(
+    request: FastifyRequest<{
+      Body: TBudget;
+    }>,
+    reply: FastifyReply
+  ) {
     try {
       const budget = request.body;
       const createdBudget = await this.budgetService.createBudget(budget);
@@ -62,22 +78,36 @@ class BudgetHandlers {
       );
     } catch (error) {
       reply.send(
-        prepareResponse(error, STATUS_CODES.BAD_REQUEST, 'Bad Request. Ensure all required fields are provided')
+        prepareResponse(
+          error,
+          STATUS_CODES.BAD_REQUEST,
+          'Bad Request. Ensure all required fields are provided'
+        )
       );
     }
   }
 
-  async updateBudgetHandler(request: FastifyRequest<{
-    Body: TBudget;
-    Params: { budgetId: number };
-  }>, reply: FastifyReply) {
+  async updateBudgetHandler(
+    request: FastifyRequest<{
+      Body: TBudget;
+      Params: { budgetId: number };
+    }>,
+    reply: FastifyReply
+  ) {
     try {
       const budget = request.body;
       const budget_id = request.params.budgetId;
-      const updatedBudget = await this.budgetService.updateBudget(budget_id, budget);
+      const updatedBudget = await this.budgetService.updateBudget(
+        budget_id,
+        budget
+      );
 
-      if(!updatedBudget) {
-        reply.status(STATUS_CODES.NOT_FOUND).send(prepareResponse(null, STATUS_CODES.NOT_FOUND, 'Budget not found'));
+      if (!updatedBudget) {
+        reply
+          .status(STATUS_CODES.NOT_FOUND)
+          .send(
+            prepareResponse(null, STATUS_CODES.NOT_FOUND, 'Budget not found')
+          );
       }
 
       reply.send(
@@ -94,15 +124,22 @@ class BudgetHandlers {
     }
   }
 
-  async deleteBudgetHandler(request: FastifyRequest<{
-    Params: { budgetId: number };
-  }>, reply: FastifyReply) {
+  async deleteBudgetHandler(
+    request: FastifyRequest<{
+      Params: { budgetId: number };
+    }>,
+    reply: FastifyReply
+  ) {
     try {
       const budgetId = request.params.budgetId;
       const deletedBudget = await this.budgetService.deleteBudget(budgetId);
 
-      if(!deletedBudget) {
-        reply.status(STATUS_CODES.NOT_FOUND).send(prepareResponse(null, STATUS_CODES.NOT_FOUND, 'Budget not found'));
+      if (!deletedBudget) {
+        reply
+          .status(STATUS_CODES.NOT_FOUND)
+          .send(
+            prepareResponse(null, STATUS_CODES.NOT_FOUND, 'Budget not found')
+          );
       }
 
       reply.send(
@@ -128,7 +165,8 @@ class BudgetHandlers {
   ) {
     try {
       const budget_id = request.params.budgetId;
-      const categories = await this.budgetService.getBudgetCategories(budget_id);
+      const categories =
+        await this.budgetService.getBudgetCategories(budget_id);
       reply.send(
         prepareResponse(
           categories,
@@ -169,7 +207,7 @@ class BudgetHandlers {
 
   async createBudgetCategoryHandler(
     request: FastifyRequest<{
-      Body: TBudgetCategory
+      Body: TBudgetCategory;
     }>,
     reply: FastifyReply
   ) {
@@ -193,7 +231,7 @@ class BudgetHandlers {
 
   async updateBudgetCategoryHandler(
     request: FastifyRequest<{
-      Body: TBudgetCategory
+      Body: TBudgetCategory;
     }>,
     reply: FastifyReply
   ) {
@@ -288,7 +326,7 @@ class BudgetHandlers {
 
   async createBudgetCategoryItemHandler(
     request: FastifyRequest<{
-      Body: TBudgetCategoryItem
+      Body: TBudgetCategoryItem;
     }>,
     reply: FastifyReply
   ) {
@@ -312,7 +350,7 @@ class BudgetHandlers {
 
   async updateBudgetCategoryItemHandler(
     request: FastifyRequest<{
-      Body: TBudgetCategoryItem
+      Body: TBudgetCategoryItem;
     }>,
     reply: FastifyReply
   ) {
@@ -359,9 +397,12 @@ class BudgetHandlers {
   }
 
   // Transactions
-  async getTransactionsHandler(request: FastifyRequest<{
-    Params: { itemId: number };
-  }>, reply: FastifyReply) {
+  async getTransactionsHandler(
+    request: FastifyRequest<{
+      Params: { itemId: number };
+    }>,
+    reply: FastifyReply
+  ) {
     try {
       const itemId = request.params.itemId;
       const transactions = await this.budgetService.getTransactions(itemId);
@@ -403,9 +444,12 @@ class BudgetHandlers {
     }
   }
 
-  async createTransactionHandler(request: FastifyRequest<{
-    Body: TTransaction
-  }>, reply: FastifyReply) {
+  async createTransactionHandler(
+    request: FastifyRequest<{
+      Body: TTransaction;
+    }>,
+    reply: FastifyReply
+  ) {
     try {
       const transaction = request.body;
       const createdTransaction =
@@ -424,9 +468,12 @@ class BudgetHandlers {
     }
   }
 
-  async updateTransactionHandler(request: FastifyRequest<{
-    Body: TTransaction
-  }>, reply: FastifyReply) {
+  async updateTransactionHandler(
+    request: FastifyRequest<{
+      Body: TTransaction;
+    }>,
+    reply: FastifyReply
+  ) {
     try {
       const transaction = request.body;
       const updatedTransaction =
@@ -445,9 +492,12 @@ class BudgetHandlers {
     }
   }
 
-  async deleteTransactionHandler(request: FastifyRequest<{
-    Params: { transactionId: number };
-  }>, reply: FastifyReply) {
+  async deleteTransactionHandler(
+    request: FastifyRequest<{
+      Params: { transactionId: number };
+    }>,
+    reply: FastifyReply
+  ) {
     try {
       const transactionId = request.params.transactionId;
       const deletedTransaction =
@@ -514,7 +564,7 @@ class BudgetHandlers {
 
   async createTransactionTypeHandler(
     request: FastifyRequest<{
-      Body: TTransactionType
+      Body: TTransactionType;
     }>,
     reply: FastifyReply
   ) {
@@ -538,7 +588,7 @@ class BudgetHandlers {
 
   async updateTransactionTypeHandler(
     request: FastifyRequest<{
-      Body: TTransactionType
+      Body: TTransactionType;
     }>,
     reply: FastifyReply
   ) {
@@ -598,14 +648,8 @@ class BudgetHandlers {
       'categories/:categoryId',
       this.getBudgetCategoryByIdHandler.bind(this)
     );
-    server.post(
-      'categories',
-      this.createBudgetCategoryHandler.bind(this)
-    );
-    server.put(
-      'categories',
-      this.updateBudgetCategoryHandler.bind(this)
-    );
+    server.post('categories', this.createBudgetCategoryHandler.bind(this));
+    server.put('categories', this.updateBudgetCategoryHandler.bind(this));
     server.delete(
       'categories/:categoryId',
       this.deleteBudgetCategoryHandler.bind(this)

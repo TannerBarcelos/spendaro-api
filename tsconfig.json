@@ -16,5 +16,5 @@
     }
   },
   "extends": "@tsconfig/node20/tsconfig.json",
-  "include": ["src/**/*.ts","global.d.ts"],
+  "include": ["src/**/*.ts","global.d.ts", "src/plugins/verify"],
 }
