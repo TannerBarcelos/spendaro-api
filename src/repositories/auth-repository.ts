@@ -26,12 +26,7 @@ class AuthRepository implements IAuthRepository {
   async signup(user: TUser): TCommonUserResponse {
     const [newUser]: Array<TUserResult> = await this.db
       .insert(users)
-      .values({
-        firstName: user.firstName,
-        lastName: user.lastName,
-        email: user.email,
-        password: user.password, // stored as password_hash in the database
-      })
+      .values(user)
       .returning();
     return newUser;
   }

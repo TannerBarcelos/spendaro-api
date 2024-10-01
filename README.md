@@ -43,11 +43,12 @@ To get started with the Spendaro API, follow these steps:
     Create a `.env` file in the root of the project and add the following environment variables:
 
     ```env
-    NODE_ENV=
-    DB_HOST=
-    DB_USER=
-    DB_PASSWORD=
-    DB_NAME=
+      NODE_ENV=
+      DB_HOST=
+      DB_USER=
+      DB_PASSWORD=
+      DB_NAME=
+      JWT_SECRET= <generate using `openssl rand -base64 32`>
     ```
     > Note: Replace the values with your own database connection details. 
     > * You can use a local database or a cloud-hosted database like Supabase.
