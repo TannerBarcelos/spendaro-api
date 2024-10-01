@@ -6,8 +6,8 @@ import { migrate } from 'drizzle-orm/postgres-js/migrator';
 import {
   users,
   budget_categories,
-  budget_category_item_transaction_types,
-  budget_category_item_transactions,
+  transaction_types,
+  transactions,
   budget_category_items,
   budgets,
 } from './schema';
@@ -30,8 +30,8 @@ const postgresConnector: FastifyPluginCallback = (fastify, _, done) => {
         budgets,
         budget_categories,
         budget_category_items,
-        budget_category_item_transactions,
-        budget_category_item_transaction_types,
+        transactions,
+        transaction_types,
       },
     });
 

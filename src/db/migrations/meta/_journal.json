@@ -5,15 +5,8 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1727565983479,
-      "tag": "0000_breezy_bulldozer",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1727569329543,
-      "tag": "0001_fine_stranger",
+      "when": 1727754292475,
+      "tag": "0000_pink_thing",
       "breakpoints": true
     }
   ]
