@@ -19,9 +19,6 @@ declare module 'fastify' {
       reply: FastifyReply
     ) => Promise<void>;
   }
-  interface FastifyRequest {
-    user: string;
-  }
 }
 
 declare module '@fastify/jwt' {
@@ -34,12 +31,12 @@ declare module '@fastify/jwt' {
       last_name: string;
     };
 
-    // the type of the decoded payload
-    decoded: {
+    // the type of the decoded payload that will be available in the request via the fastify/jwt plugin
+    user: {
       user_id: number;
       email: string;
       first_name: string;
-      last_name: string
+      last_name: string;
     };
   }
 }

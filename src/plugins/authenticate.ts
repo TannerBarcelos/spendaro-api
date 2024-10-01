@@ -14,6 +14,7 @@ const authenticate: FastifyPluginCallback = async (
   _: FastifyPluginOptions
 ) => {
   const secret = process.env.JWT_SECRET ?? 'jwtsupersecretkey';
+  // Register the fastify-jwt plugin and adds a decorator to the fastify instance
   fastify.register(jwt, {
     secret,
     cookie: {
@@ -21,6 +22,8 @@ const authenticate: FastifyPluginCallback = async (
       signed: false,
     },
   });
+
+  // Decorate the fastify instance with an authenticate method which we can call that uses this plugin to verify the JWT
   fastify.decorate(
     'authenticate',
     async function (request: FastifyRequest, reply: FastifyReply) {

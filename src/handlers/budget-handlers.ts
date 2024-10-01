@@ -16,9 +16,9 @@ class BudgetHandlers {
     this.budgetService = budgetService;
   }
 
-  async getBudgetsHandler(_: FastifyRequest, reply: FastifyReply) {
+  async getBudgetsHandler(request: FastifyRequest, reply: FastifyReply) {
     try {
-      const userId = 1; // TODO: Replace with user from request when auth is implemented
+      const userId = request.user.user_id; // Get the user_id from the authenticated user, which is available via the fastify/jwt plugin as the plugin protects the routes and sends the user object to the request object if the user is authenticated
       const budgets = await this.budgetService.getBudgets(userId);
       reply.send(
         prepareResponse(
