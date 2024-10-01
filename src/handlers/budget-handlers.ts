@@ -1,3 +1,4 @@
+import { TBudget, TBudgetCategory, TBudgetCategoryItem, TTransaction, TTransactionType } from "@/db/schema";
 import { BudgetService } from '@/services/budget-service';
 import { prepareResponse, STATUS_CODES } from '@/util/http';
 import { FastifyRequest, FastifyReply, FastifyInstance } from 'fastify';
@@ -9,7 +10,9 @@ class BudgetHandlers {
     this.budgetService = budgetService;
   }
 
-  async getBudgetsHandler(request: FastifyRequest, reply: FastifyReply) {
+  async getBudgetsHandler(request: FastifyRequest<{
+    Params: { userId: number };
+  }>, reply: FastifyReply) {
     try {
       const userId = request.params.userId;
       const budgets = await this.budgetService.getBudgets(userId);
@@ -27,7 +30,9 @@ class BudgetHandlers {
     }
   }
 
-  async getBudgetByIdHandler(request: FastifyRequest, reply: FastifyReply) {
+  async getBudgetByIdHandler(request: FastifyRequest<{
+    Params: { budgetId: number };
+  }>, reply: FastifyReply) {
     try {
       const budgetId = request.params.budgetId;
       const budget = await this.budgetService.getBudgetById(budgetId);
@@ -41,7 +46,9 @@ class BudgetHandlers {
     }
   }
 
-  async createBudgetHandler(request: FastifyRequest, reply: FastifyReply) {
+  async createBudgetHandler(request: FastifyRequest<{
+    Body: TBudget;
+  }>, reply: FastifyReply) {
     try {
       const budget = request.body;
       const createdBudget = await this.budgetService.createBudget(budget);
@@ -59,7 +66,9 @@ class BudgetHandlers {
     }
   }
 
-  async updateBudgetHandler(request: FastifyRequest, reply: FastifyReply) {
+  async updateBudgetHandler(request: FastifyRequest<{
+    Body: TBudget;
+  }>, reply: FastifyReply) {
     try {
       const budget = request.body;
       const updatedBudget = await this.budgetService.updateBudget(budget);
@@ -77,7 +86,9 @@ class BudgetHandlers {
     }
   }
 
-  async deleteBudgetHandler(request: FastifyRequest, reply: FastifyReply) {
+  async deleteBudgetHandler(request: FastifyRequest<{
+    Params: { budgetId: number };
+  }>, reply: FastifyReply) {
     try {
       const budgetId = request.params.budgetId;
       const deletedBudget = await this.budgetService.deleteBudget(budgetId);
@@ -97,12 +108,14 @@ class BudgetHandlers {
 
   // Budget Categories
   async getBudgetCategoriesHandler(
-    request: FastifyRequest,
+    request: FastifyRequest<{
+      Params: { budgetId: number };
+    }>,
     reply: FastifyReply
   ) {
     try {
-      const budgetId = request.params.budgetId;
-      const categories = await this.budgetService.getBudgetCategories(budgetId);
+      const budget_id = request.params.budgetId;
+      const categories = await this.budgetService.getBudgetCategories(budget_id);
       reply.send(
         prepareResponse(
           categories,
@@ -118,7 +131,9 @@ class BudgetHandlers {
   }
 
   async getBudgetCategoryByIdHandler(
-    request: FastifyRequest,
+    request: FastifyRequest<{
+      Params: { categoryId: number };
+    }>,
     reply: FastifyReply
   ) {
     try {
@@ -140,7 +155,9 @@ class BudgetHandlers {
   }
 
   async createBudgetCategoryHandler(
-    request: FastifyRequest,
+    request: FastifyRequest<{
+      Body: TBudgetCategory
+    }>,
     reply: FastifyReply
   ) {
     try {
@@ -162,7 +179,9 @@ class BudgetHandlers {
   }
 
   async updateBudgetCategoryHandler(
-    request: FastifyRequest,
+    request: FastifyRequest<{
+      Body: TBudgetCategory
+    }>,
     reply: FastifyReply
   ) {
     try {
@@ -184,7 +203,9 @@ class BudgetHandlers {
   }
 
   async deleteBudgetCategoryHandler(
-    request: FastifyRequest,
+    request: FastifyRequest<{
+      Params: { categoryId: number };
+    }>,
     reply: FastifyReply
   ) {
     try {
@@ -207,7 +228,9 @@ class BudgetHandlers {
 
   // Budget Category Items
   async getBudgetCategoryItemsHandler(
-    request: FastifyRequest,
+    request: FastifyRequest<{
+      Params: { categoryId: number };
+    }>,
     reply: FastifyReply
   ) {
     try {
@@ -228,7 +251,9 @@ class BudgetHandlers {
   }
 
   async getBudgetCategoryItemByIdHandler(
-    request: FastifyRequest,
+    request: FastifyRequest<{
+      Params: { itemId: number };
+    }>,
     reply: FastifyReply
   ) {
     try {
@@ -249,7 +274,9 @@ class BudgetHandlers {
   }
 
   async createBudgetCategoryItemHandler(
-    request: FastifyRequest,
+    request: FastifyRequest<{
+      Body: TBudgetCategoryItem
+    }>,
     reply: FastifyReply
   ) {
     try {
@@ -271,7 +298,9 @@ class BudgetHandlers {
   }
 
   async updateBudgetCategoryItemHandler(
-    request: FastifyRequest,
+    request: FastifyRequest<{
+      Body: TBudgetCategoryItem
+    }>,
     reply: FastifyReply
   ) {
     try {
@@ -293,7 +322,9 @@ class BudgetHandlers {
   }
 
   async deleteBudgetCategoryItemHandler(
-    request: FastifyRequest,
+    request: FastifyRequest<{
+      Params: { itemId: number };
+    }>,
     reply: FastifyReply
   ) {
     try {
@@ -315,7 +346,9 @@ class BudgetHandlers {
   }
 
   // Transactions
-  async getTransactionsHandler(request: FastifyRequest, reply: FastifyReply) {
+  async getTransactionsHandler(request: FastifyRequest<{
+    Params: { itemId: number };
+  }>, reply: FastifyReply) {
     try {
       const itemId = request.params.itemId;
       const transactions = await this.budgetService.getTransactions(itemId);
@@ -334,7 +367,9 @@ class BudgetHandlers {
   }
 
   async getTransactionByIdHandler(
-    request: FastifyRequest,
+    request: FastifyRequest<{
+      Params: { transactionId: number };
+    }>,
     reply: FastifyReply
   ) {
     try {
@@ -355,7 +390,9 @@ class BudgetHandlers {
     }
   }
 
-  async createTransactionHandler(request: FastifyRequest, reply: FastifyReply) {
+  async createTransactionHandler(request: FastifyRequest<{
+    Body: TTransaction
+  }>, reply: FastifyReply) {
     try {
       const transaction = request.body;
       const createdTransaction =
@@ -374,7 +411,9 @@ class BudgetHandlers {
     }
   }
 
-  async updateTransactionHandler(request: FastifyRequest, reply: FastifyReply) {
+  async updateTransactionHandler(request: FastifyRequest<{
+    Body: TTransaction
+  }>, reply: FastifyReply) {
     try {
       const transaction = request.body;
       const updatedTransaction =
@@ -393,7 +432,9 @@ class BudgetHandlers {
     }
   }
 
-  async deleteTransactionHandler(request: FastifyRequest, reply: FastifyReply) {
+  async deleteTransactionHandler(request: FastifyRequest<{
+    Params: { transactionId: number };
+  }>, reply: FastifyReply) {
     try {
       const transactionId = request.params.transactionId;
       const deletedTransaction =
@@ -435,7 +476,9 @@ class BudgetHandlers {
   }
 
   async getTransactionTypeByIdHandler(
-    request: FastifyRequest,
+    request: FastifyRequest<{
+      Params: { transactionId: number };
+    }>,
     reply: FastifyReply
   ) {
     try {
@@ -457,7 +500,9 @@ class BudgetHandlers {
   }
 
   async createTransactionTypeHandler(
-    request: FastifyRequest,
+    request: FastifyRequest<{
+      Body: TTransactionType
+    }>,
     reply: FastifyReply
   ) {
     try {
@@ -479,7 +524,9 @@ class BudgetHandlers {
   }
 
   async updateTransactionTypeHandler(
-    request: FastifyRequest,
+    request: FastifyRequest<{
+      Body: TTransactionType
+    }>,
     reply: FastifyReply
   ) {
     try {
@@ -501,7 +548,9 @@ class BudgetHandlers {
   }
 
   async deleteTransactionTypeHandler(
-    request: FastifyRequest,
+    request: FastifyRequest<{
+      Params: { transactionId: number };
+    }>,
     reply: FastifyReply
   ) {
     try {

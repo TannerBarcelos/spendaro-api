@@ -1,115 +1,115 @@
-import { TBudget } from '@/db/schema';
+import { TBudget, TBudgetCategory, TBudgetCategoryItem, TTransaction, TTransactionType } from '@/db/schema';
 import { IBudgetRepository } from '@/repositories/budget-repository';
 
 class BudgetService {
-  private budgetRepo: IBudgetRepository;
+  private budget_repo: IBudgetRepository;
 
-  constructor(budgetRepo: IBudgetRepository) {
-    this.budgetRepo = budgetRepo;
+  constructor(budget_repo: IBudgetRepository) {
+    this.budget_repo = budget_repo;
   }
 
-  getBudgets(userId: number) {
-    return this.budgetRepo.getBudgets(userId);
+  getBudgets(user_id: number) {
+    return this.budget_repo.getBudgets(user_id);
   }
 
-  getBudgetById(budgetId: number) {
-    return this.budgetRepo.getBudgetById(budgetId);
+  getBudgetById(budget_id: number) {
+    return this.budget_repo.getBudgetById(budget_id);
   }
 
   createBudget(budget: TBudget) {
-    return this.budgetRepo.createBudget(budget);
+    return this.budget_repo.createBudget(budget);
   }
 
   updateBudget(budget: TBudget) {
-    return this.budgetRepo.updateBudget(budget);
+    return this.budget_repo.updateBudget(budget);
   }
 
-  deleteBudget(budgetId: number) {
-    return this.budgetRepo.deleteBudget(budgetId);
+  deleteBudget(budget_id: number) {
+    return this.budget_repo.deleteBudget(budget_id);
   }
 
-  getBudgetCategories(budgetId: number) {
-    return this.budgetRepo.getBudgetCategories(budgetId);
+  getBudgetCategories(budget_id: number) {
+    return this.budget_repo.getBudgetCategories(budget_id);
   }
 
-  getBudgetCategoryById(categoryId: number) {
-    return this.budgetRepo.getBudgetCategoryById(categoryId);
+  getBudgetCategoryById(category_id: number) {
+    return this.budget_repo.getBudgetCategoryById(category_id);
   }
 
-  createBudgetCategory(category: TBudget) {
-    return this.budgetRepo.createBudgetCategory(category);
+  createBudgetCategory(category: TBudgetCategory) {
+    return this.budget_repo.createBudgetCategory(category);
   }
 
-  updateBudgetCategory(category: TBudget) {
-    return this.budgetRepo.updateBudgetCategory(category);
+  updateBudgetCategory(category: TBudgetCategory) {
+    return this.budget_repo.updateBudgetCategory(category);
   }
 
-  deleteBudgetCategory(categoryId: number) {
-    return this.budgetRepo.deleteBudgetCategory(categoryId);
+  deleteBudgetCategory(category_id: number) {
+    return this.budget_repo.deleteBudgetCategory(category_id);
   }
 
-  getBudgetCategoryItems(categoryId: number) {
-    return this.budgetRepo.getBudgetCategoryItems(categoryId);
+  getBudgetCategoryItems(category_id: number) {
+    return this.budget_repo.getBudgetCategoryItems(category_id);
   }
 
-  getBudgetCategoryItemById(itemId: number) {
-    return this.budgetRepo.getBudgetCategoryItemById(itemId);
+  getBudgetCategoryItemById(item_id: number) {
+    return this.budget_repo.getBudgetCategoryItemById(item_id);
   }
 
-  createBudgetCategoryItem(item: TBudget) {
-    return this.budgetRepo.createBudgetCategoryItem(item);
+  createBudgetCategoryItem(item: TBudgetCategoryItem) {
+    return this.budget_repo.createBudgetCategoryItem(item);
   }
 
-  updateBudgetCategoryItem(item: TBudget) {
-    return this.budgetRepo.updateBudgetCategoryItem(item);
+  updateBudgetCategoryItem(item: TBudgetCategoryItem) {
+    return this.budget_repo.updateBudgetCategoryItem(item);
   }
 
-  deleteBudgetCategoryItem(itemId: number) {
-    return this.budgetRepo.deleteBudgetCategoryItem(itemId);
+  deleteBudgetCategoryItem(item_id: number) {
+    return this.budget_repo.deleteBudgetCategoryItem(item_id);
   }
 
-  deleteAllBudgetCategoryItems(categoryId: number) {
-    return this.budgetRepo.deleteAllBudgetCategoryItems(categoryId);
+  deleteAllBudgetCategoryItems(category_id: number) {
+    return this.budget_repo.deleteAllBudgetCategoryItems(category_id);
   }
 
-  getTransactions(itemId: number) {
-    return this.budgetRepo.getTransactions(itemId);
+  getTransactions(item_id: number) {
+    return this.budget_repo.getTransactions(item_id);
   }
 
-  getTransactionById(transactionId: number) {
-    return this.budgetRepo.getTransactionById(transactionId);
+  getTransactionById(transaction_id: number) {
+    return this.budget_repo.getTransactionById(transaction_id);
   }
 
-  createTransaction(transaction: TBudget) {
-    return this.budgetRepo.createTransaction(transaction);
+  createTransaction(transaction: TTransaction) {
+    return this.budget_repo.createTransaction(transaction);
   }
 
-  updateTransaction(transaction: TBudget) {
-    return this.budgetRepo.updateTransaction(transaction);
+  updateTransaction(transaction: TTransaction) {
+    return this.budget_repo.updateTransaction(transaction);
   }
 
-  deleteTransaction(transactionId: number) {
-    return this.budgetRepo.deleteTransaction(transactionId);
+  deleteTransaction(transaction_id: number) {
+    return this.budget_repo.deleteTransaction(transaction_id);
   }
 
   getTransactionTypes() {
-    return this.budgetRepo.getTransactionTypes();
+    return this.budget_repo.getTransactionTypes();
   }
 
   getTransactionTypeById(transaction: number) {
-    return this.budgetRepo.getTransactionTypeById(transaction);
+    return this.budget_repo.getTransactionTypeById(transaction);
   }
 
-  createTransactionType(transaction: TBudget) {
-    return this.budgetRepo.createTransactionType(transaction);
+  createTransactionType(transaction: TTransactionType) {
+    return this.budget_repo.createTransactionType(transaction);
   }
 
-  updateTransactionType(transaction: TBudget) {
-    return this.budgetRepo.updateTransactionType(transaction);
+  updateTransactionType(transaction: TTransactionType) {
+    return this.budget_repo.updateTransactionType(transaction);
   }
 
-  deleteTransactionType(transactionId: number) {
-    return this.budgetRepo.deleteTransactionType(transactionId);
+  deleteTransactionType(transaction_id: number) {
+    return this.budget_repo.deleteTransactionType(transaction_id);
   }
 }
 
