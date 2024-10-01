@@ -69,10 +69,12 @@ class BudgetHandlers {
 
   async updateBudgetHandler(request: FastifyRequest<{
     Body: TBudget;
+    Params: { budgetId: number };
   }>, reply: FastifyReply) {
     try {
       const budget = request.body;
-      const updatedBudget = await this.budgetService.updateBudget(budget);
+      const budget_id = request.params.budgetId;
+      const updatedBudget = await this.budgetService.updateBudget(budget_id, budget);
 
       if(!updatedBudget) {
         reply.status(STATUS_CODES.NOT_FOUND).send(prepareResponse(null, STATUS_CODES.NOT_FOUND, 'Budget not found'));
@@ -98,6 +100,11 @@ class BudgetHandlers {
     try {
       const budgetId = request.params.budgetId;
       const deletedBudget = await this.budgetService.deleteBudget(budgetId);
+
+      if(!deletedBudget) {
+        reply.status(STATUS_CODES.NOT_FOUND).send(prepareResponse(null, STATUS_CODES.NOT_FOUND, 'Budget not found'));
+      }
+
       reply.send(
         prepareResponse(
           deletedBudget,
@@ -581,10 +588,10 @@ class BudgetHandlers {
     server.get('', this.getBudgetsHandler.bind(this));
     server.get('/:budgetId', this.getBudgetByIdHandler.bind(this));
     server.post('', this.createBudgetHandler.bind(this));
-    server.put('', this.updateBudgetHandler.bind(this));
-    server.delete(':budgetId', this.deleteBudgetHandler.bind(this));
+    server.put('/:budgetId', this.updateBudgetHandler.bind(this));
+    server.delete('/:budgetId', this.deleteBudgetHandler.bind(this));
     server.get(
-      ':budgetId/categories',
+      '/:budgetId/categories',
       this.getBudgetCategoriesHandler.bind(this)
     );
     server.get(

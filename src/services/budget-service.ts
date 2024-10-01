@@ -20,8 +20,8 @@ class BudgetService {
     return this.budget_repo.createBudget(budget);
   }
 
-  updateBudget(budget: TBudget) {
-    return this.budget_repo.updateBudget(budget);
+  updateBudget(budget_id: number, budget: TBudget) {
+    return this.budget_repo.updateBudget(budget_id, budget);
   }
 
   deleteBudget(budget_id: number) {

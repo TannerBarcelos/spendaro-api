@@ -30,7 +30,7 @@ interface IBudgetRepository {
   getBudgets(user_id: number): Promise<Array<TBudgetResult>>;
   getBudgetById(budget_id: number): TCommonBudgetResponse;
   createBudget(budget: TBudget): TCommonBudgetResponse;
-  updateBudget(budget: TBudget): TCommonBudgetResponse;
+  updateBudget(budget_id: number, budget: TBudget): TCommonBudgetResponse;
   deleteBudget(budgetId: number): TCommonBudgetResponse;
 
   // Budget Categories
@@ -85,25 +85,16 @@ class BudgetRepository implements IBudgetRepository {
   async createBudget(budget: TBudget): TCommonBudgetResponse {
     const [newBudget]: Array<TBudgetResult> = await this.db
       .insert(budgets)
-      .values({
-        user_id: budget.user_id,
-        budget_name: budget.budget_name,
-        budget_description: budget.budget_description || '',
-        amount: budget.amount,
-      })
+      .values(budget)
       .returning();
     return newBudget;
   }
 
-  async updateBudget(budget: TBudget): TCommonBudgetResponse {
+  async updateBudget(budget_id: number, budget: TBudget): TCommonBudgetResponse {
     const [updatedBudget]: Array<TBudgetResult> = await this.db
       .update(budgets)
-      .set({
-        budget_name: budget.budget_name,
-        budget_description: budget.budget_description || '',
-        amount: budget.amount,
-      })
-      .where(eq(budgets.id, budget.id!))
+      .set(budget)
+      .where(eq(budgets.id, budget_id))
       .returning();
     return updatedBudget;
   }

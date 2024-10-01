@@ -16,7 +16,7 @@ export const prepareResponse = (
   message: string
 ) => {
   return {
-    statusCode,
+    status_code: statusCode,
     body: response, // no need to serialize the response, Fastify will do it for us! We just need to define the response with JSON schema
     message,
   };
