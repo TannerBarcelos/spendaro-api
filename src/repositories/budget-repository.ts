@@ -16,7 +16,7 @@ import {
   TTransactionType,
   TTransactionTypeResult,
 } from '@/db/schema';
-import { eq } from 'drizzle-orm';
+import { eq, and } from 'drizzle-orm';
 import { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
 
 type TCommonBudgetResponse = Promise<TBudgetResult>;
@@ -28,10 +28,10 @@ type TCommonTransactionTypeResponse = Promise<TTransactionTypeResult>;
 interface IBudgetRepository {
   // Budgets
   getBudgets(user_id: number): Promise<Array<TBudgetResult>>;
-  getBudgetById(budget_id: number): TCommonBudgetResponse;
+  getBudgetById(user_id:number, budget_id: number): TCommonBudgetResponse;
   createBudget(budget: TBudget): TCommonBudgetResponse;
-  updateBudget(budget_id: number, budget: TBudget): TCommonBudgetResponse;
-  deleteBudget(budgetId: number): TCommonBudgetResponse;
+  updateBudget(budget: TBudget): TCommonBudgetResponse;
+  deleteBudget(budget_id: number): TCommonBudgetResponse;
 
   // Budget Categories
   getBudgetCategories(budget_id: number): Promise<Array<TBudgetCategoryResult>>;
@@ -97,11 +97,11 @@ class BudgetRepository implements IBudgetRepository {
       .where(eq(budgets.user_id, user_id));
   }
 
-  async getBudgetById(budget_id: number): TCommonBudgetResponse {
+  async getBudgetById(user_id: number, budget_id: number): TCommonBudgetResponse {
     const [budget]: Array<TBudgetResult> = await this.db
       .select()
       .from(budgets)
-      .where(eq(budgets.id, budget_id));
+      .where(and(eq(budgets.id, budget_id), eq(budgets.user_id, user_id)));
     return budget;
   }
 
@@ -114,13 +114,12 @@ class BudgetRepository implements IBudgetRepository {
   }
 
   async updateBudget(
-    budget_id: number,
     budget: TBudget
   ): TCommonBudgetResponse {
     const [updatedBudget]: Array<TBudgetResult> = await this.db
       .update(budgets)
       .set(budget)
-      .where(eq(budgets.id, budget_id))
+      .where(and(eq(budgets.id, budget.id!), eq(budgets.user_id, budget.user_id!)))
       .returning();
     return updatedBudget;
   }

@@ -20,17 +20,25 @@ class BudgetHandlers {
     try {
       const userId = request.user.user_id; // Get the user_id from the authenticated user, which is available via the fastify/jwt plugin as the plugin protects the routes and sends the user object to the request object if the user is authenticated
       const budgets = await this.budgetService.getBudgets(userId);
-      reply.send(
-        prepareResponse(
-          budgets,
-          STATUS_CODES.OK,
-          'Budgets fetched successfully'
-        )
-      );
+      reply
+        .status(STATUS_CODES.OK)
+        .send(
+          prepareResponse(
+            budgets,
+            STATUS_CODES.OK,
+            'Budgets fetched successfully'
+          )
+        );
     } catch (error) {
-      reply.send(
-        prepareResponse(error, STATUS_CODES.BAD_REQUEST, 'Bad Request')
-      );
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : 'An error occurred while fetching the budgets';
+      reply
+        .status(STATUS_CODES.BAD_REQUEST)
+        .send(
+          prepareResponse(null, STATUS_CODES.BAD_REQUEST, errorMessage)
+        );
     }
   }
 
@@ -41,8 +49,9 @@ class BudgetHandlers {
     reply: FastifyReply
   ) {
     try {
+      const user_id = request.user.user_id;
       const budgetId = request.params.budgetId;
-      const budget = await this.budgetService.getBudgetById(budgetId);
+      const budget = await this.budgetService.getBudgetById(user_id, budgetId);
       if (!budget) {
         reply
           .status(STATUS_CODES.NOT_FOUND)
@@ -50,13 +59,25 @@ class BudgetHandlers {
             prepareResponse(null, STATUS_CODES.NOT_FOUND, 'Budget not found')
           );
       }
-      reply.send(
-        prepareResponse(budget, STATUS_CODES.OK, 'Budget fetched successfully')
-      );
+      reply
+        .status(STATUS_CODES.OK)
+        .send(
+          prepareResponse(
+            budget,
+            STATUS_CODES.OK,
+            'Budget fetched successfully'
+          )
+        );
     } catch (error) {
-      reply.send(
-        prepareResponse(error, STATUS_CODES.BAD_REQUEST, 'Bad Request')
-      );
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : 'An error occurred while fetching the budget';
+      reply
+        .status(STATUS_CODES.BAD_REQUEST)
+        .send(
+          prepareResponse(null, STATUS_CODES.BAD_REQUEST, errorMessage)
+        );
     }
   }
 
@@ -67,23 +88,34 @@ class BudgetHandlers {
     reply: FastifyReply
   ) {
     try {
-      const budget = request.body;
+      const budget = {
+        ...request.body,
+        user_id: request.user.user_id,
+      } as TBudget;
       const createdBudget = await this.budgetService.createBudget(budget);
-      reply.send(
-        prepareResponse(
-          createdBudget,
-          STATUS_CODES.CREATED,
-          'Budget created successfully'
-        )
-      );
+      reply
+        .status(STATUS_CODES.CREATED)
+        .send(
+          prepareResponse(
+            createdBudget,
+            STATUS_CODES.CREATED,
+            'Budget created successfully'
+          )
+        );
     } catch (error) {
-      reply.send(
-        prepareResponse(
-          error,
-          STATUS_CODES.BAD_REQUEST,
-          'Bad Request. Ensure all required fields are provided'
-        )
-      );
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : 'An error occurred while creating the budget';
+      reply
+        .status(STATUS_CODES.BAD_REQUEST)
+        .send(
+          prepareResponse(
+            null,
+            STATUS_CODES.BAD_REQUEST,
+            errorMessage
+          )
+        );
     }
   }
 
@@ -95,12 +127,17 @@ class BudgetHandlers {
     reply: FastifyReply
   ) {
     try {
-      const budget = request.body;
+      const budgetPropertiesToUpdate = request.body;
       const budget_id = request.params.budgetId;
-      const updatedBudget = await this.budgetService.updateBudget(
-        budget_id,
-        budget
-      );
+
+      const budgetToUpdate = {
+        ...budgetPropertiesToUpdate,
+        id: budget_id,
+        user_id: request.user.user_id,
+      } as TBudget;
+
+      const updatedBudget =
+        await this.budgetService.updateBudget(budgetToUpdate);
 
       if (!updatedBudget) {
         reply
@@ -110,16 +147,24 @@ class BudgetHandlers {
           );
       }
 
-      reply.send(
-        prepareResponse(
-          updatedBudget,
-          STATUS_CODES.OK,
-          'Budget updated successfully'
-        )
-      );
+      reply
+        .status(STATUS_CODES.OK)
+        .send(
+          prepareResponse(
+            updatedBudget,
+            STATUS_CODES.UPDATE,
+            'Budget updated successfully'
+          )
+        );
     } catch (error) {
-      reply.send(
-        prepareResponse(error, STATUS_CODES.BAD_REQUEST, 'Bad Request')
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : 'An error occurred while updating the budget';
+      reply
+      .status(STATUS_CODES.BAD_REQUEST)
+      .send(
+        prepareResponse(null, STATUS_CODES.BAD_REQUEST, errorMessage)
       );
     }
   }
@@ -150,8 +195,9 @@ class BudgetHandlers {
         )
       );
     } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'An error occurred while deleting the budget';
       reply.send(
-        prepareResponse(error, STATUS_CODES.BAD_REQUEST, 'Bad Request')
+        prepareResponse(null, STATUS_CODES.BAD_REQUEST, errorMessage)
       );
     }
   }

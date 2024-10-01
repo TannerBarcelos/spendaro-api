@@ -2,6 +2,7 @@ export const ALLOWED_METHODS = ['GET', 'POST', 'PUT', 'DELETE'];
 export const STATUS_CODES = {
   OK: 200,
   CREATED: 201,
+  UPDATE: 204,
   BAD_REQUEST: 400,
   UNAUTHORIZED: 401,
   FORBIDDEN: 403,

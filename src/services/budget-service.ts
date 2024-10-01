@@ -18,16 +18,16 @@ class BudgetService {
     return this.budget_repo.getBudgets(user_id);
   }
 
-  getBudgetById(budget_id: number) {
-    return this.budget_repo.getBudgetById(budget_id);
+  getBudgetById(user_id: number, budget_id: number) {
+    return this.budget_repo.getBudgetById(user_id, budget_id);
   }
 
   createBudget(budget: TBudget) {
     return this.budget_repo.createBudget(budget);
   }
 
-  updateBudget(budget_id: number, budget: TBudget) {
-    return this.budget_repo.updateBudget(budget_id, budget);
+  updateBudget(budget: TBudget) {
+    return this.budget_repo.updateBudget(budget);
   }
 
   deleteBudget(budget_id: number) {
