@@ -5,7 +5,7 @@ import dotenv from 'dotenv';
 import db from './db';
 import cors from '@fastify/cors';
 import { ALLOWED_METHODS } from './util/http';
-import authenticate from "./plugins/authenticate";
+import authenticate from './plugins/authenticate';
 
 dotenv.config();
 
@@ -27,7 +27,7 @@ server.listen({ port: config.get('server.port') }, (err, address) => {
 });
 
 function registerServerPlugins(server: FastifyInstance) {
-  server.register(authenticate)
+  server.register(authenticate);
   server.register(cors, {
     origin: '*',
     methods: ALLOWED_METHODS,

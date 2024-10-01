@@ -7,9 +7,12 @@ import {
 } from 'fastify';
 import fp from 'fastify-plugin';
 import jwt from '@fastify/jwt';
-import { STATUS_CODES } from "@/util/http";
+import { STATUS_CODES } from '@/util/http';
 
-const authenticate: FastifyPluginCallback = async (fastify: FastifyInstance, _: FastifyPluginOptions) => {
+const authenticate: FastifyPluginCallback = async (
+  fastify: FastifyInstance,
+  _: FastifyPluginOptions
+) => {
   fastify.register(jwt, {
     secret: process.env.JWT_SECRET ?? 'jwtsupersecretkey',
   });
@@ -23,6 +26,6 @@ const authenticate: FastifyPluginCallback = async (fastify: FastifyInstance, _: 
       }
     }
   );
-}
+};
 
 export default fp(authenticate);

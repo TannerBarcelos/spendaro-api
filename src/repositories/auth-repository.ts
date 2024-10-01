@@ -5,7 +5,7 @@ import { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
 type TCommonUserResponse = Promise<TUserResult>;
 export interface IAuthRepository {
   signup(user: TUser): TCommonUserResponse;
-  signin(user: Pick<TUser, "email" | "password">): TCommonUserResponse;
+  signin(user: Pick<TUser, 'email' | 'password'>): TCommonUserResponse;
 }
 
 class AuthRepository implements IAuthRepository {
