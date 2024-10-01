@@ -13,8 +13,13 @@ const authenticate: FastifyPluginCallback = async (
   fastify: FastifyInstance,
   _: FastifyPluginOptions
 ) => {
+  const secret = process.env.JWT_SECRET ?? 'jwtsupersecretkey';
   fastify.register(jwt, {
-    secret: process.env.JWT_SECRET ?? 'jwtsupersecretkey',
+    secret,
+    cookie: {
+      cookieName: 'token',
+      signed: false,
+    },
   });
   fastify.decorate(
     'authenticate',

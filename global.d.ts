@@ -24,6 +24,26 @@ declare module 'fastify' {
   }
 }
 
+declare module '@fastify/jwt' {
+  interface FastifyJWT {
+    // the type of the payload to be signed or verified
+    payload: {
+      user_id: number;
+      email: string;
+      first_name: string;
+      last_name: string;
+    };
+
+    // the type of the decoded payload
+    decoded: {
+      user_id: number;
+      email: string;
+      first_name: string;
+      last_name: string
+    };
+  }
+}
+
 declare namespace NodeJS {
   interface ProcessEnv {
     DATABASE_URL: string;

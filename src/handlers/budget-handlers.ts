@@ -156,7 +156,6 @@ class BudgetHandlers {
     }
   }
 
-  // Budget Categories
   async getBudgetCategoriesHandler(
     request: FastifyRequest<{
       Params: { budgetId: number };
@@ -277,7 +276,6 @@ class BudgetHandlers {
     }
   }
 
-  // Budget Category Items
   async getBudgetCategoryItemsHandler(
     request: FastifyRequest<{
       Params: { categoryId: number };
@@ -396,7 +394,6 @@ class BudgetHandlers {
     }
   }
 
-  // Transactions
   async getTransactionsHandler(
     request: FastifyRequest<{
       Params: { itemId: number };
@@ -515,8 +512,6 @@ class BudgetHandlers {
       );
     }
   }
-
-  // Transaction Types
 
   async getTransactionTypesHandler(
     request: FastifyRequest,

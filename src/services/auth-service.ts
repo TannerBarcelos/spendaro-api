@@ -3,7 +3,6 @@ import { FastifyInstance } from 'fastify';
 import bcrypt from 'bcrypt';
 import config from 'config';
 import { IAuthRepository } from '@/repositories/auth-repository';
-import { is } from 'drizzle-orm';
 
 class AuthService {
   authRepo: IAuthRepository;

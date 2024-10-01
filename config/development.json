@@ -1,10 +1,15 @@
 {
     "server": {
-        "port": 8010
+        "port": 8010,
+        "api": {
+            "prefix": "/api",
+            "version": "v1"
+        }
     },
     "security": {
         "jwt": {
-            "salt_rounds": 10
+            "salt_rounds": 10,
+            "expires_in": "10m"
         }
     }
 }

@@ -16,7 +16,8 @@ server.get('/healthz', async (request: FastifyRequest) => {
   return { status: 'OK' };
 });
 
-server.register(routes, { prefix: '/api/v1' });
+const apiRoutePrefix = `${config.get("server.api.prefix")}/${config.get("server.api.version")}`;
+server.register(routes, { prefix: apiRoutePrefix });
 
 server.listen({ port: config.get('server.port') }, (err, address) => {
   if (err) {
