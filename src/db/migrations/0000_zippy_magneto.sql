@@ -19,8 +19,8 @@ CREATE TABLE IF NOT EXISTS "budget_category_items" (
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "budgets" (
 	"id" serial PRIMARY KEY NOT NULL,
-	"user_id" integer NOT NULL,
-	"budget_name" text NOT NULL,
+	"user_id" integer,
+	"budget_name" text,
 	"budget_description" text DEFAULT '',
 	"amount" integer DEFAULT 0,
 	"created_at" timestamp DEFAULT now(),

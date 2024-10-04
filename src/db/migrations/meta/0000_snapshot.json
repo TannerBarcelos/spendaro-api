@@ -1,5 +1,5 @@
 {
-  "id": "11f0a9bd-bb87-44b9-a0f7-9fc810ec146a",
+  "id": "cc23698b-66cc-406e-8f82-54416d7734ec",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -151,13 +151,13 @@
           "name": "user_id",
           "type": "integer",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
         "budget_name": {
           "name": "budget_name",
           "type": "text",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
         "budget_description": {
           "name": "budget_description",

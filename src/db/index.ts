@@ -3,14 +3,8 @@ import postgres from 'postgres';
 import { FastifyPluginCallback } from 'fastify';
 import fp from 'fastify-plugin';
 import { migrate } from 'drizzle-orm/postgres-js/migrator';
-import {
-  users,
-  budget_categories,
-  transaction_types,
-  transactions,
-  budget_category_items,
-  budgets,
-} from './schema';
+import * as schema from './schema';
+import * as relations from './relations';
 
 const postgresConnector: FastifyPluginCallback = async (fastify, _) => {
   try {
@@ -25,14 +19,7 @@ const postgresConnector: FastifyPluginCallback = async (fastify, _) => {
     // Create a postgres client and a drizzle instance (from docs https://arc.net/l/quote/poktxass)
     const client = postgres(databaseUrl);
     const db = drizzle(client, {
-      schema: {
-        users,
-        budgets,
-        budget_categories,
-        budget_category_items,
-        transactions,
-        transaction_types,
-      },
+      schema: { ...schema, ...relations },
     });
 
     // Decorate the fastify instance with the database object so we can access it on the fastify instance

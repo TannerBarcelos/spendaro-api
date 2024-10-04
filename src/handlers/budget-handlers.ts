@@ -1,10 +1,4 @@
-import {
-  TBudget,
-  TBudgetCategory,
-  TBudgetCategoryItem,
-  TTransaction,
-  TTransactionType,
-} from '@/db/schema';
+import { TBudget, TBudgetCategory, TBudgetCategoryItem, TTransaction, TTransactionType } from "@/lib/types";
 import { BudgetService } from '@/services/budget-service';
 import { prepareResponse, STATUS_CODES } from '@/util/http';
 import { FastifyRequest, FastifyReply, FastifyInstance } from 'fastify';
