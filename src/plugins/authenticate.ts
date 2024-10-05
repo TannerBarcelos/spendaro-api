@@ -7,7 +7,7 @@ import {
 } from 'fastify';
 import fp from 'fastify-plugin';
 import jwt from '@fastify/jwt';
-import { STATUS_CODES } from '@/util/http';
+import { STATUS_CODES } from '@/utils/http';
 
 const authenticate: FastifyPluginCallback = async (
   fastify: FastifyInstance,

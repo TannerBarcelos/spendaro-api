@@ -1,6 +1,6 @@
-import { TBudget, TBudgetCategory, TBudgetCategoryItem, TTransaction, TTransactionType } from "@/lib/types";
+import { TBudget, TBudgetCategory, TBudgetCategoryItem, TTransaction, TTransactionType } from "@/db/types";
 import { BudgetService } from '@/services/budget-service';
-import { prepareResponse, STATUS_CODES } from '@/util/http';
+import { prepareResponse, STATUS_CODES } from '@/utils/http';
 import { FastifyRequest, FastifyReply, FastifyInstance } from 'fastify';
 
 class BudgetHandlers {

@@ -1,7 +1,7 @@
 import { insertUserSchema, selectUserSchema, TUser } from '@/db/schema';
 import { AuthService } from '@/services/auth-service';
 import { FastifyReply, FastifyRequest, FastifyInstance } from 'fastify';
-import { prepareResponse, STATUS_CODES } from '@/util/http';
+import { prepareResponse, STATUS_CODES } from '@/utils/http';
 import config from 'config';
 
 const sharedJwtSigningConfig = {

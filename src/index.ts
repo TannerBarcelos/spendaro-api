@@ -4,7 +4,7 @@ import { routes } from './routes';
 import dotenv from 'dotenv';
 import db from './db';
 import cors from '@fastify/cors';
-import { ALLOWED_METHODS } from './util/http';
+import { ALLOWED_METHODS } from './utils/http';
 import authenticate from './plugins/authenticate';
 import swagger from '@fastify/swagger';
 import swaggerUi from '@fastify/swagger-ui';

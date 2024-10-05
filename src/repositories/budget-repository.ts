@@ -1,7 +1,7 @@
 import * as schema from '@/db/schema';
 import { eq, and } from 'drizzle-orm';
 import { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
-import { TBudgetResult, TBudgetCategoryResult, TBudgetCategoryItemResult, TTransactionResult, TTransactionTypeResult, TBudget, TBudgetCategory, TBudgetCategoryItem, TTransaction, TTransactionType } from "@/lib/types";
+import { TBudgetResult, TBudgetCategoryResult, TBudgetCategoryItemResult, TTransactionResult, TTransactionTypeResult, TBudget, TBudgetCategory, TBudgetCategoryItem, TTransaction, TTransactionType } from "@/db/types";
 
 type TCommonBudgetResponse = Promise<TBudgetResult>;
 type TCommonBudgetCategoryResponse = Promise<TBudgetCategoryResult>;
