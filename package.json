@@ -21,6 +21,7 @@
     "@fastify/swagger": "^9.1.0",
     "@scalar/fastify-api-reference": "^1.25.27",
     "@scalar/themes": "^0.9.33",
+    "@scalar/types": "^0.0.12",
     "@types/bcrypt": "^5.0.2",
     "bcrypt": "^5.1.1",
     "config": "^3.3.12",
@@ -28,7 +29,9 @@
     "drizzle-orm": "^0.33.0",
     "drizzle-zod": "^0.5.1",
     "fastify": "^5.0.0",
+    "fastify-api-reference": "link:@types/@scalar/fastify-api-reference",
     "fastify-plugin": "^5.0.1",
+    "http-status-codes": "^2.3.0",
     "postgres": "^3.4.4",
     "tsconfig-paths": "^4.2.0",
     "zod": "^3.23.8"

@@ -4,6 +4,8 @@ import * as schema from './src/db/schema';
 import * as relations from './src/db/relations';
 import { AuthService } from '@/services/auth-service';
 
+declare module '@scalar/fastify-api-reference';
+
 type MergedSchema = schema.SchemaType & relations.RelationsType;
 
 declare module 'fastify' {

@@ -1,4 +1,5 @@
-import { SpendaroSchema, TUser, TUserResult, users } from '@/db/schema';
+import { users } from "@/db/schema";
+import { TUser, TUserResult } from "@/db/types";
 import { eq } from 'drizzle-orm';
 import { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
 
