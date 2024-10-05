@@ -27,7 +27,7 @@ class AuthHandlers {
     );
     reply.send(
       prepareResponse(
-        token,
+        { access_token: token },
         STATUS_CODES.CREATED,
         'User created successfully',
         null

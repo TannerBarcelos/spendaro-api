@@ -1,7 +1,4 @@
-import { FastifyRequest, FastifyReply } from 'fastify';
-import { STATUS_CODES } from '@/utils/http';
-import { getReasonPhrase, StatusCodes } from 'http-status-codes';
-import { prepareResponse } from './http';
+import { StatusCodes } from 'http-status-codes';
 
 /**
  * Custom error class for handling errors in the application. This class extends the native Error class and adds a statusCode property to it so that we can use it to send the appropriate HTTP status code in the response in the Fastify error handler.

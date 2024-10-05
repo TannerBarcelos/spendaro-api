@@ -18,16 +18,10 @@ class AuthService {
       Number(config.get('security.jwt.salt_rounds')) ?? 10
     );
     const hash = await bcrypt.hash(user.password, salt);
-    const signedUpUser = await this.authRepo.signup({
+    return await this.authRepo.signup({
       ...user,
       password: hash,
-    }); // send the hashed password, not the plain text password
-
-    // if (!signedUpUser) {
-    //   throw new SpendaroError('User could not be created');
-    // }
-
-    return signedUpUser;
+    });
   }
 
   async signin(
