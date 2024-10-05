@@ -13,7 +13,7 @@ import {
   TTransaction,
   TTransactionType,
 } from '@/db/types';
-import { MergedSchema } from "global";
+import { MergedSchema } from 'global';
 
 type TCommonBudgetResponse = Promise<TBudgetResult>;
 type TCommonBudgetCategoryResponse = Promise<TBudgetCategoryResult>;
@@ -57,11 +57,21 @@ interface IBudgetRepository {
   ): TCommonBudgetCategoryItemResponse;
 
   // Transactions
-  getTransactions(item_id: number): Promise<Array<TTransactionResult>>;
-  getTransactionById(transaction_id: number): TCommonTransactionResponse;
+  getTransactions(budget_id: number): Promise<Array<TTransactionResult>>;
+  getTransactionById(
+    budget_id: number,
+    transaction_id: number
+  ): TCommonTransactionResponse;
   createTransaction(transaction: TTransaction): TCommonTransactionResponse;
-  updateTransaction(transaction: TTransaction): TCommonTransactionResponse;
-  deleteTransaction(transaction_id: number): TCommonTransactionResponse;
+  updateTransaction(
+    budget_id: number,
+    transaction_id: number,
+    transaction: TTransaction
+  ): TCommonTransactionResponse;
+  deleteTransaction(
+    budget_id: number,
+    transaction_id: number
+  ): TCommonTransactionResponse;
 
   // Transaction Types (user defined + pre-defined i.e. income, expense, bill, etc.)
   getTransactionTypes(): Promise<Array<TTransactionTypeResult>>;
@@ -249,11 +259,11 @@ class BudgetRepository implements IBudgetRepository {
     return deletedItems;
   }
 
-  async getTransactions(itemId: number): Promise<Array<TTransactionResult>> {
+  async getTransactions(budget_id: number): Promise<Array<TTransactionResult>> {
     return await this.db
       .select()
       .from(schema.transactions)
-      .where(eq(schema.transactions.item_id, itemId));
+      .where(eq(schema.transactions.budget_id, budget_id));
   }
 
   async getTransactionById(transactionId: number): TCommonTransactionResponse {
@@ -275,12 +285,19 @@ class BudgetRepository implements IBudgetRepository {
   }
 
   async updateTransaction(
+    budget_id: number,
+    transaction_id: number,
     transaction: TTransaction
   ): TCommonTransactionResponse {
     const [updatedTransaction]: Array<TTransactionResult> = await this.db
       .update(schema.transactions)
       .set(transaction)
-      .where(eq(schema.transactions.id, transaction.id!))
+      .where(
+        and(
+          eq(schema.transactions.id, transaction_id),
+          eq(schema.transactions.budget_id, budget_id)
+        )
+      )
       .returning();
     return updatedTransaction;
   }

@@ -78,24 +78,24 @@ class BudgetService {
     return this.budget_repo.deleteAllBudgetCategoryItems(category_id);
   }
 
-  getTransactions(item_id: number) {
-    return this.budget_repo.getTransactions(item_id);
+  getTransactions(budget_id: number) {
+    return this.budget_repo.getTransactions(budget_id);
   }
 
-  getTransactionById(transaction_id: number) {
-    return this.budget_repo.getTransactionById(transaction_id);
+  getTransactionById(budget_id: number, transaction_id: number) {
+    return this.budget_repo.getTransactionById(budget_id, transaction_id);
   }
 
   createTransaction(transaction: TTransaction) {
     return this.budget_repo.createTransaction(transaction);
   }
 
-  updateTransaction(transaction: TTransaction) {
-    return this.budget_repo.updateTransaction(transaction);
+  updateTransaction(budget_id: number, transaction_id: number, transaction: TTransaction) {
+    return this.budget_repo.updateTransaction(budget_id, transaction_id, transaction);
   }
 
-  deleteTransaction(transaction_id: number) {
-    return this.budget_repo.deleteTransaction(transaction_id);
+  deleteTransaction(budget_id: number, transaction_id: number) {
+    return this.budget_repo.deleteTransaction(budget_id, transaction_id);
   }
 
   getTransactionTypes() {

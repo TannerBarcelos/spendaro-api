@@ -62,9 +62,9 @@ export const transactions = pgTable('transactions', {
   user_id: integer('user_id').references(() => users.id, {
     onDelete: 'cascade',
   }), // when a user is deleted, all their transactions should be deleted as well. Also, we need to store the user id so we can query transactions by user on the frontend to show a list of transaction, irrespective of the budget category item
-  item_id: integer('item_id').references(() => budget_category_items.id, {
+  budget_id: integer('budget_id').references(() => budgets.id, {
     onDelete: 'cascade',
-  }), // when an item is deleted, all its transactions should be deleted as well
+  }), // when a budget is deleted, all its transactions should be deleted as well
   transaction_amount: integer('transaction_amount').notNull(),
   transaction_date: date('transaction_date').notNull(), // date of the transaction (can be different from the created_at date, so we need to store it separately)
   transaction_description: text('transaction_description').default(''),

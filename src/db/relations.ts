@@ -38,9 +38,9 @@ export const budgetCategoryItemsRelations = relations(
 export const transactionsRelations = relations(
   schema.transactions,
   ({ one }) => ({
-    item: one(schema.budget_category_items, {
-      fields: [schema.transactions.item_id],
-      references: [schema.budget_category_items.id],
+    budget: one(schema.budgets, {
+      fields: [schema.transactions.budget_id],
+      references: [schema.budgets.id],
     }),
     transaction_type: one(schema.transaction_types),
   })
