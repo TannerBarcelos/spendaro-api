@@ -6,7 +6,7 @@ import config from 'config';
 
 const sharedJwtSigningConfig = {
   expiresIn: config.get<string>('security.jwt.expires_in') ?? '15m',
-}
+};
 
 class AuthHandlers {
   private authService: AuthService;
@@ -19,12 +19,15 @@ class AuthHandlers {
     try {
       const user = insertUserSchema.parse(request.body);
       const signedUpUser = await this.authService.signup(user);
-      const token = request.server.jwt.sign({
-        user_id: signedUpUser.id,
-        email: signedUpUser.email,
-        first_name: signedUpUser.firstName,
-        last_name: signedUpUser.lastName,
-      }, sharedJwtSigningConfig);
+      const token = request.server.jwt.sign(
+        {
+          user_id: signedUpUser.id,
+          email: signedUpUser.email,
+          first_name: signedUpUser.firstName,
+          last_name: signedUpUser.lastName,
+        },
+        sharedJwtSigningConfig
+      );
       reply.send(
         prepareResponse(
           token,
@@ -43,14 +46,17 @@ class AuthHandlers {
     try {
       const user = request.body as Pick<TUser, 'email' | 'password'>;
       const signedInUser = await this.authService.signin(user);
-      const token = request.server.jwt.sign({
-        user_id: signedInUser.id,
-        email: signedInUser.email,
-        first_name: signedInUser.firstName,
-        last_name: signedInUser.lastName,
-      }, {
-        expiresIn: config.get('security.jwt.expires_in') ?? '15m',
-      });
+      const token = request.server.jwt.sign(
+        {
+          user_id: signedInUser.id,
+          email: signedInUser.email,
+          first_name: signedInUser.firstName,
+          last_name: signedInUser.lastName,
+        },
+        {
+          expiresIn: config.get('security.jwt.expires_in') ?? '15m',
+        }
+      );
       reply.send(
         prepareResponse(
           { token },

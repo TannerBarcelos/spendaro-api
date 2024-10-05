@@ -8,7 +8,7 @@ import { ALLOWED_METHODS } from './utils/http';
 import authenticate from './plugins/authenticate';
 import swagger from '@fastify/swagger';
 import swaggerUi from '@fastify/swagger-ui';
-import { swaggerConfig, swaggerUiConfig } from "./open-api";
+import { swaggerConfig, swaggerUiConfig } from './open-api';
 
 dotenv.config();
 

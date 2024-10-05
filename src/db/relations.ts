@@ -1,5 +1,5 @@
-import { relations } from "drizzle-orm";
-import * as schema from "./schema";
+import { relations } from 'drizzle-orm';
+import * as schema from './schema';
 
 export const usersRelations = relations(schema.users, ({ many }) => ({
   budgets: many(schema.budgets),
@@ -8,7 +8,7 @@ export const usersRelations = relations(schema.users, ({ many }) => ({
 export const budgetsRelations = relations(schema.budgets, ({ one, many }) => ({
   user: one(schema.users, {
     fields: [schema.budgets.user_id],
-    references: [schema.users.id]
+    references: [schema.users.id],
   }),
   categories: many(schema.budget_categories),
 }));
@@ -35,10 +35,13 @@ export const budgetCategoryItemsRelations = relations(
   })
 );
 
-export const transactionsRelations = relations(schema.transactions, ({ one }) => ({
-  item: one(schema.budget_category_items, {
-    fields: [schema.transactions.item_id],
-    references: [schema.budget_category_items.id],
-  }),
-  transaction_type: one(schema.transaction_types),
-}));
+export const transactionsRelations = relations(
+  schema.transactions,
+  ({ one }) => ({
+    item: one(schema.budget_category_items, {
+      fields: [schema.transactions.item_id],
+      references: [schema.budget_category_items.id],
+    }),
+    transaction_type: one(schema.transaction_types),
+  })
+);

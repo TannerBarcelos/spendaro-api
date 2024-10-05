@@ -1,5 +1,5 @@
-import { SwaggerOptions } from "@fastify/swagger";
-import { FastifySwaggerUiOptions } from "@fastify/swagger-ui";
+import { SwaggerOptions } from '@fastify/swagger';
+import { FastifySwaggerUiOptions } from '@fastify/swagger-ui';
 
 // Learn more here -> https://github.com/fastify/fastify-swagger
 export const swaggerConfig: SwaggerOptions = {

@@ -1,4 +1,10 @@
-import { TBudget, TBudgetCategory, TBudgetCategoryItem, TTransaction, TTransactionType } from "@/db/types";
+import {
+  TBudget,
+  TBudgetCategory,
+  TBudgetCategoryItem,
+  TTransaction,
+  TTransactionType,
+} from '@/db/types';
 import { IBudgetRepository } from '@/repositories/budget-repository';
 
 class BudgetService {

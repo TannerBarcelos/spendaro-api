@@ -6,7 +6,7 @@
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "start": "node index.js",
-    "dev": "pnpm db:migrate && NODE_ENV=development tsnd -r tsconfig-paths/register --respawn --transpile-only --exit-child src/index.ts",
+    "dev": "NODE_ENV=development tsnd -r tsconfig-paths/register --respawn --transpile-only --exit-child src/index.ts",
     "format": "prettier --write \"**/*.ts\"",
     "db:generate-migration": "drizzle-kit generate",
     "db:migrate": "tsnd -r tsconfig-paths/register migrate.ts",

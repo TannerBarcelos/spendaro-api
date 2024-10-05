@@ -1,4 +1,10 @@
-import { TBudget, TBudgetCategory, TBudgetCategoryItem, TTransaction, TTransactionType } from "@/db/types";
+import {
+  TBudget,
+  TBudgetCategory,
+  TBudgetCategoryItem,
+  TTransaction,
+  TTransactionType,
+} from '@/db/types';
 import { BudgetService } from '@/services/budget-service';
 import { prepareResponse, STATUS_CODES } from '@/utils/http';
 import { FastifyRequest, FastifyReply, FastifyInstance } from 'fastify';
@@ -30,9 +36,7 @@ class BudgetHandlers {
           : 'An error occurred while fetching the budgets';
       reply
         .status(STATUS_CODES.BAD_REQUEST)
-        .send(
-          prepareResponse(null, STATUS_CODES.BAD_REQUEST, errorMessage)
-        );
+        .send(prepareResponse(null, STATUS_CODES.BAD_REQUEST, errorMessage));
     }
   }
 
@@ -69,9 +73,7 @@ class BudgetHandlers {
           : 'An error occurred while fetching the budget';
       reply
         .status(STATUS_CODES.BAD_REQUEST)
-        .send(
-          prepareResponse(null, STATUS_CODES.BAD_REQUEST, errorMessage)
-        );
+        .send(prepareResponse(null, STATUS_CODES.BAD_REQUEST, errorMessage));
     }
   }
 
@@ -103,13 +105,7 @@ class BudgetHandlers {
           : 'An error occurred while creating the budget';
       reply
         .status(STATUS_CODES.BAD_REQUEST)
-        .send(
-          prepareResponse(
-            null,
-            STATUS_CODES.BAD_REQUEST,
-            errorMessage
-          )
-        );
+        .send(prepareResponse(null, STATUS_CODES.BAD_REQUEST, errorMessage));
     }
   }
 
@@ -156,10 +152,8 @@ class BudgetHandlers {
           ? error.message
           : 'An error occurred while updating the budget';
       reply
-      .status(STATUS_CODES.BAD_REQUEST)
-      .send(
-        prepareResponse(null, STATUS_CODES.BAD_REQUEST, errorMessage)
-      );
+        .status(STATUS_CODES.BAD_REQUEST)
+        .send(prepareResponse(null, STATUS_CODES.BAD_REQUEST, errorMessage));
     }
   }
 
@@ -189,10 +183,11 @@ class BudgetHandlers {
         )
       );
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'An error occurred while deleting the budget';
-      reply.send(
-        prepareResponse(null, STATUS_CODES.BAD_REQUEST, errorMessage)
-      );
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : 'An error occurred while deleting the budget';
+      reply.send(prepareResponse(null, STATUS_CODES.BAD_REQUEST, errorMessage));
     }
   }
 
@@ -683,8 +678,14 @@ class BudgetHandlers {
       '/:budgetId/categories/:categoryId',
       this.getBudgetCategoryByIdHandler.bind(this)
     );
-    server.post('/:budgetId/categories', this.createBudgetCategoryHandler.bind(this));
-    server.put('/:budgetId/categories', this.updateBudgetCategoryHandler.bind(this));
+    server.post(
+      '/:budgetId/categories',
+      this.createBudgetCategoryHandler.bind(this)
+    );
+    server.put(
+      '/:budgetId/categories',
+      this.updateBudgetCategoryHandler.bind(this)
+    );
     server.delete(
       '/:budgetId/categories/:categoryId',
       this.deleteBudgetCategoryHandler.bind(this)
@@ -717,8 +718,14 @@ class BudgetHandlers {
       '/:budgetId/transactions/:transactionId',
       this.getTransactionByIdHandler.bind(this)
     );
-    server.post('/:budgetId/transactions', this.createTransactionHandler.bind(this));
-    server.put('/:budgetId/transactions', this.updateTransactionHandler.bind(this));
+    server.post(
+      '/:budgetId/transactions',
+      this.createTransactionHandler.bind(this)
+    );
+    server.put(
+      '/:budgetId/transactions',
+      this.updateTransactionHandler.bind(this)
+    );
     server.delete(
       '/:budgetId/transactions/:transactionId',
       this.deleteTransactionHandler.bind(this)
