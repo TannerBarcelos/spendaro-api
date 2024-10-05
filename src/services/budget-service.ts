@@ -30,16 +30,16 @@ class BudgetService {
     return this.budget_repo.updateBudget(budget);
   }
 
-  deleteBudget(budget_id: number) {
-    return this.budget_repo.deleteBudget(budget_id);
+  deleteBudget(user_id: number, budget_id: number) {
+    return this.budget_repo.deleteBudget(user_id, budget_id);
   }
 
-  getBudgetCategories(budget_id: number) {
-    return this.budget_repo.getBudgetCategories(budget_id);
+  getBudgetCategories(user_id: number, budget_id: number) {
+    return this.budget_repo.getBudgetCategories(user_id, budget_id);
   }
 
-  getBudgetCategoryById(category_id: number) {
-    return this.budget_repo.getBudgetCategoryById(category_id);
+  getBudgetCategoryById(user_id: number, category_id: number) {
+    return this.budget_repo.getBudgetCategoryById(user_id, category_id);
   }
 
   createBudgetCategory(category: TBudgetCategory) {
@@ -50,8 +50,8 @@ class BudgetService {
     return this.budget_repo.updateBudgetCategory(category);
   }
 
-  deleteBudgetCategory(category_id: number) {
-    return this.budget_repo.deleteBudgetCategory(category_id);
+  deleteBudgetCategory(user_id: number, category_id: number) {
+    return this.budget_repo.deleteBudgetCategory(user_id, category_id);
   }
 
   getBudgetCategoryItems(category_id: number) {

@@ -50,14 +50,14 @@ class BudgetHandlers {
 
   async getBudgetByIdHandler(
     request: FastifyRequest<{
-      Params: { budgetId: number };
+      Params: { budget_id: number };
     }>,
     reply: FastifyReply
   ) {
     try {
       const user_id = request.user.user_id;
-      const budgetId = request.params.budgetId;
-      const budget = await this.budgetService.getBudgetById(user_id, budgetId);
+      const budget_id = request.params.budget_id;
+      const budget = await this.budgetService.getBudgetById(user_id, budget_id);
       if (!budget) {
         reply
           .status(STATUS_CODES.NOT_FOUND)
@@ -206,8 +206,9 @@ class BudgetHandlers {
     reply: FastifyReply
   ) {
     try {
-      const budgetId = request.params.budgetId;
-      const deletedBudget = await this.budgetService.deleteBudget(budgetId);
+      const budget_id = request.params.budgetId;
+      const user_id = request.user.user_id;
+      const deletedBudget = await this.budgetService.deleteBudget(user_id, budget_id);
 
       if (!deletedBudget) {
         reply
@@ -254,8 +255,9 @@ class BudgetHandlers {
   ) {
     try {
       const budget_id = request.params.budgetId;
+      const user_id = request.user.user_id;
       const categories =
-        await this.budgetService.getBudgetCategories(budget_id);
+        await this.budgetService.getBudgetCategories(user_id, budget_id);
       reply.send(
         prepareResponse(
           categories,
@@ -282,14 +284,15 @@ class BudgetHandlers {
 
   async getBudgetCategoryByIdHandler(
     request: FastifyRequest<{
-      Params: { categoryId: number };
+      Params: { category_id: number };
     }>,
     reply: FastifyReply
   ) {
     try {
-      const categoryId = request.params.categoryId;
+      const category_id = request.params.category_id;
+      const user_id = request.user.user_id;
       const category =
-        await this.budgetService.getBudgetCategoryById(categoryId);
+        await this.budgetService.getBudgetCategoryById(user_id, category_id);
       reply.send(
         prepareResponse(
           category,
@@ -322,8 +325,13 @@ class BudgetHandlers {
   ) {
     try {
       const category = request.body;
+      const user_id = request.user.user_id;
+      const new_category = {
+        ...category,
+        user_id,
+      } as TBudgetCategory;
       const createdCategory =
-        await this.budgetService.createBudgetCategory(category);
+        await this.budgetService.createBudgetCategory(new_category);
       reply.send(
         prepareResponse(
           createdCategory,
@@ -356,9 +364,26 @@ class BudgetHandlers {
   ) {
     try {
       const category = request.body;
+      const user_id = request.user.user_id;
+      const category_to_update = {
+        ...category,
+        user_id,
+      } as TBudgetCategory;
       const updatedCategory =
-        await this.budgetService.updateBudgetCategory(category);
-      reply.send(
+        await this.budgetService.updateBudgetCategory(category_to_update);
+      
+      if(!updatedCategory) {
+        reply.send(
+          prepareResponse(
+            null,
+            STATUS_CODES.NOT_FOUND,
+            'Budget category not found',
+            null
+          )
+        );
+      }
+      
+        reply.send(
         prepareResponse(
           updatedCategory,
           STATUS_CODES.OK,
@@ -384,15 +409,28 @@ class BudgetHandlers {
 
   async deleteBudgetCategoryHandler(
     request: FastifyRequest<{
-      Params: { categoryId: number };
+      Params: { category_id: number };
     }>,
     reply: FastifyReply
   ) {
     try {
-      const categoryId = request.params.categoryId;
+      const category_id = request.params.category_id;
+      const user_id = request.user.user_id;
       const deletedCategory =
-        await this.budgetService.deleteBudgetCategory(categoryId);
-      reply.send(
+        await this.budgetService.deleteBudgetCategory(user_id, category_id);
+      
+      if(!deletedCategory) {
+        reply.send(
+          prepareResponse(
+            null,
+            STATUS_CODES.NOT_FOUND,
+            'Budget category not found',
+            null
+          )
+        );
+      }
+
+        reply.send(
         prepareResponse(
           deletedCategory,
           STATUS_CODES.OK,
@@ -931,11 +969,85 @@ class BudgetHandlers {
   }
 
   registerHandlers(server: FastifyInstance) {
-    server.get('', this.getBudgetsHandler.bind(this));
-    server.get('/:budgetId', this.getBudgetByIdHandler.bind(this));
-    server.post('', this.createBudgetHandler.bind(this));
-    server.put('/:budgetId', this.updateBudgetHandler.bind(this));
-    server.delete('/:budgetId', this.deleteBudgetHandler.bind(this));
+    server.get(
+      '',
+      {
+        schema: {
+          description: 'This endpoint will return all the budgets a user has created. To get the budgets categories, items, and transactions, you can use the respective endpoints',
+          tags: ['budget'],
+          summary: 'List all budgets for the authenticated user',
+          response: {},
+        },
+      },
+      this.getBudgetsHandler.bind(this)
+    );
+    server.get('/:budgetId', {
+      schema: {
+        description: 'This endpoint will return the budget with the specified id',
+        tags: ['budget'],
+        summary: 'Get a budget by ID',
+        params: {
+          type: 'object',
+          properties: {
+            budgetId: { type: 'number' },
+          },
+        },
+        response: {},
+      },
+    }, this.getBudgetByIdHandler.bind(this));
+    server.post('', {
+      schema: {
+        description: 'This endpoint will create a new budget for the authenticated user',
+        tags: ['budget'],
+        summary: 'Create a new budget',
+        body: {
+          type: 'object',
+          properties: {
+            // user_id is not required here as we can get it from the authenticated user (but it is a required field in the database schema, hence it being used in the repository)
+            budget_name: { type: 'string' },
+            budget_description: { type: 'string' },
+            amount: { type: 'number' },
+          },
+        },
+        response: {},
+      },
+    }, this.createBudgetHandler.bind(this));
+    server.put('/:budgetId', {
+      schema: {
+        description: 'This endpoint will update the budget with the specified id',
+        tags: ['budget'],
+        summary: 'Update a budget by ID',
+        params: {
+          type: 'object',
+          properties: {
+            budgetId: { type: 'number' },
+          },
+        },
+        body: {
+          type: 'object',
+          properties: {
+            budget_name: { type: 'string' },
+            budget_description: { type: 'string' },
+            amount: { type: 'number' },
+          },
+        },
+        response: {},
+      },
+    }, this.updateBudgetHandler.bind(this));
+    server.delete('/:budgetId', {
+      schema: {
+        description: 'This endpoint will delete the budget with the specified id',
+        tags: ['budget'],
+        summary: 'Delete a budget by ID',
+        params: {
+          type: 'object',
+          properties: {
+            budgetId: { type: 'number' },
+          },
+        },
+        response: {},
+      },
+    },this.deleteBudgetHandler.bind(this));
 
     server.get(
       '/:budgetId/categories',

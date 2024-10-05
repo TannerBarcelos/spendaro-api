@@ -27,18 +27,18 @@ interface IBudgetRepository {
   getBudgetById(user_id: number, budget_id: number): TCommonBudgetResponse;
   createBudget(budget: TBudget): TCommonBudgetResponse;
   updateBudget(budget: TBudget): TCommonBudgetResponse;
-  deleteBudget(budget_id: number): TCommonBudgetResponse;
+  deleteBudget(user_id: number, budget_id: number): TCommonBudgetResponse;
 
   // Budget Categories
-  getBudgetCategories(budget_id: number): Promise<Array<TBudgetCategoryResult>>;
-  getBudgetCategoryById(category_id: number): TCommonBudgetCategoryResponse;
+  getBudgetCategories(user_id: number, budget_id: number): Promise<Array<TBudgetCategoryResult>>;
+  getBudgetCategoryById(user_id: number, category_id: number): TCommonBudgetCategoryResponse;
   createBudgetCategory(
     category: TBudgetCategory
   ): TCommonBudgetCategoryResponse;
   updateBudgetCategory(
     category: TBudgetCategory
   ): TCommonBudgetCategoryResponse;
-  deleteBudgetCategory(categoryId: number): TCommonBudgetCategoryResponse;
+  deleteBudgetCategory(user_id: number, categoryId: number): TCommonBudgetCategoryResponse;
 
   // Budget Category Items
   getBudgetCategoryItems(
@@ -141,10 +141,10 @@ class BudgetRepository implements IBudgetRepository {
     return updatedBudget;
   }
 
-  async deleteBudget(budget_id: number): TCommonBudgetResponse {
+  async deleteBudget(user_id: number, budget_id: number): TCommonBudgetResponse {
     const [deletedBudget]: Array<TBudgetResult> = await this.db
       .delete(schema.budgets)
-      .where(eq(schema.budgets.id, budget_id))
+      .where(and(eq(schema.budgets.id, budget_id), eq(schema.budgets.user_id, user_id)))
       .returning();
     return deletedBudget;
   }
