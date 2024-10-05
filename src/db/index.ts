@@ -27,15 +27,8 @@ const postgresConnector: FastifyPluginCallback = async (fastify, _) => {
 
     console.log('Connected to the database');
 
-    // Run migrations, if not in production
-    if (process.env.NODE_ENV !== 'production') {
-      console.log(`Running migrations against ${databaseUrl}`);
-      migrate(db, {
-        migrationsFolder: './src/db/migrations',
-      });
-    }
-
     // Close the database connection when the server closes
+    // No need to put in .finally block as fastify will handle this for us
     fastify.addHook('onClose', async () => {
       await client.end();
     });

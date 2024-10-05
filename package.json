@@ -8,7 +8,8 @@
     "start": "node index.js",
     "dev": "pnpm db:migrate && NODE_ENV=development tsnd -r tsconfig-paths/register --respawn --transpile-only --exit-child src/index.ts",
     "format": "prettier --write \"**/*.ts\"",
-    "db:migrate": "drizzle-kit generate",
+    "db:generate-migration": "drizzle-kit generate",
+    "db:migrate": "tsnd -r tsconfig-paths/register migrate.ts",
     "db:seed": "src/db/seed.ts"
   },
   "keywords": [],
