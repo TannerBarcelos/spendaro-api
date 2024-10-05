@@ -6,6 +6,8 @@ import db from './db';
 import cors from '@fastify/cors';
 import { ALLOWED_METHODS } from './util/http';
 import authenticate from './plugins/authenticate';
+import swagger from '@fastify/swagger';
+import swaggerUi from '@fastify/swagger-ui';
 
 dotenv.config();
 
@@ -16,7 +18,7 @@ server.get('/healthz', async (request: FastifyRequest) => {
   return { status: 'OK' };
 });
 
-const apiRoutePrefix = `${config.get("server.api.prefix")}/${config.get("server.api.version")}`;
+const apiRoutePrefix = `${config.get('server.api.prefix')}/${config.get('server.api.version')}`;
 server.register(routes, { prefix: apiRoutePrefix });
 
 server.listen({ port: config.get('server.port') }, (err, address) => {
@@ -28,6 +30,15 @@ server.listen({ port: config.get('server.port') }, (err, address) => {
 });
 
 function registerServerPlugins(server: FastifyInstance) {
+  server.register(swagger);
+  server.register(swaggerUi, {
+    routePrefix: '/docs',
+    uiConfig: {
+      docExpansion: 'list',
+      deepLinking: false,
+    },
+    staticCSP: true
+  });
   server.register(authenticate);
   server.register(cors, {
     origin: '*',
