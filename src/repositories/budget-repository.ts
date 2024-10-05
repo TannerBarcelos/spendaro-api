@@ -13,6 +13,7 @@ import {
   TTransaction,
   TTransactionType,
 } from '@/db/types';
+import { MergedSchema } from "global";
 
 type TCommonBudgetResponse = Promise<TBudgetResult>;
 type TCommonBudgetCategoryResponse = Promise<TBudgetCategoryResult>;
@@ -79,9 +80,9 @@ interface IBudgetRepository {
 }
 
 class BudgetRepository implements IBudgetRepository {
-  private db: PostgresJsDatabase<schema.SpendaroSchema>;
+  private db: PostgresJsDatabase<MergedSchema>;
 
-  constructor(db: PostgresJsDatabase<schema.SpendaroSchema>) {
+  constructor(db: PostgresJsDatabase<MergedSchema>) {
     this.db = db;
   }
 

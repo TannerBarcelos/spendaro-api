@@ -83,12 +83,3 @@ export const transaction_types = pgTable('transaction_types', {
   created_at: createdTs,
   updated_at: updatedTs,
 });
-
-export type SpendaroSchema = {
-  users: typeof users;
-  budgets: typeof budgets;
-  budget_categories: typeof budget_categories;
-  budget_category_items: typeof budget_category_items;
-  transactions: typeof transactions;
-  transaction_types: typeof transaction_types;
-};

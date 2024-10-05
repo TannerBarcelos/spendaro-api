@@ -18,7 +18,7 @@ declare module 'fastify' {
 
 declare module '@fastify/jwt' {
   interface FastifyJWT {
-    // the type of the payload to be signed or verified
+    // the type of the payload to be signed
     payload: {
       user_id: number;
       email: string;
@@ -29,9 +29,6 @@ declare module '@fastify/jwt' {
     // the type of the decoded payload that will be available in the request via the fastify/jwt plugin
     user: {
       user_id: number;
-      email: string;
-      first_name: string;
-      last_name: string;
     };
   }
 }
