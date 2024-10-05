@@ -7,12 +7,19 @@ import cors from '@fastify/cors';
 import { ALLOWED_METHODS } from './utils/http';
 import authenticate from './plugins/authenticate';
 import swagger from '@fastify/swagger';
-import swaggerUi from '@fastify/swagger-ui';
-import { swaggerConfig, swaggerUiConfig } from './open-api';
+import scalarOpenApiUi from '@scalar/fastify-api-reference'
+import { scalarOpenApiUiConfig, swaggerConfig } from './open-api';
 
 dotenv.config();
 
-const server = fastify();
+const server = fastify({
+  // Uses Pino for logging
+  logger: {
+    enabled: true,
+    level: config.get("server.logging.level"),
+  },
+});
+
 registerServerPlugins(server);
 
 server.get('/healthz', async (request: FastifyRequest) => {
@@ -32,7 +39,7 @@ server.listen({ port: config.get('server.port') }, (err, address) => {
 
 function registerServerPlugins(server: FastifyInstance) {
   server.register(swagger, swaggerConfig);
-  server.register(swaggerUi, swaggerUiConfig);
+  server.register(scalarOpenApiUi, scalarOpenApiUiConfig);
   server.register(authenticate);
   server.register(cors, {
     origin: '*',

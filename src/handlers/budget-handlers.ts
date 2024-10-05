@@ -981,8 +981,8 @@ class BudgetHandlers {
       {
         schema: {
           description: 'This endpoint will return all the budgets a user has created. To get the budgets categories, items, and transactions, you can use the respective endpoints',
-          tags: ['budget'],
-          summary: 'List all budgets for the authenticated user',
+          tags: ['budgets'],
+          summary: 'List all budgets',
           response: {},
         },
       },
@@ -991,7 +991,7 @@ class BudgetHandlers {
     server.get('/:budgetId', {
       schema: {
         description: 'This endpoint will return the budget with the specified id',
-        tags: ['budget'],
+        tags: ['budgets'],
         summary: 'Get a budget by ID',
         params: {
           type: 'object',
@@ -1005,7 +1005,7 @@ class BudgetHandlers {
     server.post('', {
       schema: {
         description: 'This endpoint will create a new budget for the authenticated user',
-        tags: ['budget'],
+        tags: ['budgets'],
         summary: 'Create a new budget',
         body: {
           type: 'object',
@@ -1022,7 +1022,7 @@ class BudgetHandlers {
     server.put('/:budgetId', {
       schema: {
         description: 'This endpoint will update the budget with the specified id',
-        tags: ['budget'],
+        tags: ['budgets'],
         summary: 'Update a budget by ID',
         params: {
           type: 'object',
@@ -1044,7 +1044,7 @@ class BudgetHandlers {
     server.delete('/:budgetId', {
       schema: {
         description: 'This endpoint will delete the budget with the specified id',
-        tags: ['budget'],
+        tags: ['budgets'],
         summary: 'Delete a budget by ID',
         params: {
           type: 'object',
@@ -1058,22 +1058,108 @@ class BudgetHandlers {
 
     server.get(
       '/:budgetId/categories',
+      {
+        schema: {
+          description: 'This endpoint will return all the categories for the budget with the specified id',
+          tags: ['categories'],
+          summary: 'List all categories',
+          params: {
+            type: 'object',
+            properties: {
+              budgetId: { type: 'number' },
+            },
+          },
+          response: {},
+        },
+      },
       this.getBudgetCategoriesHandler.bind(this)
     );
     server.get(
       '/:budgetId/categories/:categoryId',
+      {
+        schema: {
+          description: 'This endpoint will return the category with the specified id',
+          tags: ['categories'],
+          summary: 'Get a category by ID',
+          params: {
+            type: 'object',
+            properties: {
+              categoryId: { type: 'number' },
+              budgetId: { type: 'number' }
+            },
+          },
+          response: {},
+        },
+      },
       this.getBudgetCategoryByIdHandler.bind(this)
     );
     server.post(
       '/:budgetId/categories',
+      {
+        schema: {
+          description: 'This endpoint will create a new category for the budget with the specified id',
+          tags: ['categories'],
+          summary: 'Create a new category',
+          params: {
+            type: 'object',
+            properties: {
+              budgetId: { type: 'number' },
+            },
+          },
+          body: {
+            type: 'object',
+            properties: {
+              category_name: { type: 'string' },
+              category_description: { type: 'string' },
+            },
+          },
+          response: {},
+        },
+      },
       this.createBudgetCategoryHandler.bind(this)
     );
     server.put(
       '/:budgetId/categories',
+      {
+        schema: {
+          description: 'This endpoint will update the category with the specified id',
+          tags: ['categories'],
+          summary: 'Update a category by ID',
+          params: {
+            type: 'object',
+            properties: {
+              categoryId: { type: 'number' },
+            },
+          },
+          body: {
+            type: 'object',
+            properties: {
+              category_name: { type: 'string' },
+              category_description: { type: 'string' },
+            },
+          },
+          response: {},
+        },
+      },
       this.updateBudgetCategoryHandler.bind(this)
     );
     server.delete(
       '/:budgetId/categories/:categoryId',
+      {
+        schema: {
+          description: 'This endpoint will delete the category with the specified id',
+          tags: ['categories'],
+          summary: 'Delete a category by ID',
+          params: {
+            type: 'object',
+            properties: {
+              categoryId: { type: 'number' },
+              budgetId: { type: 'number' },
+            },
+          },
+          response: {},
+        },
+      },
       this.deleteBudgetCategoryHandler.bind(this)
     );
 

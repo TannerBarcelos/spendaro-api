@@ -1,5 +1,4 @@
 import { SwaggerOptions } from '@fastify/swagger';
-import { FastifySwaggerUiOptions } from '@fastify/swagger-ui';
 
 // Learn more here -> https://github.com/fastify/fastify-swagger
 export const swaggerConfig: SwaggerOptions = {
@@ -22,7 +21,7 @@ export const swaggerConfig: SwaggerOptions = {
     // represent the sections in the UI - these are assigned as tags to each API schema object
     tags: [
       {
-        name: 'budget',
+        name: 'budgets',
         description: 'View and manage budgets',
       },
       {
@@ -47,11 +46,20 @@ export const swaggerConfig: SwaggerOptions = {
   },
 };
 
-export const swaggerUiConfig: FastifySwaggerUiOptions = {
+export const scalarOpenApiUiConfig = {
   routePrefix: '/docs',
-  uiConfig: {
-    docExpansion: 'list',
-    deepLinking: false,
+  configuration: {
+    theme: 'purple',
+    defaultHttpClient: {
+      targetKey: 'javascript',
+      clientKey: 'fetch',
+    },
+    metaData: {
+      title: 'Spendaro API Docs',
+      description: 'API documentation for the Spendaro API',
+      ogDescription: 'API documentation for the Spendaro API',
+      ogTitle: 'Spendaro API Docs',
+    },
+    defaultOpenAllTags: true,
   },
-  staticCSP: true,
 };

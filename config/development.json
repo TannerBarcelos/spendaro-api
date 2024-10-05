@@ -4,6 +4,9 @@
         "api": {
             "prefix": "/api",
             "version": "v1"
+        },
+        "logging": {
+            "level": "debug"
         }
     },
     "security": {
