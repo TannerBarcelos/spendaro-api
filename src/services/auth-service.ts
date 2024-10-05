@@ -4,6 +4,7 @@ import config from 'config';
 import { IAuthRepository } from '@/repositories/auth-repository';
 import { TUser, TUserResult } from '@/db/types';
 import { SpendaroError } from '@/utils/error';
+import { StatusCodes } from "http-status-codes";
 
 class AuthService {
   authRepo: IAuthRepository;
@@ -35,7 +36,7 @@ class AuthService {
     const signedInUser = await this.authRepo.signin(candidateUser);
 
     if (!signedInUser) {
-      throw new SpendaroError('User does not exist', 401);
+      throw new SpendaroError('User does not exist', StatusCodes.UNAUTHORIZED);
     }
 
     const isValid = await bcrypt.compare(
@@ -46,7 +47,7 @@ class AuthService {
     if (!isValid) {
       throw new SpendaroError(
         'Invalid credentials. Passwords do not match.',
-        401
+        StatusCodes.UNAUTHORIZED
       );
     }
 

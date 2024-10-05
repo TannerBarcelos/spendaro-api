@@ -10,8 +10,7 @@ import { ALLOWED_METHODS, prepareResponse, STATUS_CODES } from './utils/http';
 import authenticate from './plugins/authenticate';
 import swagger from '@fastify/swagger';
 import { scalarOpenApiUiConfig, swaggerConfig } from './open-api';
-import { getReasonPhrase } from 'http-status-codes';
-import { DrizzleError } from 'drizzle-orm';
+import { ErrorHandlers } from "./handlers/error-handlers";
 
 dotenv.config();
 
@@ -23,27 +22,8 @@ const server = fastify({
   },
 });
 
-server.setErrorHandler(function (error: FastifyError, request: FastifyRequest, reply: FastifyReply) {
-  request.log.error(error); // send to Sentry or similar service to monitor errors
-  reply
-    .status(error.statusCode || 500)
-    .send(
-      prepareResponse(
-        null,
-        error.statusCode || 500,
-        getReasonPhrase(error.statusCode || 500),
-        process.env.NODE_ENV === 'development' ? error.stack : error.message
-      )
-    );
-});
-
-server.setNotFoundHandler((request:FastifyRequest, reply:FastifyReply) => {
-  reply
-    .status(STATUS_CODES.NOT_FOUND)
-    .send(
-      prepareResponse(null, STATUS_CODES.NOT_FOUND, getReasonPhrase(STATUS_CODES.NOT_FOUND), `Resource ${request.url} not found`)
-    );
-});
+server.setErrorHandler(ErrorHandlers.handleError);
+server.setNotFoundHandler(ErrorHandlers.handleNotFoundError);
 
 registerServerPlugins(server);
 

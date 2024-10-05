@@ -2,6 +2,7 @@ import { users } from "@/db/schema";
 import { TUser, TUserResult } from "@/db/types";
 import { eq } from 'drizzle-orm';
 import { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
+import { MergedSchema } from "global";
 
 type TCommonUserResponse = Promise<TUserResult>;
 export interface IAuthRepository {
@@ -10,9 +11,9 @@ export interface IAuthRepository {
 }
 
 class AuthRepository implements IAuthRepository {
-  private db: PostgresJsDatabase<SpendaroSchema>;
+  private db: PostgresJsDatabase<MergedSchema>;
 
-  constructor(db: PostgresJsDatabase<SpendaroSchema>) {
+  constructor(db: PostgresJsDatabase<MergedSchema>) {
     this.db = db;
   }
 
