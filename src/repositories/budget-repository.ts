@@ -30,29 +30,49 @@ interface IBudgetRepository {
   deleteBudget(user_id: number, budget_id: number): TCommonBudgetResponse;
 
   // Budget Categories
-  getBudgetCategories(user_id: number, budget_id: number): Promise<Array<TBudgetCategoryResult>>;
-  getBudgetCategoryById(user_id: number, category_id: number): TCommonBudgetCategoryResponse;
+  getBudgetCategories(
+    user_id: number,
+    budget_id: number
+  ): Promise<Array<TBudgetCategoryResult>>;
+  getBudgetCategoryById(
+    user_id: number,
+    category_id: number
+  ): TCommonBudgetCategoryResponse;
   createBudgetCategory(
     category: TBudgetCategory
   ): TCommonBudgetCategoryResponse;
   updateBudgetCategory(
     category: TBudgetCategory
   ): TCommonBudgetCategoryResponse;
-  deleteBudgetCategory(user_id: number, categoryId: number): TCommonBudgetCategoryResponse;
+  deleteBudgetCategory(
+    user_id: number,
+    categoryId: number
+  ): TCommonBudgetCategoryResponse;
 
   // Budget Category Items
   getBudgetCategoryItems(
+    user_id: number,
+    budget_id: number,
     category_id: number
   ): Promise<Array<TBudgetCategoryItemResult>>;
-  getBudgetCategoryItemById(item_id: number): TCommonBudgetCategoryItemResponse;
+  getBudgetCategoryItemById(
+    user_id: number,
+    budget_id: number,
+    category_id: number,
+    item_id: number
+  ): TCommonBudgetCategoryItemResponse;
   createBudgetCategoryItem(
     item: TBudgetCategoryItem
   ): TCommonBudgetCategoryItemResponse;
   updateBudgetCategoryItem(
     item: TBudgetCategoryItem
   ): TCommonBudgetCategoryItemResponse;
-  deleteBudgetCategoryItem(item_id: number): TCommonBudgetCategoryItemResponse;
+  deleteBudgetCategoryItem(
+    user_id: number,
+    item_id: number
+  ): TCommonBudgetCategoryItemResponse;
   deleteAllBudgetCategoryItems(
+    user_id: number,
     category_id: number
   ): TCommonBudgetCategoryItemResponse;
 
@@ -141,10 +161,18 @@ class BudgetRepository implements IBudgetRepository {
     return updatedBudget;
   }
 
-  async deleteBudget(user_id: number, budget_id: number): TCommonBudgetResponse {
+  async deleteBudget(
+    user_id: number,
+    budget_id: number
+  ): TCommonBudgetResponse {
     const [deletedBudget]: Array<TBudgetResult> = await this.db
       .delete(schema.budgets)
-      .where(and(eq(schema.budgets.id, budget_id), eq(schema.budgets.user_id, user_id)))
+      .where(
+        and(
+          eq(schema.budgets.id, budget_id),
+          eq(schema.budgets.user_id, user_id)
+        )
+      )
       .returning();
     return deletedBudget;
   }

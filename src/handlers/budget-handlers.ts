@@ -456,13 +456,14 @@ class BudgetHandlers {
 
   async getBudgetCategoryItemsHandler(
     request: FastifyRequest<{
-      Params: { categoryId: number };
+      Params: { category_id: number, budget_id: number };
     }>,
     reply: FastifyReply
   ) {
     try {
-      const categoryId = request.params.categoryId;
-      const items = await this.budgetService.getBudgetCategoryItems(categoryId);
+      const { category_id, budget_id } = request.params
+      const user_id = request.user.user_id;
+      const items = await this.budgetService.getBudgetCategoryItems(user_id, budget_id, category_id);
       reply.send(
         prepareResponse(
           items,
@@ -489,13 +490,19 @@ class BudgetHandlers {
 
   async getBudgetCategoryItemByIdHandler(
     request: FastifyRequest<{
-      Params: { itemId: number };
+      Params: { item_id: number, budget_id: number, category_id: number };
     }>,
     reply: FastifyReply
   ) {
     try {
-      const itemId = request.params.itemId;
-      const item = await this.budgetService.getBudgetCategoryItemById(itemId);
+      const { item_id, budget_id, category_id } = request.params;
+      const user_id = request.user.user_id;
+      const item = await this.budgetService.getBudgetCategoryItemById(
+        user_id,
+        budget_id,
+        category_id,
+        item_id
+      );
       reply.send(
         prepareResponse(
           item,
@@ -590,14 +597,14 @@ class BudgetHandlers {
 
   async deleteBudgetCategoryItemHandler(
     request: FastifyRequest<{
-      Params: { itemId: number };
+      Params: { item_id: number };
     }>,
     reply: FastifyReply
   ) {
     try {
-      const itemId = request.params.itemId;
+      const item_id = request.params.item_id;
       const deletedItem =
-        await this.budgetService.deleteBudgetCategoryItem(itemId);
+        await this.budgetService.deleteBudgetCategoryItem(item_id);
       reply.send(
         prepareResponse(
           deletedItem,
