@@ -26,7 +26,8 @@ class BudgetHandlers {
           prepareResponse(
             budgets,
             STATUS_CODES.OK,
-            'Budgets fetched successfully'
+            'Budgets fetched successfully',
+            null
           )
         );
     } catch (error) {
@@ -36,7 +37,7 @@ class BudgetHandlers {
           : 'An error occurred while fetching the budgets';
       reply
         .status(STATUS_CODES.BAD_REQUEST)
-        .send(prepareResponse(null, STATUS_CODES.BAD_REQUEST, errorMessage));
+        .send(prepareResponse(null, STATUS_CODES.BAD_REQUEST, "Failed to fetch budgets", new Error(errorMessage)));
     }
   }
 
@@ -54,7 +55,7 @@ class BudgetHandlers {
         reply
           .status(STATUS_CODES.NOT_FOUND)
           .send(
-            prepareResponse(null, STATUS_CODES.NOT_FOUND, 'Budget not found')
+            prepareResponse(null, STATUS_CODES.NOT_FOUND, 'Budget not found', null)
           );
       }
       reply
@@ -63,7 +64,8 @@ class BudgetHandlers {
           prepareResponse(
             budget,
             STATUS_CODES.OK,
-            'Budget fetched successfully'
+            'Budget fetched successfully',
+            null
           )
         );
     } catch (error) {
@@ -73,7 +75,7 @@ class BudgetHandlers {
           : 'An error occurred while fetching the budget';
       reply
         .status(STATUS_CODES.BAD_REQUEST)
-        .send(prepareResponse(null, STATUS_CODES.BAD_REQUEST, errorMessage));
+        .send(prepareResponse(null, STATUS_CODES.BAD_REQUEST, "Failed to fetch budget", new Error(errorMessage)));
     }
   }
 
@@ -95,7 +97,8 @@ class BudgetHandlers {
           prepareResponse(
             createdBudget,
             STATUS_CODES.CREATED,
-            'Budget created successfully'
+            'Budget created successfully',
+            null
           )
         );
     } catch (error) {
@@ -105,7 +108,7 @@ class BudgetHandlers {
           : 'An error occurred while creating the budget';
       reply
         .status(STATUS_CODES.BAD_REQUEST)
-        .send(prepareResponse(null, STATUS_CODES.BAD_REQUEST, errorMessage));
+        .send(prepareResponse(null, STATUS_CODES.BAD_REQUEST, errorMessage, new Error(errorMessage)));
     }
   }
 
@@ -133,7 +136,7 @@ class BudgetHandlers {
         reply
           .status(STATUS_CODES.NOT_FOUND)
           .send(
-            prepareResponse(null, STATUS_CODES.NOT_FOUND, 'Budget not found')
+            prepareResponse(null, STATUS_CODES.NOT_FOUND, 'Budget not found', null)
           );
       }
 
@@ -143,7 +146,8 @@ class BudgetHandlers {
           prepareResponse(
             updatedBudget,
             STATUS_CODES.UPDATE,
-            'Budget updated successfully'
+            'Budget updated successfully',
+            null
           )
         );
     } catch (error) {
@@ -153,7 +157,7 @@ class BudgetHandlers {
           : 'An error occurred while updating the budget';
       reply
         .status(STATUS_CODES.BAD_REQUEST)
-        .send(prepareResponse(null, STATUS_CODES.BAD_REQUEST, errorMessage));
+        .send(prepareResponse(null, STATUS_CODES.BAD_REQUEST, "Failed to update budget", new Error(errorMessage)));
     }
   }
 
@@ -171,7 +175,7 @@ class BudgetHandlers {
         reply
           .status(STATUS_CODES.NOT_FOUND)
           .send(
-            prepareResponse(null, STATUS_CODES.NOT_FOUND, 'Budget not found')
+            prepareResponse(null, STATUS_CODES.NOT_FOUND, 'Budget not found', null)
           );
       }
 
@@ -179,7 +183,8 @@ class BudgetHandlers {
         prepareResponse(
           deletedBudget,
           STATUS_CODES.OK,
-          'Budget deleted successfully'
+          'Budget deleted successfully',
+          null
         )
       );
     } catch (error) {
@@ -187,7 +192,7 @@ class BudgetHandlers {
         error instanceof Error
           ? error.message
           : 'An error occurred while deleting the budget';
-      reply.send(prepareResponse(null, STATUS_CODES.BAD_REQUEST, errorMessage));
+      reply.send(prepareResponse(null, STATUS_CODES.BAD_REQUEST, "Failed to delete budget", new Error(errorMessage)));
     }
   }
 
@@ -205,12 +210,14 @@ class BudgetHandlers {
         prepareResponse(
           categories,
           STATUS_CODES.OK,
-          'Budget categories fetched successfully'
+          'Budget categories fetched successfully',
+          null
         )
       );
     } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'An error occurred while fetching the budget categories';
       reply.send(
-        prepareResponse(error, STATUS_CODES.BAD_REQUEST, 'Bad Request')
+        prepareResponse(error, STATUS_CODES.BAD_REQUEST, "Failed to fetch categories for the budget", new Error(errorMessage))
       );
     }
   }
@@ -229,12 +236,14 @@ class BudgetHandlers {
         prepareResponse(
           category,
           STATUS_CODES.OK,
-          'Budget category fetched successfully'
+          'Budget category fetched successfully',
+          null
         )
       );
     } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'An error occurred while fetching the budget category';
       reply.send(
-        prepareResponse(error, STATUS_CODES.BAD_REQUEST, 'Bad Request')
+        prepareResponse(error, STATUS_CODES.BAD_REQUEST, "Failed to fetch category for the budget", new Error(errorMessage))
       );
     }
   }
@@ -253,12 +262,14 @@ class BudgetHandlers {
         prepareResponse(
           createdCategory,
           STATUS_CODES.CREATED,
-          'Budget category created successfully'
+          'Budget category created successfully',
+          null
         )
       );
     } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'An error occurred while creating the budget category';
       reply.send(
-        prepareResponse(error, STATUS_CODES.BAD_REQUEST, 'Bad Request')
+        prepareResponse(error, STATUS_CODES.BAD_REQUEST, "Failed to create category for the budget", new Error(errorMessage))
       );
     }
   }
@@ -277,12 +288,14 @@ class BudgetHandlers {
         prepareResponse(
           updatedCategory,
           STATUS_CODES.OK,
-          'Budget category updated successfully'
+          'Budget category updated successfully',
+          null
         )
       );
     } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'An error occurred while updating the budget category';
       reply.send(
-        prepareResponse(error, STATUS_CODES.BAD_REQUEST, 'Bad Request')
+        prepareResponse(error, STATUS_CODES.BAD_REQUEST, "Failed to update category for the budget", new Error(errorMessage))
       );
     }
   }
@@ -301,12 +314,14 @@ class BudgetHandlers {
         prepareResponse(
           deletedCategory,
           STATUS_CODES.OK,
-          'Budget category deleted successfully'
+          'Budget category deleted successfully',
+          null
         )
       );
     } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'An error occurred while deleting the budget category';
       reply.send(
-        prepareResponse(error, STATUS_CODES.BAD_REQUEST, 'Bad Request')
+        prepareResponse(error, STATUS_CODES.BAD_REQUEST, "Failed to delete category for the budget", new Error(errorMessage))
       );
     }
   }
@@ -324,12 +339,14 @@ class BudgetHandlers {
         prepareResponse(
           items,
           STATUS_CODES.OK,
-          'Budget category items fetched successfully'
+          'Budget category items fetched successfully',
+          null
         )
       );
     } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'An error occurred while fetching the budget category items';
       reply.send(
-        prepareResponse(error, STATUS_CODES.BAD_REQUEST, 'Bad Request')
+        prepareResponse(error, STATUS_CODES.BAD_REQUEST, "Failed to fetch items for the budget category", new Error(errorMessage))
       );
     }
   }
@@ -347,12 +364,14 @@ class BudgetHandlers {
         prepareResponse(
           item,
           STATUS_CODES.OK,
-          'Budget category item fetched successfully'
+          'Budget category item fetched successfully',
+          null
         )
       );
     } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'An error occurred while fetching the budget category item';
       reply.send(
-        prepareResponse(error, STATUS_CODES.BAD_REQUEST, 'Bad Request')
+        prepareResponse(error, STATUS_CODES.BAD_REQUEST, "Failed to fetch item for the budget category", new Error(errorMessage))
       );
     }
   }
@@ -371,12 +390,14 @@ class BudgetHandlers {
         prepareResponse(
           createdItem,
           STATUS_CODES.CREATED,
-          'Budget category item created successfully'
+          'Budget category item created successfully',
+          null
         )
       );
     } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'An error occurred while creating the budget category item';
       reply.send(
-        prepareResponse(error, STATUS_CODES.BAD_REQUEST, 'Bad Request')
+        prepareResponse(error, STATUS_CODES.BAD_REQUEST, "Failed to create item for the budget category", new Error(errorMessage))
       );
     }
   }
@@ -395,12 +416,14 @@ class BudgetHandlers {
         prepareResponse(
           updatedItem,
           STATUS_CODES.OK,
-          'Budget category item updated successfully'
+          'Budget category item updated successfully',
+          null
         )
       );
     } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'An error occurred while updating the budget category item';
       reply.send(
-        prepareResponse(error, STATUS_CODES.BAD_REQUEST, 'Bad Request')
+        prepareResponse(error, STATUS_CODES.BAD_REQUEST, "Failed to update item for the budget category", new Error(errorMessage))
       );
     }
   }
@@ -419,12 +442,14 @@ class BudgetHandlers {
         prepareResponse(
           deletedItem,
           STATUS_CODES.OK,
-          'Budget category item deleted successfully'
+          'Budget category item deleted successfully',
+          null
         )
       );
     } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'An error occurred while deleting the budget category item';
       reply.send(
-        prepareResponse(error, STATUS_CODES.BAD_REQUEST, 'Bad Request')
+        prepareResponse(error, STATUS_CODES.BAD_REQUEST, "Failed to delete item for the budget category", new Error(errorMessage))
       );
     }
   }
@@ -442,12 +467,14 @@ class BudgetHandlers {
         prepareResponse(
           transactions,
           STATUS_CODES.OK,
-          'Transactions fetched successfully'
+          'Transactions fetched successfully',
+          null
         )
       );
     } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'An error occurred while fetching the transactions';
       reply.send(
-        prepareResponse(error, STATUS_CODES.BAD_REQUEST, 'Bad Request')
+        prepareResponse(error, STATUS_CODES.BAD_REQUEST, "Failed to fetch transactions", new Error(errorMessage))
       );
     }
   }
@@ -466,12 +493,14 @@ class BudgetHandlers {
         prepareResponse(
           transaction,
           STATUS_CODES.OK,
-          'Transaction fetched successfully'
+          'Transaction fetched successfully',
+          null
         )
       );
     } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'An error occurred while fetching the transaction';
       reply.send(
-        prepareResponse(error, STATUS_CODES.BAD_REQUEST, 'Bad Request')
+        prepareResponse(error, STATUS_CODES.BAD_REQUEST, "Failed to fetch transaction", new Error(errorMessage))
       );
     }
   }
@@ -490,12 +519,14 @@ class BudgetHandlers {
         prepareResponse(
           createdTransaction,
           STATUS_CODES.CREATED,
-          'Transaction created successfully'
+          'Transaction created successfully',
+          null
         )
       );
     } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'An error occurred while creating the transaction';
       reply.send(
-        prepareResponse(error, STATUS_CODES.BAD_REQUEST, 'Bad Request')
+        prepareResponse(error, STATUS_CODES.BAD_REQUEST, "Failed to create transaction", new Error(errorMessage))
       );
     }
   }
@@ -514,12 +545,14 @@ class BudgetHandlers {
         prepareResponse(
           updatedTransaction,
           STATUS_CODES.OK,
-          'Transaction updated successfully'
+          'Transaction updated successfully',
+          null
         )
       );
     } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'An error occurred while updating the transaction';
       reply.send(
-        prepareResponse(error, STATUS_CODES.BAD_REQUEST, 'Bad Request')
+        prepareResponse(error, STATUS_CODES.BAD_REQUEST, "Failed to update transaction", new Error(errorMessage))
       );
     }
   }
@@ -538,12 +571,14 @@ class BudgetHandlers {
         prepareResponse(
           deletedTransaction,
           STATUS_CODES.OK,
-          'Transaction deleted successfully'
+          'Transaction deleted successfully',
+          null
         )
       );
     } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'An error occurred while deleting the transaction';
       reply.send(
-        prepareResponse(error, STATUS_CODES.BAD_REQUEST, 'Bad Request')
+        prepareResponse(error, STATUS_CODES.BAD_REQUEST, "Failed to delete transaction", new Error(errorMessage))
       );
     }
   }
@@ -558,12 +593,14 @@ class BudgetHandlers {
         prepareResponse(
           transactionTypes,
           STATUS_CODES.OK,
-          'Transaction types fetched successfully'
+          'Transaction types fetched successfully',
+          null
         )
       );
     } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'An error occurred while fetching the transaction types';
       reply.send(
-        prepareResponse(error, STATUS_CODES.BAD_REQUEST, 'Bad Request')
+        prepareResponse(error, STATUS_CODES.BAD_REQUEST, "Failed to fetch transaction types", new Error(errorMessage))
       );
     }
   }
@@ -582,12 +619,14 @@ class BudgetHandlers {
         prepareResponse(
           transactionType,
           STATUS_CODES.OK,
-          'Transaction type fetched successfully'
+          'Transaction type fetched successfully',
+          null
         )
       );
     } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'An error occurred while fetching the transaction type';
       reply.send(
-        prepareResponse(error, STATUS_CODES.BAD_REQUEST, 'Bad Request')
+        prepareResponse(error, STATUS_CODES.BAD_REQUEST, "Failed to fetch transaction type", new Error(errorMessage))
       );
     }
   }
@@ -606,12 +645,14 @@ class BudgetHandlers {
         prepareResponse(
           createdTransactionType,
           STATUS_CODES.CREATED,
-          'Transaction type created successfully'
+          'Transaction type created successfully',
+          null
         )
       );
     } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'An error occurred while creating the transaction type';
       reply.send(
-        prepareResponse(error, STATUS_CODES.BAD_REQUEST, 'Bad Request')
+        prepareResponse(error, STATUS_CODES.BAD_REQUEST, "Failed to create transaction type", new Error(errorMessage))
       );
     }
   }
@@ -630,12 +671,14 @@ class BudgetHandlers {
         prepareResponse(
           updatedTransactionType,
           STATUS_CODES.OK,
-          'Transaction type updated successfully'
+          'Transaction type updated successfully',
+          null
         )
       );
     } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'An error occurred while updating the transaction type';
       reply.send(
-        prepareResponse(error, STATUS_CODES.BAD_REQUEST, 'Bad Request')
+        prepareResponse(error, STATUS_CODES.BAD_REQUEST, "Failed to update transaction type", new Error(errorMessage))
       );
     }
   }
@@ -654,12 +697,14 @@ class BudgetHandlers {
         prepareResponse(
           deletedTransactionType,
           STATUS_CODES.OK,
-          'Transaction type deleted successfully'
+          'Transaction type deleted successfully',
+          null
         )
       );
     } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'An error occurred while deleting the transaction type';
       reply.send(
-        prepareResponse(error, STATUS_CODES.BAD_REQUEST, 'Bad Request')
+        prepareResponse(error, STATUS_CODES.BAD_REQUEST, "Failed to delete transaction type", new Error(errorMessage))
       );
     }
   }

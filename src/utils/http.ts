@@ -14,11 +14,13 @@ export const STATUS_CODES = {
 export const prepareResponse = (
   response: any,
   statusCode: number,
-  message: string
+  message: string,
+  error: Error | null
 ) => {
   return {
-    status_code: statusCode,
-    body: response, // no need to serialize the response, Fastify will do it for us! We just need to define the response with JSON schema
+    status: statusCode,
+    data: response, // no need to serialize the response, Fastify will do it for us! We just need to define the response with JSON schema
     message,
+    error: error ? error.message : null,
   };
 };
