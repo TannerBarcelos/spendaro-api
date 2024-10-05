@@ -680,67 +680,67 @@ class BudgetHandlers {
       this.getBudgetCategoriesHandler.bind(this)
     );
     server.get(
-      'categories/:categoryId',
+      '/:budgetId/categories/:categoryId',
       this.getBudgetCategoryByIdHandler.bind(this)
     );
-    server.post('categories', this.createBudgetCategoryHandler.bind(this));
-    server.put('categories', this.updateBudgetCategoryHandler.bind(this));
+    server.post('/:budgetId/categories', this.createBudgetCategoryHandler.bind(this));
+    server.put('/:budgetId/categories', this.updateBudgetCategoryHandler.bind(this));
     server.delete(
-      'categories/:categoryId',
+      '/:budgetId/categories/:categoryId',
       this.deleteBudgetCategoryHandler.bind(this)
     );
     server.get(
-      '/categories/:categoryId/items',
+      '/:budgetId/categories/:categoryId/items',
       this.getBudgetCategoryItemsHandler.bind(this)
     );
     server.get(
-      '/categories/items/:itemId',
+      '/:budgetId/categories/items/:itemId',
       this.getBudgetCategoryItemByIdHandler.bind(this)
     );
     server.post(
-      '/categories/items',
+      '/:budgetId/categories/items',
       this.createBudgetCategoryItemHandler.bind(this)
     );
     server.put(
-      '/categories/items',
+      '/:budgetId/categories/items',
       this.updateBudgetCategoryItemHandler.bind(this)
     );
     server.delete(
-      '/categories/items/:itemId',
+      '/:budgetId/categories/items/:itemId',
       this.deleteBudgetCategoryItemHandler.bind(this)
     );
     server.get(
-      '/items/:itemId/transactions',
+      '/:budgetId/items/:itemId/transactions',
       this.getTransactionsHandler.bind(this)
     );
     server.get(
-      '/transactions/:transactionId',
+      '/:budgetId/transactions/:transactionId',
       this.getTransactionByIdHandler.bind(this)
     );
-    server.post('/transactions', this.createTransactionHandler.bind(this));
-    server.put('/transactions', this.updateTransactionHandler.bind(this));
+    server.post('/:budgetId/transactions', this.createTransactionHandler.bind(this));
+    server.put('/:budgetId/transactions', this.updateTransactionHandler.bind(this));
     server.delete(
-      '/transactions/:transactionId',
+      '/:budgetId/transactions/:transactionId',
       this.deleteTransactionHandler.bind(this)
     );
     server.get(
-      '/transaction-types',
+      '/transaction/types',
       this.getTransactionTypesHandler.bind(this)
     );
     server.get(
-      '/transaction-types/:transactionId',
+      '/transaction/types/:transactionId',
       this.getTransactionTypeByIdHandler.bind(this)
     );
     server.post(
-      '/transaction-types',
+      '/transaction/types',
       this.createTransactionTypeHandler.bind(this)
     );
     server.put(
-      '/transaction-types',
+      '/transaction/types',
       this.updateTransactionTypeHandler.bind(this)
     );
     server.delete(
-      '/transaction-types/:transactionId',
+      '/transaction/types/:transactionId',
       this.deleteTransactionTypeHandler.bind(this)
     );
   }
