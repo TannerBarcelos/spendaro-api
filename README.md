@@ -23,7 +23,9 @@ The Spendaro API is a RESTful service designed to manage financial data for the 
 - Reporting and analytics
 
 >[!NOTE]
-> Our API adheres to the OpenAPI Specification, automatically generating documentation that is rendered using Scalar for an interactive, user-friendly experience.​​​​​​​​​​​​​​​​
+> The API adheres to the OpenAPI Specification, automatically generating documentation that is rendered using Scalar for an interactive, user-friendly experience.​​​​​​​​​​​​​​​​
+> Go to `http://localhost:8010/docs` and you will be able to understand all the APIs
+> and how to consume them.
 
 ## Getting Started
 
