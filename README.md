@@ -22,6 +22,9 @@ The Spendaro API is a RESTful service designed to manage financial data for the 
 - Category management
 - Reporting and analytics
 
+>[!NOTE]
+> Our API adheres to the OpenAPI Specification, automatically generating documentation that is rendered using Scalar for an interactive, user-friendly experience.​​​​​​​​​​​​​​​​
+
 ## Getting Started
 
 To get started with the Spendaro API, follow these steps:
