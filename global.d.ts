@@ -1,14 +1,15 @@
-import 'fastify';
-import { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
-import * as schema from './src/db/schema';
-import * as relations from './src/db/relations';
-import { AuthService } from '@/services/auth-service';
+import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 
-declare module '@scalar/fastify-api-reference';
+import "fastify";
+
+import type * as relations from "./src/db/relations";
+import type * as schema from "./src/db/schema";
+
+declare module "@scalar/fastify-api-reference";
 
 type MergedSchema = schema.SchemaType & relations.RelationsType;
 
-declare module 'fastify' {
+declare module "fastify" {
   interface FastifyInstance {
     db: PostgresJsDatabase<MergedSchema>;
     authenticate: (
@@ -18,7 +19,7 @@ declare module 'fastify' {
   }
 }
 
-declare module '@fastify/jwt' {
+declare module "@fastify/jwt" {
   interface FastifyJWT {
     // the type of the payload to be signed
     payload: {
@@ -35,7 +36,7 @@ declare module '@fastify/jwt' {
 declare namespace NodeJS {
   interface ProcessEnv {
     DATABASE_URL: string;
-    NODE_ENV: 'development' | 'production';
+    NODE_ENV: "development" | "production";
     DB_HOST: string;
     DB_USER: string;
     DB_PASSWORD: string;
@@ -43,4 +44,3 @@ declare namespace NodeJS {
     JWT_SECRET: string;
   }
 }
-

@@ -22,8 +22,8 @@ The Spendaro API is a RESTful service designed to manage financial data for the 
 - Category management
 - Reporting and analytics
 
->[!NOTE]
-> The API adheres to the OpenAPI Specification, automatically generating documentation that is rendered using Scalar for an interactive, user-friendly experience.​​​​​​​​​​​​​​​​
+> [!NOTE]
+> The API adheres to the OpenAPI Specification, automatically generating documentation that is rendered using Scalar for an interactive, user-friendly experience.
 > Go to `http://localhost:8010/docs` and you will be able to understand all the APIs
 > and how to consume them.
 
@@ -32,40 +32,43 @@ The Spendaro API is a RESTful service designed to manage financial data for the 
 To get started with the Spendaro API, follow these steps:
 
 1. **Clone the repository:**
-    ```bash
-    git clone https://github.com/tannerbarcelos/spendaro-api.git
-    ```
+   ```bash
+   git clone https://github.com/tannerbarcelos/spendaro-api.git
+   ```
 2. **Navigate to the project directory:**
-    ```bash
-    cd spendaro-api
-    ```
+   ```bash
+   cd spendaro-api
+   ```
 3. **Install dependencies:**
-    ```bash
-    pnpm install
-    ```
+
+   ```bash
+   pnpm install
+   ```
 
 4. **Set up environment variables:**
-    Create a `.env` file in the root of the project and add the following environment variables:
+   Create a `.env` file in the root of the project and add the following environment variables:
 
-    ```env
-      NODE_ENV=
-      DB_HOST=
-      DB_USER=
-      DB_PASSWORD=
-      DB_NAME=
-      JWT_SECRET= <generate using `openssl rand -base64 32`>
-    ```
-    > Note: Replace the values with your own database connection details. 
-    > * You can use a local database or a cloud-hosted database like Supabase.
-    > * If you're using Supabase, you can find your database connection details in the "Settings" tab of your Supabase project.
-    > * **Docker support is coming soon so this can be automated**
+   ```env
+     NODE_ENV=
+     DB_HOST=
+     DB_USER=
+     DB_PASSWORD=
+     DB_NAME=
+     JWT_SECRET= <generate using `openssl rand -base64 32`>
+   ```
+
+   > Note: Replace the values with your own database connection details.
+   >
+   > - You can use a local database or a cloud-hosted database like Supabase.
+   > - If you're using Supabase, you can find your database connection details in the "Settings" tab of your Supabase project.
+   > - **Docker support is coming soon so this can be automated**
 
 5. **Start the server:**
-    ```bash
-    pnpm dev
-    ```
+   ```bash
+   pnpm dev
+   ```
 6. **Test the API:**
-    Import the [Postman collection](Spendaro.postman_collection.json) into Postman to test the API endpoints and explore the available features.
+   Import the [Postman collection](Spendaro.postman_collection.json) into Postman to test the API endpoints and explore the available features.
 
 > Docker support is coming soon!
 
@@ -74,10 +77,12 @@ To get started with the Spendaro API, follow these steps:
 Here are some of the key endpoints available in the Spendaro API:
 
 - **User Authentication:**
+
   - `POST /api/v1/auth/signup` - Signup a new user
   - `POST /api/v1/auth/signin` - Signin an existing user
 
 - **Budgets:**
+
   - `GET /api/v1/budgets/` - Get all budgets
   - `POST /api/v1/budgets/` - Create a new budget
   - `GET /api/v1/budgets/:id` - Get a specific budget
@@ -85,6 +90,7 @@ Here are some of the key endpoints available in the Spendaro API:
   - `DELETE /api/v1/budgets/:id` - Delete a budget
 
 - **Expenses: (coming soon)**
+
   - `GET /api/v1/expenses` - Get all expenses
   - `POST /api/v1/expenses` - Create a new expense
   - `GET /api/v1/expenses/:id` - Get a specific expense
@@ -92,6 +98,7 @@ Here are some of the key endpoints available in the Spendaro API:
   - `DELETE /api/v1/expenses/:id` - Delete an expense
 
 - **Categories:**
+
   - `GET /api/v1/budgets/categories` - Get all categories
   - `POST /api/v1/budgets/categories` - Create a new category
   - `GET /api/v1/budgets/categories/:id` - Get a specific category

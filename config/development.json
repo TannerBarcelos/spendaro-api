@@ -1,18 +1,18 @@
 {
-    "server": {
-        "port": 8010,
-        "api": {
-            "prefix": "/api",
-            "version": "v1"
-        },
-        "logging": {
-            "level": "debug"
-        }
+  "server": {
+    "port": 8010,
+    "api": {
+      "prefix": "/api",
+      "version": "v1"
     },
-    "security": {
-        "jwt": {
-            "salt_rounds": 10,
-            "expires_in": "10m"
-        }
+    "logging": {
+      "level": "debug"
     }
+  },
+  "security": {
+    "jwt": {
+      "salt_rounds": 10,
+      "expires_in": "10m"
+    }
+  }
 }

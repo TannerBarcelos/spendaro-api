@@ -1,20 +1,20 @@
 {
+  "extends": "@tsconfig/node20/tsconfig.json",
   "compilerOptions": {
     "target": "ESNext",
-    "module": "Node16",
-    "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
-    "strict": true,
-    "skipLibCheck": true,
     "baseUrl": ".",
-    "outDir": "./dist",
-    "declaration": true,
+    "module": "Node16",
     "paths": {
       "@/*": [
         "./src/*"
       ]
-    }
+    },
+    "strict": true,
+    "declaration": true,
+    "outDir": "./dist",
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true
   },
-  "extends": "@tsconfig/node20/tsconfig.json",
-  "include": ["src/**/*.ts","global.d.ts", "src/plugins/verify", "migrate.ts"],
+  "include": ["src/**/*.ts", "global.d.ts", "src/plugins/verify", "migrate.ts"]
 }

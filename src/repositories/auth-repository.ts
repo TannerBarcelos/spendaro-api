@@ -1,13 +1,16 @@
+import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
+import type { MergedSchema } from "global";
+
+import { eq } from "drizzle-orm";
+
+import type { TUser, TUserResult } from "@/db/types";
+
 import { users } from "@/db/schema";
-import { TUser, TUserResult } from "@/db/types";
-import { eq } from 'drizzle-orm';
-import { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
-import { MergedSchema } from "global";
 
 type TCommonUserResponse = Promise<TUserResult>;
 export interface IAuthRepository {
-  signup(user: TUser): TCommonUserResponse;
-  signin(user: Pick<TUser, 'email' | 'password'>): TCommonUserResponse;
+  signup: (user: TUser) => TCommonUserResponse;
+  signin: (user: Pick<TUser, "email" | "password">) => TCommonUserResponse;
 }
 
 class AuthRepository implements IAuthRepository {

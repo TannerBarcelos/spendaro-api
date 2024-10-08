@@ -1,10 +1,13 @@
-import { FastifyInstance } from 'fastify';
-import bcrypt from 'bcrypt';
-import config from 'config';
-import { IAuthRepository } from '@/repositories/auth-repository';
-import { TUser, TUserResult } from '@/db/types';
-import { SpendaroError } from '@/utils/error';
+import type { FastifyInstance } from "fastify";
+
+import bcrypt from "bcrypt";
+import config from "config";
 import { StatusCodes } from "http-status-codes";
+
+import type { TUser, TUserResult } from "@/db/types";
+import type { IAuthRepository } from "@/repositories/auth-repository";
+
+import { SpendaroError } from "@/utils/error";
 
 class AuthService {
   authRepo: IAuthRepository;
@@ -13,9 +16,10 @@ class AuthService {
     this.authRepo = authRepo;
     this.server = server;
   }
+
   async signup(user: TUser): Promise<TUserResult> {
     const salt = await bcrypt.genSalt(
-      Number(config.get('security.jwt.salt_rounds')) ?? 10
+      Number(config.get("security.jwt.salt_rounds")) ?? 10,
     );
     const hash = await bcrypt.hash(user.password, salt);
     return await this.authRepo.signup({
@@ -25,23 +29,23 @@ class AuthService {
   }
 
   async signin(
-    candidateUser: Pick<TUser, 'email' | 'password'>
+    candidateUser: Pick<TUser, "email" | "password">,
   ): Promise<TUserResult> {
     const signedInUser = await this.authRepo.signin(candidateUser);
 
     if (!signedInUser) {
-      throw new SpendaroError('User does not exist', StatusCodes.UNAUTHORIZED);
+      throw new SpendaroError("User does not exist", StatusCodes.UNAUTHORIZED);
     }
 
     const isValid = await bcrypt.compare(
       candidateUser.password,
-      signedInUser.password
+      signedInUser.password,
     );
 
     if (!isValid) {
       throw new SpendaroError(
-        'Invalid credentials. Passwords do not match.',
-        StatusCodes.UNAUTHORIZED
+        "Invalid credentials. Passwords do not match.",
+        StatusCodes.UNAUTHORIZED,
       );
     }
 

@@ -1,16 +1,19 @@
-//@ts-ignore
-import scalarOpenApiUi from '@scalar/fastify-api-reference';
-import config from 'config'; // NODE_ENV this server is running in will resolve to the appropriate config file in the config folder
-import fastify, { FastifyError, FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
-import { routes } from './routes';
-import dotenv from 'dotenv';
-import db from './db';
-import cors from '@fastify/cors';
-import { ALLOWED_METHODS, prepareResponse, STATUS_CODES } from './utils/http';
-import authenticate from './plugins/authenticate';
-import swagger from '@fastify/swagger';
-import { scalarOpenApiUiConfig, swaggerConfig } from './open-api';
+import type { FastifyInstance, FastifyRequest } from "fastify";
+
+import cors from "@fastify/cors"; // NODE_ENV this server is running in will resolve to the appropriate config file in the config folder
+import swagger from "@fastify/swagger";
+// @ts-expect-error @scalar/fastify-api-reference does not have types
+import scalarOpenApiUi from "@scalar/fastify-api-reference";
+import config from "config";
+import dotenv from "dotenv";
+import fastify from "fastify";
+
+import db from "./db";
 import { ErrorHandlers } from "./handlers/error-handlers";
+import { scalarOpenApiUiConfig, swaggerConfig } from "./open-api";
+import authenticate from "./plugins/authenticate";
+import { routes } from "./routes";
+import { ALLOWED_METHODS } from "./utils/http";
 
 dotenv.config();
 
@@ -18,7 +21,7 @@ const server = fastify({
   // Uses Pino for logging
   logger: {
     enabled: true,
-    level: config.get('server.logging.level'),
+    level: config.get("server.logging.level"),
   },
 });
 
@@ -27,14 +30,14 @@ server.setNotFoundHandler(ErrorHandlers.handleNotFoundError);
 
 registerServerPlugins(server);
 
-server.get('/healthz', async (request: FastifyRequest) => {
-  return { status: 'OK' };
+server.get("/healthz", async (_: FastifyRequest) => {
+  return { status: "OK" };
 });
 
-const apiRoutePrefix = `${config.get('server.api.prefix')}/${config.get('server.api.version')}`;
+const apiRoutePrefix = `${config.get("server.api.prefix")}/${config.get("server.api.version")}`;
 server.register(routes, { prefix: apiRoutePrefix });
 
-server.listen({ port: config.get('server.port') }, (err, address) => {
+server.listen({ port: config.get("server.port") }, (err, address) => {
   if (err) {
     console.error(err);
     process.exit(1);
@@ -47,7 +50,7 @@ function registerServerPlugins(server: FastifyInstance) {
   server.register(scalarOpenApiUi, scalarOpenApiUiConfig);
   server.register(authenticate);
   server.register(cors, {
-    origin: '*',
+    origin: "*",
     methods: ALLOWED_METHODS,
   });
   server.register(db);

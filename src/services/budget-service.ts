@@ -1,11 +1,11 @@
-import {
+import type {
   TBudget,
   TBudgetCategory,
   TBudgetCategoryItem,
   TTransaction,
   TTransactionType,
-} from '@/db/types';
-import { IBudgetRepository } from '@/repositories/budget-repository';
+} from "@/db/types";
+import type { IBudgetRepository } from "@/repositories/budget-repository";
 
 class BudgetService {
   private budget_repo: IBudgetRepository;
@@ -54,7 +54,7 @@ class BudgetService {
     return this.budget_repo.deleteBudgetCategory(user_id, category_id);
   }
 
-  getBudgetCategoryItems(user_id: number, budget_id:number, category_id: number) {
+  getBudgetCategoryItems(user_id: number, budget_id: number, category_id: number) {
     return this.budget_repo.getBudgetCategoryItems(user_id, budget_id, category_id);
   }
 
