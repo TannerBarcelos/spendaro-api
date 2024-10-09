@@ -1,5 +1,7 @@
 import type { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 
+import { SpendaroError } from "src/utils/error.js";
+
 import type {
   TBudget,
   TBudgetCategory,

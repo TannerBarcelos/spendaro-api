@@ -29,12 +29,12 @@ export class ErrorHandlers {
   ) {
     request.log.error(error); // send to Sentry or similar service to monitor errors
     reply
-      .status(error.statusCode || 500)
+      .status(error.statusCode || STATUS_CODES.INTERNAL_SERVER_ERROR)
       .send(
         prepareResponse(
           null,
-          error.statusCode || 500,
-          getReasonPhrase(error.statusCode || 500),
+          error.statusCode || STATUS_CODES.INTERNAL_SERVER_ERROR,
+          getReasonPhrase(error.statusCode || STATUS_CODES.INTERNAL_SERVER_ERROR),
           env.NODE_ENV === "development" ? error.stack : error.message,
         ),
       );
