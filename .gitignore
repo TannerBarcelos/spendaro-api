@@ -25,14 +25,6 @@ build/
 .env.test.local
 .env.production.local
 
-# IDEs and editors
-.idea/
-.vscode/
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-
 # MacOS
 .DS_Store
 
