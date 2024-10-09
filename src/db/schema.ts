@@ -19,7 +19,7 @@ export const budgets = pgTable("budgets", {
   user_id: integer("user_id").references(() => users.id, {
     onDelete: "cascade",
   }), // when a user is deleted, all their budgets should be deleted as well
-  budget_name: text("budget_name"),
+  budget_name: text("budget_name").notNull(),
   budget_description: text("budget_description").default(""),
   amount: integer("amount").default(0),
   createdAt: timestamp("created_at")

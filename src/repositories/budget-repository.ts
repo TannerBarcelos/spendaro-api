@@ -3,16 +3,21 @@ import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 import { and, eq } from "drizzle-orm";
 
 import type {
-  TBudget,
   TBudgetCategory,
   TBudgetCategoryItem,
   TBudgetCategoryItemResult,
   TBudgetCategoryResult,
   TBudgetResult,
+  TInsertBudget,
   TTransaction,
   TTransactionResult,
   TTransactionType,
   TTransactionTypeResult,
+  TUpdateBudget,
+  TUpdateBudgetCategory,
+  TUpdateBudgetCategoryItem,
+  TUpdateTransaction,
+  TUpdateTransactionType,
 } from "../db/types.js";
 
 import * as schema from "../db/schema.js";
@@ -23,12 +28,12 @@ type TCommonBudgetCategoryItemResponse = Promise<TBudgetCategoryItemResult>;
 type TCommonTransactionResponse = Promise<TTransactionResult>;
 type TCommonTransactionTypeResponse = Promise<TTransactionTypeResult>;
 
-interface IBudgetRepository {
+export interface IBudgetRepository {
   // Budgets
   getBudgets: (user_id: number) => Promise<Array<TBudgetResult>>;
   getBudgetById: (user_id: number, budget_id: number) => TCommonBudgetResponse;
-  createBudget: (budget: TBudget) => TCommonBudgetResponse;
-  updateBudget: (budget: TBudget) => TCommonBudgetResponse;
+  createBudget: (budget: TInsertBudget) => TCommonBudgetResponse;
+  updateBudget: (user_id: number, budget_id: number, budget_to_update: TUpdateBudget) => TCommonBudgetResponse;
   deleteBudget: (user_id: number, budget_id: number) => TCommonBudgetResponse;
 
   // Budget Categories
@@ -44,7 +49,7 @@ interface IBudgetRepository {
     category: TBudgetCategory
   ) => TCommonBudgetCategoryResponse;
   updateBudgetCategory: (
-    category: TBudgetCategory
+    category: TUpdateBudgetCategory
   ) => TCommonBudgetCategoryResponse;
   deleteBudgetCategory: (
     user_id: number,
@@ -67,7 +72,7 @@ interface IBudgetRepository {
     item: TBudgetCategoryItem
   ) => TCommonBudgetCategoryItemResponse;
   updateBudgetCategoryItem: (
-    item: TBudgetCategoryItem
+    item: TUpdateBudgetCategoryItem
   ) => TCommonBudgetCategoryItemResponse;
   deleteBudgetCategoryItem: (
     user_id: number,
@@ -88,7 +93,7 @@ interface IBudgetRepository {
   updateTransaction: (
     budget_id: number,
     transaction_id: number,
-    transaction: TTransaction
+    transaction: TUpdateTransaction
   ) => TCommonTransactionResponse;
   deleteTransaction: (
     budget_id: number,
@@ -104,14 +109,14 @@ interface IBudgetRepository {
     transaction_type: TTransactionType
   ) => TCommonTransactionTypeResponse;
   updateTransactionType: (
-    transaction_type: TTransactionType
+    transaction_type: TUpdateTransactionType
   ) => TCommonTransactionTypeResponse;
   deleteTransactionType: (
     transaction_type_id: number
   ) => TCommonTransactionTypeResponse;
 }
 
-class BudgetRepository implements IBudgetRepository {
+export class BudgetRepository implements IBudgetRepository {
   private db: PostgresJsDatabase<typeof schema>;
 
   constructor(db: PostgresJsDatabase<typeof schema>) {
@@ -141,7 +146,7 @@ class BudgetRepository implements IBudgetRepository {
     return budget;
   }
 
-  async createBudget(budget: TBudget): TCommonBudgetResponse {
+  async createBudget(budget: TInsertBudget): TCommonBudgetResponse {
     const [newBudget]: Array<TBudgetResult> = await this.db
       .insert(schema.budgets)
       .values(budget)
@@ -149,14 +154,14 @@ class BudgetRepository implements IBudgetRepository {
     return newBudget;
   }
 
-  async updateBudget(budget: TBudget): TCommonBudgetResponse {
+  async updateBudget(user_id: number, budget_id: number, budget_to_update: TUpdateBudget): TCommonBudgetResponse {
     const [updatedBudget]: Array<TBudgetResult> = await this.db
       .update(schema.budgets)
-      .set(budget)
+      .set(budget_to_update)
       .where(
         and(
-          eq(schema.budgets.id, budget.id!),
-          eq(schema.budgets.user_id, budget.user_id!),
+          eq(schema.budgets.id, budget_id),
+          eq(schema.budgets.user_id, user_id),
         ),
       )
       .returning();
@@ -387,5 +392,3 @@ class BudgetRepository implements IBudgetRepository {
     return deletedTransactionType;
   }
 }
-
-export { BudgetRepository, IBudgetRepository };

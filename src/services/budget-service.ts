@@ -1,9 +1,10 @@
 import type {
-  TBudget,
   TBudgetCategory,
   TBudgetCategoryItem,
+  TInsertBudget,
   TTransaction,
   TTransactionType,
+  TUpdateBudget,
 } from "../db/types.js";
 import type { IBudgetRepository } from "../repositories/budget-repository.js";
 
@@ -22,12 +23,12 @@ export class BudgetService {
     return this.budget_repo.getBudgetById(user_id, budget_id);
   }
 
-  createBudget(budget: TBudget) {
+  createBudget(budget: TInsertBudget) {
     return this.budget_repo.createBudget(budget);
   }
 
-  updateBudget(budget: TBudget) {
-    return this.budget_repo.updateBudget(budget);
+  updateBudget(user_id: number, budget_id: number, budget_to_update: TUpdateBudget) {
+    return this.budget_repo.updateBudget(user_id, budget_id, budget_to_update);
   }
 
   deleteBudget(user_id: number, budget_id: number) {

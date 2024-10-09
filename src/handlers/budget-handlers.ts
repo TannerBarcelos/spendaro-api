@@ -1,11 +1,12 @@
 import type { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 
 import type {
-  TBudget,
   TBudgetCategory,
   TBudgetCategoryItem,
+  TInsertBudget,
   TTransaction,
   TTransactionType,
+  TUpdateBudget,
 } from "../db/types.js";
 import type { BudgetService } from "../services/budget-service.js";
 
@@ -104,15 +105,15 @@ export class BudgetHandlers {
 
   async createBudgetHandler(
     request: FastifyRequest<{
-      Body: TBudget;
+      Body: TInsertBudget;
     }>,
     reply: FastifyReply,
   ) {
     try {
-      const budget = {
+      const budget: TInsertBudget = {
         ...request.body,
         user_id: request.user.user_id,
-      } as TBudget;
+      };
       const createdBudget = await this.budgetService.createBudget(budget);
       reply
         .status(STATUS_CODES.CREATED)
@@ -145,7 +146,7 @@ export class BudgetHandlers {
 
   async updateBudgetHandler(
     request: FastifyRequest<{
-      Body: TBudget;
+      Body: TUpdateBudget;
       Params: { budgetId: number };
     }>,
     reply: FastifyReply,
@@ -154,14 +155,11 @@ export class BudgetHandlers {
       const budgetPropertiesToUpdate = request.body;
       const budget_id = request.params.budgetId;
 
-      const budgetToUpdate = {
+      const budgetToUpdate: TUpdateBudget = {
         ...budgetPropertiesToUpdate,
-        id: budget_id,
-        user_id: request.user.user_id,
-      } as TBudget;
+      };
 
-      const updatedBudget
-        = await this.budgetService.updateBudget(budgetToUpdate);
+      const updatedBudget = await this.budgetService.updateBudget(request.user.user_id, budget_id, budgetToUpdate);
 
       if (!updatedBudget) {
         reply
@@ -213,8 +211,7 @@ export class BudgetHandlers {
   ) {
     try {
       const budget_id = request.params.budgetId;
-      const user_id = request.user.user_id;
-      const deletedBudget = await this.budgetService.deleteBudget(user_id, budget_id);
+      const deletedBudget = await this.budgetService.deleteBudget(request.user.user_id, budget_id);
 
       if (!deletedBudget) {
         reply
