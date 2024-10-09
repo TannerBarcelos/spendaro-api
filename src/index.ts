@@ -2,22 +2,18 @@ import type { FastifyInstance, FastifyRequest } from "fastify";
 
 import cors from "@fastify/cors";
 import swagger from "@fastify/swagger";
-import scalarOpenApiUi from "@scalar/fastify-api-reference";
+import scalar from "@scalar/fastify-api-reference";
 import config from "config";
-import dotenv from "dotenv";
 import fastify from "fastify";
 
 import db from "./db/index.js";
 import { ErrorHandlers } from "./handlers/error-handlers.js";
-import { scalarOpenApiUiConfig, swaggerConfig } from "./open-api.js";
+import { swaggerConfig } from "./open-api.js";
 import authenticate from "./plugins/authenticate.js";
 import { routes } from "./routes/index.js";
 import { ALLOWED_METHODS } from "./utils/http.js";
 
-dotenv.config();
-
 const server = fastify({
-  // Uses Pino for logging
   logger: {
     enabled: true,
     level: config.get("server.logging.level"),
@@ -46,7 +42,23 @@ server.listen({ port: config.get("server.port") }, (err, address) => {
 
 function registerServerPlugins(server: FastifyInstance) {
   server.register(swagger, swaggerConfig);
-  server.register(scalarOpenApiUi, scalarOpenApiUiConfig);
+  server.register(scalar, {
+    routePrefix: "/docs",
+    configuration: {
+      theme: "purple",
+      defaultHttpClient: {
+        targetKey: "javascript",
+        clientKey: "fetch",
+      },
+      metaData: {
+        title: "Spendaro API Docs",
+        description: "API documentation for the Spendaro API",
+        ogDescription: "API documentation for the Spendaro API",
+        ogTitle: "Spendaro API Docs",
+      },
+      defaultOpenAllTags: true,
+    },
+  });
   server.register(authenticate);
   server.register(cors, {
     origin: "*",

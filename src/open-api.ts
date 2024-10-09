@@ -45,21 +45,3 @@ export const swaggerConfig: SwaggerOptions = {
     ],
   },
 };
-
-export const scalarOpenApiUiConfig = {
-  routePrefix: "/docs",
-  configuration: {
-    theme: "purple",
-    defaultHttpClient: {
-      targetKey: "javascript",
-      clientKey: "fetch",
-    },
-    metaData: {
-      title: "Spendaro API Docs",
-      description: "API documentation for the Spendaro API",
-      ogDescription: "API documentation for the Spendaro API",
-      ogTitle: "Spendaro API Docs",
-    },
-    defaultOpenAllTags: true,
-  },
-};

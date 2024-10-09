@@ -5,8 +5,6 @@ import "fastify";
 import type * as relations from "./src/db/relations";
 import type * as schema from "./src/db/schema";
 
-declare module "@scalar/fastify-api-reference";
-
 type MergedSchema = schema.SchemaType & relations.RelationsType;
 
 declare module "fastify" {

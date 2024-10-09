@@ -1,4 +1,3 @@
-import dotenv from "dotenv";
 import { drizzle } from "drizzle-orm/postgres-js";
 import { migrate } from "drizzle-orm/postgres-js/migrator";
 import postgres from "postgres";
@@ -8,7 +7,6 @@ import { env } from "@/env.js";
 import * as relations from "./relations.js";
 import * as schema from "./schema.js";
 
-dotenv.config();
 const databaseUrl = `postgresql://${env.DB_USER}:${env.DB_PASSWORD}@${env.DB_HOST}:${env.DB_PORT}/${env.DB_NAME}`;
 
 if (!databaseUrl) {
