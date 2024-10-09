@@ -5,7 +5,10 @@ import postgres from "postgres";
 import { env } from "../env.js";
 import * as schema from "./schema.js";
 
-const databaseUrl = `postgresql://${env.DB_USER}:${env.DB_PASSWORD}@${env.DB_HOST}:${env.DB_PORT}/${env.DB_NAME}`;
+// Handles url with no password (default PostgreSQL setup)
+const databaseUrl = env.DB_PASSWORD.length > 0
+  ? `postgresql://${env.DB_USER}:${env.DB_PASSWORD}@${env.DB_HOST}:${env.DB_PORT}/${env.DB_NAME}`
+  : `postgresql://${env.DB_USER}@${env.DB_HOST}:${env.DB_PORT}/${env.DB_NAME}`;
 
 if (!databaseUrl) {
   throw new Error("DATABASE_URL must be set to connect to the database");

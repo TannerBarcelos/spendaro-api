@@ -10,7 +10,7 @@ import * as schema from "./schema.js";
 const postgresConnector: FastifyPluginCallback = async (fastify, _) => {
   try {
     const databaseUrl
-      = `postgresql://${env.DB_USER}:${env.DB_PASSWORD}@${env.DB_HOST}:5432/${env.DB_NAME}`
+      = `postgresql://${env.DB_USER}:${env.DB_PASSWORD}@${env.DB_HOST}:${env.DB_PORT}/${env.DB_NAME}`
       || "postgresql://postgres@localhost:5432/postgres";
 
     if (!databaseUrl) {
