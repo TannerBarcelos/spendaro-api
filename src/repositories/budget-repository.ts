@@ -1,5 +1,4 @@
 import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
-import type { MergedSchema } from "global.js";
 
 import { and, eq } from "drizzle-orm";
 
@@ -113,9 +112,9 @@ interface IBudgetRepository {
 }
 
 class BudgetRepository implements IBudgetRepository {
-  private db: PostgresJsDatabase<MergedSchema>;
+  private db: PostgresJsDatabase<typeof schema>;
 
-  constructor(db: PostgresJsDatabase<MergedSchema>) {
+  constructor(db: PostgresJsDatabase<typeof schema>) {
     this.db = db;
   }
 

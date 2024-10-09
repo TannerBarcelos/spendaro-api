@@ -10,7 +10,7 @@ export const users = pgTable("users", {
   password: text("password_hash").notNull(),
   createdAt: timestamp("created_at")
     .$defaultFn(() => new Date()),
-  updatedAt: timestamp("updated_at"),
+  updatedAt: timestamp("updated_at").$defaultFn(() => new Date()),
 });
 
 // This table is used to store the budgets that belong to a user
@@ -24,7 +24,7 @@ export const budgets = pgTable("budgets", {
   amount: integer("amount").default(0),
   createdAt: timestamp("created_at")
     .$defaultFn(() => new Date()),
-  updatedAt: timestamp("updated_at"),
+  updatedAt: timestamp("updated_at").$defaultFn(() => new Date()),
 });
 
 // This table is used to store the categories that belong to a budget
@@ -37,7 +37,7 @@ export const budget_categories = pgTable("budget_categories", {
   category_description: text("category_description").default(""),
   createdAt: timestamp("created_at")
     .$defaultFn(() => new Date()),
-  updatedAt: timestamp("updated_at"),
+  updatedAt: timestamp("updated_at").$defaultFn(() => new Date()),
 });
 
 // This table is used to store the items that belong to a budget category
@@ -51,7 +51,7 @@ export const budget_category_items = pgTable("budget_category_items", {
   item_amount: integer("item_amount").default(0),
   createdAt: timestamp("created_at")
     .$defaultFn(() => new Date()),
-  updatedAt: timestamp("updated_at"),
+  updatedAt: timestamp("updated_at").$defaultFn(() => new Date()),
 });
 
 // This table is used to store the types of transactions that can be made on a budget category item i.e. income, expense, etc. (not using enum as users can add their own transaction types)
@@ -60,7 +60,7 @@ export const transaction_types = pgTable("transaction_types", {
   transaction_type: text("transaction_type"),
   createdAt: timestamp("created_at")
     .$defaultFn(() => new Date()),
-  updatedAt: timestamp("updated_at"),
+  updatedAt: timestamp("updated_at").$defaultFn(() => new Date()),
 });
 
 // This table is used to store the transactions made and assign them to a budget category item
@@ -81,7 +81,7 @@ export const transactions = pgTable("transactions", {
   ), // when a transaction type is deleted, we should set the transaction type id to null since transactions should still persist
   createdAt: timestamp("created_at")
     .$defaultFn(() => new Date()),
-  updatedAt: timestamp("updated_at"),
+  updatedAt: timestamp("updated_at").$defaultFn(() => new Date()),
 });
 
 export const usersRelations = relations(users, ({ many }) => ({
