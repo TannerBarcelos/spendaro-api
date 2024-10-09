@@ -3,7 +3,7 @@ import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 
 import "fastify";
 
-import * as schema from "./src/db/schema.js";
+import * as schema from "./src/db/schema.ts";
 
 declare module "fastify" {
   interface FastifyInstance {

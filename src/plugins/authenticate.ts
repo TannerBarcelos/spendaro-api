@@ -16,7 +16,7 @@ const authenticate: FastifyPluginCallback = async (
   fastify: FastifyInstance,
   _: FastifyPluginOptions,
 ) => {
-  const secret = env.JWT_SECRET ?? "jwtsupersecretkey";
+  const secret = env.JWT_SECRET;
   // Register the fastify-jwt plugin and adds a decorator to the fastify instance
   fastify.register(jwt, {
     secret,
@@ -31,7 +31,7 @@ const authenticate: FastifyPluginCallback = async (
     "authenticate",
     async (request: FastifyRequest, reply: FastifyReply) => {
       try {
-        await request.jwtVerify();
+        await request.jwtVerify(); // returns { user_id: user_id_from_token } if successful
       }
       catch (err) {
         reply.status(STATUS_CODES.UNAUTHORIZED).send(err);
