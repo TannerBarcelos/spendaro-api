@@ -201,12 +201,12 @@ export class BudgetHandlers {
 
   async deleteBudgetHandler(
     request: FastifyRequest<{
-      Params: { budgetId: number };
+      Params: { budget_id: number };
     }>,
     reply: FastifyReply,
   ) {
     try {
-      const budget_id = request.params.budgetId;
+      const budget_id = request.params.budget_id;
       const deletedBudget = await this.budgetService.deleteBudget(request.user.user_id, budget_id);
 
       if (!deletedBudget) {
@@ -779,15 +779,15 @@ export class BudgetHandlers {
 
   async deleteTransactionHandler(
     request: FastifyRequest<{
-      Params: { transactionId: number; budgetId: number };
+      Params: { transactionId: number; budget_id: number };
     }>,
     reply: FastifyReply,
   ) {
     try {
       const transactionId = request.params.transactionId;
-      const budgetId = request.params.budgetId;
+      const budget_id = request.params.budget_id;
       const deletedTransaction = await this.budgetService.deleteTransaction(
-        budgetId,
+        budget_id,
         transactionId,
       );
       reply.send(
@@ -1174,44 +1174,44 @@ export class BudgetHandlers {
       this.deleteBudgetCategoryHandler.bind(this),
     );
     server.get(
-      "/:budgetId/categories/:categoryId/items",
+      "/:budget_id/categories/:category_id/items",
       this.getBudgetCategoryItemsHandler.bind(this),
     );
     server.get(
-      "/:budgetId/categories/items/:itemId",
+      "/:budget_id/categories/:category_id/items/:itemId",
       this.getBudgetCategoryItemByIdHandler.bind(this),
     );
     server.post(
-      "/:budgetId/categories/items",
+      "/:budget_id/categories/:category_id/items",
       this.createBudgetCategoryItemHandler.bind(this),
     );
     server.put(
-      "/:budgetId/categories/items",
+      "/:budget_id/categories/:category_id/items/:itemId",
       this.updateBudgetCategoryItemHandler.bind(this),
     );
     server.delete(
-      "/:budgetId/categories/items/:itemId",
+      "/:budget_id/categories/:category_id/items/:itemId",
       this.deleteBudgetCategoryItemHandler.bind(this),
     );
 
     server.get(
-      "/:budgetId/transactions",
+      "/:budget_id/transactions",
       this.getTransactionsHandler.bind(this),
     );
     server.get(
-      "/:budgetId/transactions/:transactionId",
+      "/:budget_id/transactions/:transactionId",
       this.getTransactionByIdHandler.bind(this),
     );
     server.post(
-      "/:budgetId/transactions",
+      "/:budget_id/transactions",
       this.createTransactionHandler.bind(this),
     );
     server.put(
-      "/:budgetId/transactions/:transactionId",
+      "/:budget_id/transactions/:transactionId",
       this.updateTransactionHandler.bind(this),
     );
     server.delete(
-      "/:budgetId/transactions/:transactionId",
+      "/:budget_id/transactions/:transactionId",
       this.deleteTransactionHandler.bind(this),
     );
 
