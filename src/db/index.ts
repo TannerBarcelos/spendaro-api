@@ -1,4 +1,4 @@
-import type { FastifyPluginCallback } from "fastify";
+import type { FastifyInstance, FastifyPluginCallback } from "fastify";
 
 import { drizzle } from "drizzle-orm/postgres-js";
 import fp from "fastify-plugin";
@@ -7,7 +7,7 @@ import postgres from "postgres";
 import { env } from "../env.js";
 import * as schema from "./schema.js";
 
-const postgresConnector: FastifyPluginCallback = async (fastify, _) => {
+const postgresConnector: FastifyPluginCallback = async (fastify: FastifyInstance) => {
   try {
     const databaseUrl
       = `postgresql://${env.DB_USER}:${env.DB_PASSWORD}@${env.DB_HOST}:${env.DB_PORT}/${env.DB_NAME}`
