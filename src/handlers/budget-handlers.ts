@@ -1,7 +1,5 @@
 import type { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 
-import { SpendaroError } from "src/utils/error.js";
-
 import type {
   TBudget,
   TBudgetCategory,
@@ -13,7 +11,7 @@ import type { BudgetService } from "../services/budget-service.js";
 
 import { prepareResponse, STATUS_CODES } from "../utils/http.js";
 
-class BudgetHandlers {
+export class BudgetHandlers {
   private budgetService: BudgetService;
 
   constructor(budgetService: BudgetService) {
@@ -1257,5 +1255,3 @@ class BudgetHandlers {
     );
   }
 }
-
-export { BudgetHandlers };

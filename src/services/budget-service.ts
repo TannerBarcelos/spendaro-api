@@ -7,7 +7,7 @@ import type {
 } from "../db/types.js";
 import type { IBudgetRepository } from "../repositories/budget-repository.js";
 
-class BudgetService {
+export class BudgetService {
   private budget_repo: IBudgetRepository;
 
   constructor(budget_repo: IBudgetRepository) {
@@ -118,5 +118,3 @@ class BudgetService {
     return this.budget_repo.deleteTransactionType(transaction_id);
   }
 }
-
-export { BudgetService };

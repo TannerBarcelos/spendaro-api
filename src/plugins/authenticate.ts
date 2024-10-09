@@ -1,7 +1,6 @@
 import type {
   FastifyInstance,
   FastifyPluginCallback,
-  FastifyPluginOptions,
   FastifyReply,
   FastifyRequest,
 } from "fastify";
@@ -14,12 +13,10 @@ import { STATUS_CODES } from "../utils/http.js";
 
 const authenticate: FastifyPluginCallback = async (
   fastify: FastifyInstance,
-  _: FastifyPluginOptions,
 ) => {
-  const secret = env.JWT_SECRET;
   // Register the fastify-jwt plugin and adds a decorator to the fastify instance
   fastify.register(jwt, {
-    secret,
+    secret: env.JWT_SECRET,
     cookie: {
       cookieName: "token",
       signed: false,
@@ -31,7 +28,7 @@ const authenticate: FastifyPluginCallback = async (
     "authenticate",
     async (request: FastifyRequest, reply: FastifyReply) => {
       try {
-        await request.jwtVerify(); // returns { user_id: user_id_from_token } if successful
+        await request.jwtVerify(); // adds a user object to the request if the JWT is valid, containing the decoded JWT payload (which is just the user ID in our case since that's all we stored in the token when we signed it)
       }
       catch (err) {
         reply.status(STATUS_CODES.UNAUTHORIZED).send(err);

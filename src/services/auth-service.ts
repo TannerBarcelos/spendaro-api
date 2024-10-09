@@ -7,7 +7,7 @@ import type { IAuthRepository } from "../repositories/auth-repository.js";
 
 import { SpendaroError } from "../utils/error.js";
 
-class AuthService {
+export class AuthService {
   authRepo: IAuthRepository;
   server: FastifyInstance;
   constructor(server: FastifyInstance, authRepo: IAuthRepository) {
@@ -44,5 +44,3 @@ class AuthService {
     return signedInUser;
   }
 }
-
-export { AuthService };

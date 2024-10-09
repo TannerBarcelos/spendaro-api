@@ -9,11 +9,7 @@ import type { AuthService } from "../services/auth-service.js";
 import { insertUserSchema } from "../db/types.js";
 import { prepareResponse, STATUS_CODES } from "../utils/http.js";
 
-const sharedJwtSigningConfig = {
-  expiresIn: config.get<string>("security.jwt.expires_in") ?? "15m",
-};
-
-class AuthHandlers {
+export class AuthHandlers {
   private authService: AuthService;
 
   constructor(authService: AuthService) {
@@ -27,7 +23,9 @@ class AuthHandlers {
       {
         user_id: signedUpUser.id,
       },
-      sharedJwtSigningConfig,
+      {
+        expiresIn: config.get<string>("security.jwt.expires_in") ?? "15m",
+      },
     );
     reply.send(
       prepareResponse(
@@ -222,5 +220,3 @@ class AuthHandlers {
     );
   }
 }
-
-export { AuthHandlers };
