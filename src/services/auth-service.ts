@@ -4,10 +4,10 @@ import bcrypt from "bcrypt";
 import config from "config";
 import { StatusCodes } from "http-status-codes";
 
-import type { TUser, TUserResult } from "@/db/types.js";
-import type { IAuthRepository } from "@/repositories/auth-repository.js";
+import type { TUser, TUserResult } from "../db/types.js";
+import type { IAuthRepository } from "../repositories/auth-repository.js";
 
-import { SpendaroError } from "@/utils/error.js";
+import { SpendaroError } from "../utils/error.js";
 
 class AuthService {
   authRepo: IAuthRepository;

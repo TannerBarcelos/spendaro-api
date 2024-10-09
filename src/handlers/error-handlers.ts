@@ -2,9 +2,8 @@ import type { FastifyError, FastifyReply, FastifyRequest } from "fastify";
 
 import { getReasonPhrase } from "http-status-codes";
 
-import { prepareResponse, STATUS_CODES } from "@/utils/http.js";
-
 import { env } from "../env.js";
+import { prepareResponse, STATUS_CODES } from "../utils/http.js";
 
 export class ErrorHandlers {
   static async handleNotFoundError(

@@ -9,8 +9,8 @@ import type {
 import jwt from "@fastify/jwt";
 import fp from "fastify-plugin";
 
-import { env } from "@/env.js";
-import { STATUS_CODES } from "@/utils/http.js";
+import { env } from "../env.js";
+import { STATUS_CODES } from "../utils/http.js";
 
 const authenticate: FastifyPluginCallback = async (
   fastify: FastifyInstance,
