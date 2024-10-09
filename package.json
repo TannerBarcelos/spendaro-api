@@ -1,5 +1,6 @@
 {
   "name": "spendaro-api",
+  "type": "module",
   "version": "1.0.0",
   "description": "Official Spendaro Budgeting App API Server",
   "main": "index.js",
@@ -20,6 +21,7 @@
     "@scalar/fastify-api-reference": "^1.25.27",
     "@scalar/themes": "^0.9.33",
     "@scalar/types": "^0.0.12",
+    "@t3-oss/env-core": "^0.11.1",
     "@types/bcrypt": "^5.0.2",
     "bcrypt": "^5.1.1",
     "config": "^3.3.12",

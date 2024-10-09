@@ -1,19 +1,18 @@
 import type { FastifyInstance, FastifyRequest } from "fastify";
 
-import cors from "@fastify/cors"; // NODE_ENV this server is running in will resolve to the appropriate config file in the config folder
+import cors from "@fastify/cors";
 import swagger from "@fastify/swagger";
-// @ts-expect-error @scalar/fastify-api-reference does not have types
 import scalarOpenApiUi from "@scalar/fastify-api-reference";
 import config from "config";
 import dotenv from "dotenv";
 import fastify from "fastify";
 
-import db from "./db";
-import { ErrorHandlers } from "./handlers/error-handlers";
-import { scalarOpenApiUiConfig, swaggerConfig } from "./open-api";
-import authenticate from "./plugins/authenticate";
-import { routes } from "./routes";
-import { ALLOWED_METHODS } from "./utils/http";
+import db from "./db/index.js";
+import { ErrorHandlers } from "./handlers/error-handlers.js";
+import { scalarOpenApiUiConfig, swaggerConfig } from "./open-api.js";
+import authenticate from "./plugins/authenticate.js";
+import { routes } from "./routes/index.js";
+import { ALLOWED_METHODS } from "./utils/http.js";
 
 dotenv.config();
 

@@ -6,10 +6,10 @@ import type {
   TBudgetCategoryItem,
   TTransaction,
   TTransactionType,
-} from "@/db/types";
-import type { BudgetService } from "@/services/budget-service";
+} from "@/db/types.js";
+import type { BudgetService } from "@/services/budget-service.js";
 
-import { prepareResponse, STATUS_CODES } from "@/utils/http";
+import { prepareResponse, STATUS_CODES } from "@/utils/http.js";
 
 class BudgetHandlers {
   private budgetService: BudgetService;
@@ -181,7 +181,7 @@ class BudgetHandlers {
         .send(
           prepareResponse(
             updatedBudget,
-            STATUS_CODES.UPDATE,
+            STATUS_CODES.OK,
             "Budget updated successfully",
             null,
           ),
@@ -619,8 +619,9 @@ class BudgetHandlers {
   ) {
     try {
       const item_id = request.params.item_id;
+      const user_id = request.user.user_id;
       const deletedItem
-        = await this.budgetService.deleteBudgetCategoryItem(item_id);
+        = await this.budgetService.deleteBudgetCategoryItem(user_id, item_id);
       reply.send(
         prepareResponse(
           deletedItem,

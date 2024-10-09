@@ -4,13 +4,15 @@ import { drizzle } from "drizzle-orm/postgres-js";
 import fp from "fastify-plugin";
 import postgres from "postgres";
 
-import * as relations from "./relations";
-import * as schema from "./schema";
+import { env } from "@/env.js";
+
+import * as relations from "./relations.js";
+import * as schema from "./schema.js";
 
 const postgresConnector: FastifyPluginCallback = async (fastify, _) => {
   try {
     const databaseUrl
-      = `postgresql://${process.env.DB_USER}:${process.env.DB_PASSWORD}@${process.env.DB_HOST}:5432/${process.env.DB_NAME}`
+      = `postgresql://${env.DB_USER}:${env.DB_PASSWORD}@${env.DB_HOST}:5432/${env.DB_NAME}`
       || "postgresql://postgres@localhost:5432/postgres";
 
     if (!databaseUrl) {

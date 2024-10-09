@@ -3,7 +3,8 @@
   "compilerOptions": {
     "target": "ESNext",
     "baseUrl": ".",
-    "module": "Node16",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
     "paths": {
       "@/*": [
         "./src/*"
@@ -16,5 +17,5 @@
     "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true
   },
-  "include": ["src/**/*.ts", "global.d.ts", "src/plugins/verify", "migrate.ts"]
+  "include": ["src/**/*.ts", "global.d.ts", "src/plugins/verify", "src/db/migrate.ts", "src/env.ts"]
 }

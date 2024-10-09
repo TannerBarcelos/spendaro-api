@@ -3,11 +3,13 @@ import { drizzle } from "drizzle-orm/postgres-js";
 import { migrate } from "drizzle-orm/postgres-js/migrator";
 import postgres from "postgres";
 
-import * as relations from "./src/db/relations";
-import * as schema from "./src/db/schema";
+import { env } from "@/env.js";
+
+import * as relations from "./relations.js";
+import * as schema from "./schema.js";
 
 dotenv.config();
-const databaseUrl = `postgresql://${process.env.DB_USER}:${process.env.DB_PASSWORD}@${process.env.DB_HOST}:5432/${process.env.DB_NAME}`;
+const databaseUrl = `postgresql://${env.DB_USER}:${env.DB_PASSWORD}@${env.DB_HOST}:${env.DB_PORT}/${env.DB_NAME}`;
 
 if (!databaseUrl) {
   throw new Error("DATABASE_URL must be set to connect to the database");

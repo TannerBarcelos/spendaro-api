@@ -9,13 +9,14 @@ import type {
 import jwt from "@fastify/jwt";
 import fp from "fastify-plugin";
 
-import { STATUS_CODES } from "@/utils/http";
+import { env } from "@/env.js";
+import { STATUS_CODES } from "@/utils/http.js";
 
 const authenticate: FastifyPluginCallback = async (
   fastify: FastifyInstance,
   _: FastifyPluginOptions,
 ) => {
-  const secret = process.env.JWT_SECRET ?? "jwtsupersecretkey";
+  const secret = env.JWT_SECRET ?? "jwtsupersecretkey";
   // Register the fastify-jwt plugin and adds a decorator to the fastify instance
   fastify.register(jwt, {
     secret,
