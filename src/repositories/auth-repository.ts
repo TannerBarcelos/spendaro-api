@@ -20,7 +20,7 @@ class AuthRepository implements IAuthRepository {
     this.db = db;
   }
 
-  async signin(candidateUser: TUser): TCommonUserResponse {
+  async signin(candidateUser: Pick<TUser, "email" | "password">): TCommonUserResponse {
     const [foundUser]: Array<TUserResult> = await this.db
       .select()
       .from(users)
