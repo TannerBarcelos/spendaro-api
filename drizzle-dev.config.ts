@@ -4,7 +4,7 @@ import { env } from "./src/env.ts";
 
 // https://orm.drizzle.team/docs/migrations
 export default defineConfig({
-  schema: "./src/db/schema",
+  schema: "./src/db/schema.ts",
   out: "./src/db/migrations",
   dialect: "postgresql",
   dbCredentials: {

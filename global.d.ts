@@ -3,7 +3,7 @@ import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 import "fastify";
 
 import type * as relations from "./src/db/schema/relations.ts";
-import type * as schema from "./src/db/schema/schema.ts";
+import type * as schema from "./src/db/schema.ts";
 
 type MergedSchema = typeof schema & typeof relations;
 

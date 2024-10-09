@@ -5,7 +5,7 @@ import { eq } from "drizzle-orm";
 
 import type { TUser, TUserResult } from "../db/types.js";
 
-import { users } from "../db/schema/schema.js";
+import { users } from "../db/schema.ts";
 
 type TCommonUserResponse = Promise<TUserResult>;
 export interface IAuthRepository {

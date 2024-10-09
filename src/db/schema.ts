@@ -1,3 +1,4 @@
+import { relations } from "drizzle-orm";
 import { date, integer, pgTable, serial, text, timestamp, varchar } from "drizzle-orm/pg-core";
 
 // This table is used to store the users of the application
@@ -82,3 +83,48 @@ export const transactions = pgTable("transactions", {
     .$defaultFn(() => new Date()),
   updatedAt: timestamp("updated_at"),
 });
+
+export const usersRelations = relations(users, ({ many }) => ({
+  budgets: many(budgets),
+}));
+
+export const budgetsRelations = relations(budgets, ({ one, many }) => ({
+  user: one(users, {
+    fields: [budgets.user_id],
+    references: [users.id],
+  }),
+  categories: many(budget_categories),
+}));
+
+export const budgetCategoriesRelations = relations(
+  budget_categories,
+  ({ one, many }) => ({
+    budget: one(budgets, {
+      fields: [budget_categories.budget_id],
+      references: [budgets.id],
+    }),
+    budget_category_items: many(budget_category_items),
+  }),
+);
+
+export const budgetCategoryItemsRelations = relations(
+  budget_category_items,
+  ({ one, many }) => ({
+    category: one(budget_categories, {
+      fields: [budget_category_items.category_id],
+      references: [budget_categories.id],
+    }),
+    transactions: many(transactions), // an item in a category can have N transactions, so we need to establish a one-to-many relationship for N transactions to one item
+  }),
+);
+
+export const transactionsRelations = relations(
+  transactions,
+  ({ one }) => ({
+    budget: one(budgets, {
+      fields: [transactions.budget_id],
+      references: [budgets.id],
+    }),
+    transaction_type: one(transaction_types),
+  }),
+);

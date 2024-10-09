@@ -3,8 +3,7 @@ import { migrate } from "drizzle-orm/postgres-js/migrator";
 import postgres from "postgres";
 
 import { env } from "../env.js";
-import * as relations from "./schema/relations.js";
-import * as schema from "./schema/schema.js";
+import * as schema from "./schema.js";
 
 const databaseUrl = `postgresql://${env.DB_USER}:${env.DB_PASSWORD}@${env.DB_HOST}:${env.DB_PORT}/${env.DB_NAME}`;
 
@@ -14,7 +13,7 @@ if (!databaseUrl) {
 
 const client = postgres(databaseUrl);
 const db = drizzle(client, {
-  schema: { ...schema, ...relations },
+  schema: { ...schema },
 });
 
 async function main() {

@@ -5,8 +5,7 @@ import fp from "fastify-plugin";
 import postgres from "postgres";
 
 import { env } from "../env.js";
-import * as relations from "./schema/relations.js";
-import * as schema from "./schema/schema.js";
+import * as schema from "./schema.js";
 
 const postgresConnector: FastifyPluginCallback = async (fastify, _) => {
   try {
@@ -21,10 +20,10 @@ const postgresConnector: FastifyPluginCallback = async (fastify, _) => {
     // Create a postgres client and a drizzle instance (from docs https://arc.net/l/quote/poktxass)
     const client = postgres(databaseUrl);
     const db = drizzle(client, {
-      schema: { ...schema, ...relations },
+      schema: { ...schema },
     });
 
-    // Decorate the fastify instance with the database object so we can access it on the fastify instance
+    // Decorate the fastify instance with the database object so we can access it on the fastify instance in our repositories
     fastify.decorate<typeof db>("db", db);
 
     console.log("Connected to the database");
