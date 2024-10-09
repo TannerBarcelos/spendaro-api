@@ -16,7 +16,7 @@ import type {
   TTransactionTypeResult,
 } from "../db/types.js";
 
-import * as schema from "../db/schema.js";
+import * as schema from "../db/schema/schema.js";
 
 type TCommonBudgetResponse = Promise<TBudgetResult>;
 type TCommonBudgetCategoryResponse = Promise<TBudgetCategoryResult>;

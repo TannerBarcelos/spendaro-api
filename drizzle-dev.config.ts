@@ -4,7 +4,7 @@ import { env } from "./src/env.ts";
 
 // https://orm.drizzle.team/docs/migrations
 export default defineConfig({
-  schema: "./src/db/schema.ts",
+  schema: "./src/db/schema",
   out: "./src/db/migrations",
   dialect: "postgresql",
   dbCredentials: {
@@ -12,5 +12,7 @@ export default defineConfig({
     user: env.DB_USER,
     password: env.DB_PASSWORD,
     database: env.DB_NAME,
+    ssl: false,
+    port: Number(env.DB_PORT),
   },
 });

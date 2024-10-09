@@ -1,4 +1,4 @@
-import * as schema from "./schema.js";
+import * as schema from "./schema/schema.js";
 
 // Inferring Zod schemas from the tables so we can use it in application code to validate data.
 // Also inferring the types so we can use them in function arguments and return types.
