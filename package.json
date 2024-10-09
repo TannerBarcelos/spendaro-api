@@ -6,12 +6,12 @@
   "main": "index.js",
   "scripts": {
     "build": "tsc -p tsconfig.json",
-    "dev": "tsc -w src/index.ts",
+    "dev": "tsx watch src/index.ts",
     "start": "node dist/index.js",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "db:generate-migration": "drizzle-kit generate",
-    "db:migrate": "tsnd -r tsconfig-paths/register migrate.ts",
+    "db:migrate": "tsx src/db/migrate.ts",
     "db:seed": "src/db/seed.ts"
   },
   "dependencies": {
@@ -31,10 +31,9 @@
     "fastify-api-reference": "link:@types/@scalar/fastify-api-reference",
     "fastify-plugin": "^5.0.1",
     "http-status-codes": "^2.3.0",
-    "nodemon": "^3.1.7",
     "postgres": "^3.4.4",
-    "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0",
+    "vite-node": "^2.1.2",
     "zod": "^3.23.8"
   },
   "devDependencies": {
@@ -45,7 +44,10 @@
     "drizzle-kit": "^0.24.2",
     "eslint": "^9.12.0",
     "eslint-plugin-format": "^0.1.2",
+    "nodemon": "^3.1.7",
+    "ts-node": "^10.9.2",
     "ts-node-dev": "^2.0.0",
+    "tsx": "^4.19.1",
     "typescript": "^5.6.2"
   }
 }
