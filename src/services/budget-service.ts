@@ -4,8 +4,8 @@ import type {
   TBudgetCategoryItem,
   TTransaction,
   TTransactionType,
-} from "@/db/types";
-import type { IBudgetRepository } from "@/repositories/budget-repository";
+} from "@/db/types.js";
+import type { IBudgetRepository } from "@/repositories/budget-repository.js";
 
 class BudgetService {
   private budget_repo: IBudgetRepository;

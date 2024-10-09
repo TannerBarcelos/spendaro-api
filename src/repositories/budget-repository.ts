@@ -1,5 +1,5 @@
 import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
-import type { MergedSchema } from "global";
+import type { MergedSchema } from "global.js";
 
 import { and, eq } from "drizzle-orm";
 
@@ -14,9 +14,9 @@ import type {
   TTransactionResult,
   TTransactionType,
   TTransactionTypeResult,
-} from "@/db/types";
+} from "@/db/types.js";
 
-import * as schema from "@/db/schema";
+import * as schema from "@/db/schema.js";
 
 type TCommonBudgetResponse = Promise<TBudgetResult>;
 type TCommonBudgetCategoryResponse = Promise<TBudgetCategoryResult>;
