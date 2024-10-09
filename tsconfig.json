@@ -2,11 +2,11 @@
   "extends": "@tsconfig/node20/tsconfig.json",
   "compilerOptions": {
     "target": "ESNext",
-    "baseUrl": "./src",
+    "baseUrl": ".",
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
     "paths": {
-      "@/*": ["*"]
+      "@/*": ["src/*"]
     },
     "resolveJsonModule": true,
     "strict": true,

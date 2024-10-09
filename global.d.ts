@@ -5,7 +5,7 @@ import "fastify";
 import type * as relations from "./src/db/relations";
 import type * as schema from "./src/db/schema";
 
-type MergedSchema = schema.SchemaType & relations.RelationsType;
+type MergedSchema = typeof schema & typeof relations;
 
 declare module "fastify" {
   interface FastifyInstance {
