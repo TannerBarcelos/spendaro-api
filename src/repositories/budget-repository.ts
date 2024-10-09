@@ -38,21 +38,21 @@ export interface IBudgetRepository {
 
   // Budget Categories
   getBudgetCategories: (
-    user_id: number,
     budget_id: number
   ) => Promise<Array<TBudgetCategoryResult>>;
   getBudgetCategoryById: (
-    user_id: number,
+    budget_category_id: number,
     category_id: number
   ) => TCommonBudgetCategoryResponse;
   createBudgetCategory: (
     category: TBudgetCategory
   ) => TCommonBudgetCategoryResponse;
   updateBudgetCategory: (
+    budget_id: number,
+    category_id: number,
     category: TUpdateBudgetCategory
   ) => TCommonBudgetCategoryResponse;
   deleteBudgetCategory: (
-    user_id: number,
     categoryId: number
   ) => TCommonBudgetCategoryResponse;
 
@@ -194,12 +194,13 @@ export class BudgetRepository implements IBudgetRepository {
   }
 
   async getBudgetCategoryById(
-    categoryId: number,
+    budget_id: number,
+    cateogry_id: number,
   ): TCommonBudgetCategoryResponse {
     const [category]: Array<TBudgetCategoryResult> = await this.db
       .select()
       .from(schema.budget_categories)
-      .where(eq(schema.budget_categories.id, categoryId));
+      .where(and(eq(schema.budget_categories.id, cateogry_id), eq(schema.budget_categories.budget_id, budget_id)));
     return category;
   }
 
@@ -214,22 +215,24 @@ export class BudgetRepository implements IBudgetRepository {
   }
 
   async updateBudgetCategory(
-    category: TBudgetCategory,
+    budget_id: number,
+    category_id: number,
+    category_to_update: TUpdateBudgetCategory,
   ): TCommonBudgetCategoryResponse {
     const [updatedCategory]: Array<TBudgetCategoryResult> = await this.db
       .update(schema.budget_categories)
-      .set(category)
-      .where(eq(schema.budget_categories.id, category.id!))
+      .set(category_to_update)
+      .where(and(eq(schema.budget_categories.id, category_id), eq(schema.budget_categories.budget_id, budget_id)))
       .returning();
     return updatedCategory;
   }
 
   async deleteBudgetCategory(
-    categoryId: number,
+    category_id: number,
   ): TCommonBudgetCategoryResponse {
     const [deletedCategory]: Array<TBudgetCategoryResult> = await this.db
       .delete(schema.budget_categories)
-      .where(eq(schema.budget_categories.id, categoryId))
+      .where(eq(schema.budget_categories.id, category_id))
       .returning();
     return deletedCategory;
   }

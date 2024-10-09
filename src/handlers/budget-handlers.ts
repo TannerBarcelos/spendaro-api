@@ -7,6 +7,7 @@ import type {
   TTransaction,
   TTransactionType,
   TUpdateBudget,
+  TUpdateBudgetCategory,
 } from "../db/types.js";
 import type { BudgetService } from "../services/budget-service.js";
 
@@ -59,9 +60,7 @@ export class BudgetHandlers {
     reply: FastifyReply,
   ) {
     try {
-      const user_id = request.user.user_id;
-      const budget_id = request.params.budget_id;
-      const budget = await this.budgetService.getBudgetById(user_id, budget_id);
+      const budget = await this.budgetService.getBudgetById(request.user.user_id, request.params.budget_id);
       if (!budget) {
         reply
           .status(STATUS_CODES.NOT_FOUND)
@@ -147,19 +146,16 @@ export class BudgetHandlers {
   async updateBudgetHandler(
     request: FastifyRequest<{
       Body: TUpdateBudget;
-      Params: { budgetId: number };
+      Params: { budget_id: number };
     }>,
     reply: FastifyReply,
   ) {
     try {
-      const budgetPropertiesToUpdate = request.body;
-      const budget_id = request.params.budgetId;
-
       const budgetToUpdate: TUpdateBudget = {
-        ...budgetPropertiesToUpdate,
+        ...request.body,
       };
 
-      const updatedBudget = await this.budgetService.updateBudget(request.user.user_id, budget_id, budgetToUpdate);
+      const updatedBudget = await this.budgetService.updateBudget(request.user.user_id, request.params.budget_id, budgetToUpdate);
 
       if (!updatedBudget) {
         reply
@@ -253,15 +249,13 @@ export class BudgetHandlers {
 
   async getBudgetCategoriesHandler(
     request: FastifyRequest<{
-      Params: { budgetId: number };
+      Params: { budget_id: number };
     }>,
     reply: FastifyReply,
   ) {
     try {
-      const budget_id = request.params.budgetId;
-      const user_id = request.user.user_id;
       const categories
-        = await this.budgetService.getBudgetCategories(user_id, budget_id);
+        = await this.budgetService.getBudgetCategories(request.params.budget_id);
       reply.send(
         prepareResponse(
           categories,
@@ -289,15 +283,13 @@ export class BudgetHandlers {
 
   async getBudgetCategoryByIdHandler(
     request: FastifyRequest<{
-      Params: { category_id: number };
+      Params: { category_id: number; budget_id: number };
     }>,
     reply: FastifyReply,
   ) {
     try {
-      const category_id = request.params.category_id;
-      const user_id = request.user.user_id;
       const category
-        = await this.budgetService.getBudgetCategoryById(user_id, category_id);
+        = await this.budgetService.getBudgetCategoryById(request.params.budget_id, request.params.category_id);
       reply.send(
         prepareResponse(
           category,
@@ -325,17 +317,18 @@ export class BudgetHandlers {
 
   async createBudgetCategoryHandler(
     request: FastifyRequest<{
-      Body: TBudgetCategory;
+      Body: Pick<TBudgetCategory, "category_name" | "category_description">; // the request body should only contain the category_name and category_description as the budget_id will be taken from the URL params (but it is a FK to the budgets table, hence it is required in the database schema and used in the insert query)
+      Params: { budget_id: number };
     }>,
     reply: FastifyReply,
   ) {
     try {
       const category = request.body;
-      const user_id = request.user.user_id;
-      const new_category = {
+      const budget_id = request.params.budget_id;
+      const new_category: TBudgetCategory = {
         ...category,
-        user_id,
-      } as TBudgetCategory;
+        budget_id,
+      };
       const createdCategory
         = await this.budgetService.createBudgetCategory(new_category);
       reply.send(
@@ -365,19 +358,14 @@ export class BudgetHandlers {
 
   async updateBudgetCategoryHandler(
     request: FastifyRequest<{
-      Body: TBudgetCategory;
+      Body: TUpdateBudgetCategory;
+      Params: { category_id: number; budget_id: number };
     }>,
     reply: FastifyReply,
   ) {
     try {
-      const category = request.body;
-      const user_id = request.user.user_id;
-      const category_to_update = {
-        ...category,
-        user_id,
-      } as TBudgetCategory;
       const updatedCategory
-        = await this.budgetService.updateBudgetCategory(category_to_update);
+        = await this.budgetService.updateBudgetCategory(request.params.budget_id, request.params.category_id, request.body);
 
       if (!updatedCategory) {
         reply.send(
@@ -422,10 +410,8 @@ export class BudgetHandlers {
     reply: FastifyReply,
   ) {
     try {
-      const category_id = request.params.category_id;
-      const user_id = request.user.user_id;
       const deletedCategory
-        = await this.budgetService.deleteBudgetCategory(user_id, category_id);
+        = await this.budgetService.deleteBudgetCategory(request.params.category_id);
 
       if (!deletedCategory) {
         reply.send(
@@ -1013,7 +999,7 @@ export class BudgetHandlers {
       },
       this.getBudgetsHandler.bind(this),
     );
-    server.get("/:budgetId", {
+    server.get("/:budget_id", {
       schema: {
         description: "This endpoint will return the budget with the specified id",
         tags: ["budgets"],
@@ -1021,7 +1007,7 @@ export class BudgetHandlers {
         params: {
           type: "object",
           properties: {
-            budgetId: { type: "number" },
+            budget_id: { type: "number" },
           },
         },
         response: {},
@@ -1044,7 +1030,7 @@ export class BudgetHandlers {
         response: {},
       },
     }, this.createBudgetHandler.bind(this));
-    server.put("/:budgetId", {
+    server.put("/:budget_id", {
       schema: {
         description: "This endpoint will update the budget with the specified id",
         tags: ["budgets"],
@@ -1052,7 +1038,7 @@ export class BudgetHandlers {
         params: {
           type: "object",
           properties: {
-            budgetId: { type: "number" },
+            budget_id: { type: "number" },
           },
         },
         body: {
@@ -1066,7 +1052,7 @@ export class BudgetHandlers {
         response: {},
       },
     }, this.updateBudgetHandler.bind(this));
-    server.delete("/:budgetId", {
+    server.delete("/:budget_id", {
       schema: {
         description: "This endpoint will delete the budget with the specified id",
         tags: ["budgets"],
@@ -1074,15 +1060,14 @@ export class BudgetHandlers {
         params: {
           type: "object",
           properties: {
-            budgetId: { type: "number" },
+            budget_id: { type: "number" },
           },
         },
         response: {},
       },
     }, this.deleteBudgetHandler.bind(this));
-
     server.get(
-      "/:budgetId/categories",
+      "/:budget_id/categories",
       {
         schema: {
           description: "This endpoint will return all the categories for the budget with the specified id",
@@ -1091,7 +1076,7 @@ export class BudgetHandlers {
           params: {
             type: "object",
             properties: {
-              budgetId: { type: "number" },
+              budget_id: { type: "number" },
             },
           },
           response: {},
@@ -1100,7 +1085,7 @@ export class BudgetHandlers {
       this.getBudgetCategoriesHandler.bind(this),
     );
     server.get(
-      "/:budgetId/categories/:categoryId",
+      "/:budget_id/categories/:category_id",
       {
         schema: {
           description: "This endpoint will return the category with the specified id",
@@ -1109,8 +1094,8 @@ export class BudgetHandlers {
           params: {
             type: "object",
             properties: {
-              categoryId: { type: "number" },
-              budgetId: { type: "number" },
+              category_id: { type: "number" },
+              budget_id: { type: "number" },
             },
           },
           response: {},
@@ -1119,7 +1104,7 @@ export class BudgetHandlers {
       this.getBudgetCategoryByIdHandler.bind(this),
     );
     server.post(
-      "/:budgetId/categories",
+      "/:budget_id/categories",
       {
         schema: {
           description: "This endpoint will create a new category for the budget with the specified id",
@@ -1128,7 +1113,7 @@ export class BudgetHandlers {
           params: {
             type: "object",
             properties: {
-              budgetId: { type: "number" },
+              budget_id: { type: "number" },
             },
           },
           body: {
@@ -1144,7 +1129,7 @@ export class BudgetHandlers {
       this.createBudgetCategoryHandler.bind(this),
     );
     server.put(
-      "/:budgetId/categories",
+      "/:budget_id/categories/:category_id",
       {
         schema: {
           description: "This endpoint will update the category with the specified id",
@@ -1153,7 +1138,8 @@ export class BudgetHandlers {
           params: {
             type: "object",
             properties: {
-              categoryId: { type: "number" },
+              category_id: { type: "number" },
+              budget_id: { type: "number" },
             },
           },
           body: {
@@ -1169,7 +1155,7 @@ export class BudgetHandlers {
       this.updateBudgetCategoryHandler.bind(this),
     );
     server.delete(
-      "/:budgetId/categories/:categoryId",
+      "/:budget_id/categories/:category_id",
       {
         schema: {
           description: "This endpoint will delete the category with the specified id",
@@ -1178,8 +1164,8 @@ export class BudgetHandlers {
           params: {
             type: "object",
             properties: {
-              categoryId: { type: "number" },
-              budgetId: { type: "number" },
+              category_id: { type: "number" },
+              budget_id: { type: "number" },
             },
           },
           response: {},
@@ -1187,7 +1173,6 @@ export class BudgetHandlers {
       },
       this.deleteBudgetCategoryHandler.bind(this),
     );
-
     server.get(
       "/:budgetId/categories/:categoryId/items",
       this.getBudgetCategoryItemsHandler.bind(this),

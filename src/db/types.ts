@@ -41,7 +41,7 @@ export const insertBudgetCategorySchema = createInsertSchema(
   createdAt: true,
   updatedAt: true,
 });
-export const updateBudgetCategorySchema = insertBudgetCategorySchema.partial();
+export const updateBudgetCategorySchema = insertBudgetCategorySchema.partial().omit({ budget_id: true });
 export type TBudgetCategory = z.infer<typeof insertBudgetCategorySchema>;
 export type TUpdateBudgetCategory = z.infer<typeof updateBudgetCategorySchema>;
 

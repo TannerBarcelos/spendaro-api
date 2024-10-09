@@ -5,6 +5,7 @@ import type {
   TTransaction,
   TTransactionType,
   TUpdateBudget,
+  TUpdateBudgetCategory,
 } from "../db/types.js";
 import type { IBudgetRepository } from "../repositories/budget-repository.js";
 
@@ -35,24 +36,24 @@ export class BudgetService {
     return this.budget_repo.deleteBudget(user_id, budget_id);
   }
 
-  getBudgetCategories(user_id: number, budget_id: number) {
-    return this.budget_repo.getBudgetCategories(user_id, budget_id);
+  getBudgetCategories(budget_id: number) {
+    return this.budget_repo.getBudgetCategories(budget_id);
   }
 
-  getBudgetCategoryById(user_id: number, category_id: number) {
-    return this.budget_repo.getBudgetCategoryById(user_id, category_id);
+  getBudgetCategoryById(budget_id: number, category_id: number) {
+    return this.budget_repo.getBudgetCategoryById(budget_id, category_id);
   }
 
   createBudgetCategory(category: TBudgetCategory) {
     return this.budget_repo.createBudgetCategory(category);
   }
 
-  updateBudgetCategory(category: TBudgetCategory) {
-    return this.budget_repo.updateBudgetCategory(category);
+  updateBudgetCategory(budget_id: number, category_id: number, category: TUpdateBudgetCategory) {
+    return this.budget_repo.updateBudgetCategory(budget_id, category_id, category);
   }
 
-  deleteBudgetCategory(user_id: number, category_id: number) {
-    return this.budget_repo.deleteBudgetCategory(user_id, category_id);
+  deleteBudgetCategory(category_id: number) {
+    return this.budget_repo.deleteBudgetCategory(category_id);
   }
 
   getBudgetCategoryItems(user_id: number, budget_id: number, category_id: number) {
