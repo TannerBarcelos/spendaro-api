@@ -5,6 +5,7 @@ import swagger from "@fastify/swagger";
 import scalar from "@scalar/fastify-api-reference";
 import config from "config";
 import fastify from "fastify";
+import { fastifyBcrypt } from "fastify-bcrypt";
 
 import db from "./db/index.js";
 import { ErrorHandlers } from "./handlers/error-handlers.js";
@@ -58,6 +59,9 @@ function registerServerPlugins(server: FastifyInstance) {
       },
       defaultOpenAllTags: true,
     },
+  });
+  server.register(fastifyBcrypt, {
+    saltWorkFactor: config.get("security.jwt.salt_rounds"),
   });
   server.register(authenticate);
   server.register(cors, {

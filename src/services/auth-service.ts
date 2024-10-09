@@ -1,7 +1,5 @@
 import type { FastifyInstance } from "fastify";
 
-import bcrypt from "bcrypt";
-import config from "config";
 import { StatusCodes } from "http-status-codes";
 
 import type { TUser, TUserResult } from "../db/types.js";
@@ -18,13 +16,10 @@ class AuthService {
   }
 
   async signup(user: TUser): Promise<TUserResult> {
-    const salt = await bcrypt.genSalt(
-      Number(config.get("security.jwt.salt_rounds")) ?? 10,
-    );
-    const hash = await bcrypt.hash(user.password, salt);
+    const hashedPassword = await this.server.bcrypt.hash(user.password);
     return await this.authRepo.signup({
       ...user,
-      password: hash,
+      password: hashedPassword,
     });
   }
 
@@ -37,10 +32,7 @@ class AuthService {
       throw new SpendaroError("User does not exist", StatusCodes.UNAUTHORIZED);
     }
 
-    const isValid = await bcrypt.compare(
-      candidateUser.password,
-      signedInUser.password,
-    );
+    const isValid = await this.server.bcrypt.compare(candidateUser.password, signedInUser.password);
 
     if (!isValid) {
       throw new SpendaroError(
