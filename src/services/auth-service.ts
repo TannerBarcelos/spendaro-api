@@ -2,10 +2,10 @@ import type { FastifyInstance } from "fastify";
 
 import { StatusCodes } from "http-status-codes";
 
-import type { TInsertUser, TUserResult } from "@/db/types.js";
-import type { IAuthRepository } from "@/repositories/auth-repository.js";
+import type { TInsertUser, TUserResult } from "@/db/types";
+import type { IAuthRepository } from "@/repositories/auth-repository";
 
-import { SpendaroError } from "@/utils/error.js";
+import { SpendaroError } from "@/utils/error";
 
 export class AuthService {
   authRepo: IAuthRepository;

@@ -4,8 +4,8 @@
     "target": "ESNext",
     "moduleDetection": "force",
     "baseUrl": ".",
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",
+    "module": "Preserve",
+    "moduleResolution": "Bundler",
     "paths": {
       "@/*": ["src/*"]
     },

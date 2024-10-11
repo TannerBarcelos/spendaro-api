@@ -3,11 +3,11 @@ import type { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import config from "config";
 import { getReasonPhrase } from "http-status-codes";
 
-import type { TInsertUser } from "@/db/types.js";
-import type { AuthService } from "@/services/auth-service.js";
+import type { TInsertUser } from "@/db/types";
+import type { AuthService } from "@/services/auth-service";
 
-import { insertUserSchema } from "@/db/types.js";
-import { prepareResponse, STATUS_CODES } from "@/utils/http.js";
+import { insertUserSchema } from "@/db/types";
+import { prepareResponse, STATUS_CODES } from "@/utils/http";
 
 export class AuthHandlers {
   private authService: AuthService;

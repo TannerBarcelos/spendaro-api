@@ -18,9 +18,9 @@ import type {
   TUpdateBudgetCategoryItem,
   TUpdateTransaction,
   TUpdateTransactionType,
-} from "@/db/types.js";
+} from "@/db/types";
 
-import * as schema from "@/db/schema.js";
+import * as schema from "@/db/schema";
 
 type TCommonBudgetResponse = Promise<TBudgetResult>;
 type TCommonBudgetCategoryResponse = Promise<TBudgetCategoryResult>;
@@ -72,6 +72,7 @@ export interface IBudgetRepository {
     item: TBudgetCategoryItem
   ) => TCommonBudgetCategoryItemResponse;
   updateBudgetCategoryItem: (
+    item_id: number,
     item: TUpdateBudgetCategoryItem
   ) => TCommonBudgetCategoryItemResponse;
   deleteBudgetCategoryItem: (
@@ -109,6 +110,7 @@ export interface IBudgetRepository {
     transaction_type: TTransactionType
   ) => TCommonTransactionTypeResponse;
   updateTransactionType: (
+    type_id: number,
     transaction_type: TUpdateTransactionType
   ) => TCommonTransactionTypeResponse;
   deleteTransactionType: (
@@ -267,12 +269,13 @@ export class BudgetRepository implements IBudgetRepository {
   }
 
   async updateBudgetCategoryItem(
-    item: TBudgetCategoryItem,
+    item_id: number,
+    item: TUpdateBudgetCategoryItem,
   ): TCommonBudgetCategoryItemResponse {
     const [updatedItem]: Array<TBudgetCategoryItemResult> = await this.db
       .update(schema.budget_category_items)
       .set(item)
-      .where(eq(schema.budget_category_items.id, item.id!))
+      .where(eq(schema.budget_category_items.id, item_id))
       .returning();
     return updatedItem;
   }
@@ -325,7 +328,7 @@ export class BudgetRepository implements IBudgetRepository {
   async updateTransaction(
     budget_id: number,
     transaction_id: number,
-    transaction: TTransaction,
+    transaction: TUpdateTransaction,
   ): TCommonTransactionResponse {
     const [updatedTransaction]: Array<TTransactionResult> = await this.db
       .update(schema.transactions)
@@ -373,13 +376,14 @@ export class BudgetRepository implements IBudgetRepository {
   }
 
   async updateTransactionType(
-    transaction: TTransactionType,
+    type_id: number,
+    type: TTransactionType,
   ): TCommonTransactionTypeResponse {
     const [updatedTransactionType]: Array<TTransactionTypeResult>
       = await this.db
         .update(schema.transaction_types)
-        .set(transaction)
-        .where(eq(schema.transaction_types.id, transaction.id!))
+        .set(type)
+        .where(eq(schema.transaction_types.id, type_id))
         .returning();
     return updatedTransactionType;
   }

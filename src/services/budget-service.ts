@@ -6,8 +6,9 @@ import type {
   TTransactionType,
   TUpdateBudget,
   TUpdateBudgetCategory,
-} from "@/db/types.js";
-import type { IBudgetRepository } from "@/repositories/budget-repository.js";
+  TUpdateTransactionType,
+} from "@/db/types";
+import type { IBudgetRepository } from "@/repositories/budget-repository";
 
 export class BudgetService {
   private budget_repo: IBudgetRepository;
@@ -68,8 +69,8 @@ export class BudgetService {
     return this.budget_repo.createBudgetCategoryItem(item);
   }
 
-  updateBudgetCategoryItem(item: TBudgetCategoryItem) {
-    return this.budget_repo.updateBudgetCategoryItem(item);
+  updateBudgetCategoryItem(item_id: number, item: TBudgetCategoryItem) {
+    return this.budget_repo.updateBudgetCategoryItem(item_id, item);
   }
 
   deleteBudgetCategoryItem(user_id: number, item_id: number) {
@@ -112,8 +113,8 @@ export class BudgetService {
     return this.budget_repo.createTransactionType(transaction);
   }
 
-  updateTransactionType(transaction: TTransactionType) {
-    return this.budget_repo.updateTransactionType(transaction);
+  updateTransactionType(type_id: number, transaction: TUpdateTransactionType) {
+    return this.budget_repo.updateTransactionType(type_id, transaction);
   }
 
   deleteTransactionType(transaction_id: number) {

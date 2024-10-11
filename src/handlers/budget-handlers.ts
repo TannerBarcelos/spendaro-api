@@ -8,10 +8,10 @@ import type {
   TTransactionType,
   TUpdateBudget,
   TUpdateBudgetCategory,
-} from "@/db/types.js";
-import type { BudgetService } from "@/services/budget-service.js";
+} from "@/db/types";
+import type { BudgetService } from "@/services/budget-service";
 
-import { prepareResponse, STATUS_CODES } from "@/utils/http.js";
+import { prepareResponse, STATUS_CODES } from "@/utils/http";
 
 export class BudgetHandlers {
   private budgetService: BudgetService;
@@ -562,13 +562,15 @@ export class BudgetHandlers {
   async updateBudgetCategoryItemHandler(
     request: FastifyRequest<{
       Body: TBudgetCategoryItem;
+      Params: { item_id: number };
     }>,
     reply: FastifyReply,
   ) {
     try {
+      const item_id = request.params.item_id;
       const item = request.body;
       const updatedItem
-        = await this.budgetService.updateBudgetCategoryItem(item);
+        = await this.budgetService.updateBudgetCategoryItem(item_id, item);
       reply.send(
         prepareResponse(
           updatedItem,
@@ -919,13 +921,15 @@ export class BudgetHandlers {
   async updateTransactionTypeHandler(
     request: FastifyRequest<{
       Body: TTransactionType;
+      Params: { type_id: number };
     }>,
     reply: FastifyReply,
   ) {
     try {
+      const type_id = request.params.type_id;
       const transactionType = request.body;
       const updatedTransactionType
-        = await this.budgetService.updateTransactionType(transactionType);
+        = await this.budgetService.updateTransactionType(type_id, transactionType);
       reply.send(
         prepareResponse(
           updatedTransactionType,
