@@ -2,9 +2,9 @@ import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 
 import { eq } from "drizzle-orm";
 
-import type { TInsertUser, TUserResult } from "../db/types.js";
+import type { TInsertUser, TUserResult } from "@/db/types.js";
 
-import * as schema from "../db/schema.js";
+import * as schema from "@/db/schema.js";
 
 type TCommonUserResponse = Promise<TUserResult>;
 export interface IAuthRepository {

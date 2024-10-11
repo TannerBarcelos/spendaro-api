@@ -2,10 +2,15 @@
   "extends": "@tsconfig/node20/tsconfig.json",
   "compilerOptions": {
     "target": "ESNext",
+    "moduleDetection": "force",
     "baseUrl": ".",
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
+    "paths": {
+      "@/*": ["src/*"]
+    },
     "resolveJsonModule": true,
+    "allowJs": true,
     "strict": true,
     "declaration": true,
     "noEmit": false,
@@ -14,7 +19,12 @@
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
+    "isolatedModules": true,
     "skipLibCheck": true
+  },
+  "tsc-alias": {
+    "verbose": false,
+    "resolveFullPaths": true
   },
   "include": ["src/**/*", "global.d.ts"]
 }

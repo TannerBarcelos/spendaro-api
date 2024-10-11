@@ -8,10 +8,10 @@ import type {
   TTransactionType,
   TUpdateBudget,
   TUpdateBudgetCategory,
-} from "../db/types.js";
-import type { BudgetService } from "../services/budget-service.js";
+} from "@/db/types.js";
+import type { BudgetService } from "@/services/budget-service.js";
 
-import { prepareResponse, STATUS_CODES } from "../utils/http.js";
+import { prepareResponse, STATUS_CODES } from "@/utils/http.js";
 
 export class BudgetHandlers {
   private budgetService: BudgetService;

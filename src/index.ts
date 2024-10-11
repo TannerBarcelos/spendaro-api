@@ -7,12 +7,12 @@ import config from "config";
 import fastify from "fastify";
 import { fastifyBcrypt } from "fastify-bcrypt";
 
-import db from "./db/index.js";
-import { ErrorHandlers } from "./handlers/error-handlers.js";
-import { swaggerConfig } from "./open-api.js";
-import authenticate from "./plugins/authenticate.js";
-import { routes } from "./routes/index.js";
-import { ALLOWED_METHODS } from "./utils/http.js";
+import db from "@/db/index.js";
+import { ErrorHandlers } from "@/handlers/error-handlers.js";
+import { swaggerConfig } from "@/open-api.js";
+import authenticate from "@/plugins/authenticate.js";
+import { routes } from "@/routes/index.js";
+import { ALLOWED_METHODS } from "@/utils/http.js";
 
 const server = fastify({
   logger: {

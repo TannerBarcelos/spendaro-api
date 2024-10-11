@@ -18,9 +18,9 @@ import type {
   TUpdateBudgetCategoryItem,
   TUpdateTransaction,
   TUpdateTransactionType,
-} from "../db/types.js";
+} from "@/db/types.js";
 
-import * as schema from "../db/schema.js";
+import * as schema from "@/db/schema.js";
 
 type TCommonBudgetResponse = Promise<TBudgetResult>;
 type TCommonBudgetCategoryResponse = Promise<TBudgetCategoryResult>;

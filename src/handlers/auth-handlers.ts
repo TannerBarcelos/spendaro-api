@@ -3,11 +3,11 @@ import type { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import config from "config";
 import { getReasonPhrase } from "http-status-codes";
 
-import type { TUser } from "../db/types.js";
-import type { AuthService } from "../services/auth-service.js";
+import type { TInsertUser } from "@/db/types.js";
+import type { AuthService } from "@/services/auth-service.js";
 
-import { insertUserSchema } from "../db/types.js";
-import { prepareResponse, STATUS_CODES } from "../utils/http.js";
+import { insertUserSchema } from "@/db/types.js";
+import { prepareResponse, STATUS_CODES } from "@/utils/http.js";
 
 export class AuthHandlers {
   private authService: AuthService;
@@ -38,7 +38,7 @@ export class AuthHandlers {
   }
 
   async signinUserHandler(request: FastifyRequest, reply: FastifyReply) {
-    const user = request.body as Pick<TUser, "email" | "password">;
+    const user = request.body as Pick<TInsertUser, "email" | "password">;
     const signedInUser = await this.authService.signin(user);
 
     if (!signedInUser) {

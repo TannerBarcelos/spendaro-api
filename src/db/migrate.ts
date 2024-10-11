@@ -2,7 +2,8 @@ import { drizzle } from "drizzle-orm/postgres-js";
 import { migrate } from "drizzle-orm/postgres-js/migrator";
 import postgres from "postgres";
 
-import { env } from "../env.js";
+import { env } from "@/env.js";
+
 import * as schema from "./schema.js";
 
 // Handles url with no password (default PostgreSQL setup)

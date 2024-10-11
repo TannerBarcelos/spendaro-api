@@ -6,8 +6,8 @@ import type {
   TTransactionType,
   TUpdateBudget,
   TUpdateBudgetCategory,
-} from "../db/types.js";
-import type { IBudgetRepository } from "../repositories/budget-repository.js";
+} from "@/db/types.js";
+import type { IBudgetRepository } from "@/repositories/budget-repository.js";
 
 export class BudgetService {
   private budget_repo: IBudgetRepository;
