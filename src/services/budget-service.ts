@@ -37,23 +37,23 @@ export class BudgetService {
     return this.budget_repo.deleteBudget(user_id, budget_id);
   }
 
-  getBudgetCategories(budget_id: number) {
+  getBudgetCategories(user_id: number, budget_id: number) {
     return this.budget_repo.getBudgetCategories(budget_id);
   }
 
-  getBudgetCategoryById(budget_id: number, category_id: number) {
+  getBudgetCategoryById(user_id: number, budget_id: number, category_id: number) {
     return this.budget_repo.getBudgetCategoryById(budget_id, category_id);
   }
 
-  createBudgetCategory(category: TBudgetCategory) {
+  createBudgetCategory(user_id: number, category: TBudgetCategory) {
     return this.budget_repo.createBudgetCategory(category);
   }
 
-  updateBudgetCategory(budget_id: number, category_id: number, category: TUpdateBudgetCategory) {
+  updateBudgetCategory(user_id: number, budget_id: number, category_id: number, category: TUpdateBudgetCategory) {
     return this.budget_repo.updateBudgetCategory(budget_id, category_id, category);
   }
 
-  deleteBudgetCategory(category_id: number) {
+  deleteBudgetCategory(user_id: number, category_id: number) {
     return this.budget_repo.deleteBudgetCategory(category_id);
   }
 
@@ -65,11 +65,11 @@ export class BudgetService {
     return this.budget_repo.getBudgetCategoryItemById(user_id, budget_id, category_id, item_id);
   }
 
-  createBudgetCategoryItem(item: TBudgetCategoryItem) {
+  createBudgetCategoryItem(user_id: number, item: TBudgetCategoryItem) {
     return this.budget_repo.createBudgetCategoryItem(item);
   }
 
-  updateBudgetCategoryItem(item_id: number, item: TBudgetCategoryItem) {
+  updateBudgetCategoryItem(user_id: number, item_id: number, item: TBudgetCategoryItem) {
     return this.budget_repo.updateBudgetCategoryItem(item_id, item);
   }
 
@@ -81,43 +81,43 @@ export class BudgetService {
     return this.budget_repo.deleteAllBudgetCategoryItems(user_id, category_id);
   }
 
-  getTransactions(budget_id: number) {
+  getTransactions(user_id: number, budget_id: number) {
     return this.budget_repo.getTransactions(budget_id);
   }
 
-  getTransactionById(budget_id: number, transaction_id: number) {
+  getTransactionById(user_id: number, budget_id: number, transaction_id: number) {
     return this.budget_repo.getTransactionById(budget_id, transaction_id);
   }
 
-  createTransaction(transaction: TTransaction) {
+  createTransaction(user_id: number, transaction: TTransaction) {
     return this.budget_repo.createTransaction(transaction);
   }
 
-  updateTransaction(budget_id: number, transaction_id: number, transaction: TTransaction) {
+  updateTransaction(user_id: number, budget_id: number, transaction_id: number, transaction: TTransaction) {
     return this.budget_repo.updateTransaction(budget_id, transaction_id, transaction);
   }
 
-  deleteTransaction(budget_id: number, transaction_id: number) {
+  deleteTransaction(user_id: number, budget_id: number, transaction_id: number) {
     return this.budget_repo.deleteTransaction(budget_id, transaction_id);
   }
 
-  getTransactionTypes() {
-    return this.budget_repo.getTransactionTypes();
+  getTransactionTypes(user_id: number) {
+    return this.budget_repo.getTransactionTypes(user_id);
   }
 
-  getTransactionTypeById(transaction: number) {
-    return this.budget_repo.getTransactionTypeById(transaction);
+  getTransactionTypeById(user_id: number, transaction: number) {
+    return this.budget_repo.getTransactionTypeById(user_id, transaction);
   }
 
-  createTransactionType(transaction: TTransactionType) {
-    return this.budget_repo.createTransactionType(transaction);
+  createTransactionType(user_id: number, transaction: TTransactionType) {
+    return this.budget_repo.createTransactionType(user_id, transaction);
   }
 
-  updateTransactionType(type_id: number, transaction: TUpdateTransactionType) {
-    return this.budget_repo.updateTransactionType(type_id, transaction);
+  updateTransactionType(user_id: number, type_id: number, transaction: TUpdateTransactionType) {
+    return this.budget_repo.updateTransactionType(user_id, type_id, transaction);
   }
 
-  deleteTransactionType(transaction_id: number) {
-    return this.budget_repo.deleteTransactionType(transaction_id);
+  deleteTransactionType(user_id: number, transaction_id: number) {
+    return this.budget_repo.deleteTransactionType(user_id, transaction_id);
   }
 }

@@ -102,18 +102,22 @@ export interface IBudgetRepository {
   ) => TCommonTransactionResponse;
 
   // Transaction Types (user defined + pre-defined i.e. income, expense, bill, etc.)
-  getTransactionTypes: () => Promise<Array<TTransactionTypeResult>>;
+  getTransactionTypes: (user_id: number) => Promise<Array<TTransactionTypeResult>>;
   getTransactionTypeById: (
+    user_id: number,
     transaction_type_id: number
   ) => TCommonTransactionTypeResponse;
   createTransactionType: (
+    user_id: number,
     transaction_type: TTransactionType
   ) => TCommonTransactionTypeResponse;
   updateTransactionType: (
+    user_id: number,
     type_id: number,
     transaction_type: TUpdateTransactionType
   ) => TCommonTransactionTypeResponse;
   deleteTransactionType: (
+    user_id: number,
     transaction_type_id: number
   ) => TCommonTransactionTypeResponse;
 }
@@ -376,6 +380,7 @@ export class BudgetRepository implements IBudgetRepository {
   }
 
   async createTransactionType(
+    user_id: number,
     transaction: TTransactionType,
   ): TCommonTransactionTypeResponse {
     const [newTransactionType]: Array<TTransactionTypeResult> = await this.db
@@ -386,6 +391,7 @@ export class BudgetRepository implements IBudgetRepository {
   }
 
   async updateTransactionType(
+    user_id: number,
     type_id: number,
     type: TTransactionType,
   ): TCommonTransactionTypeResponse {

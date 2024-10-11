@@ -255,7 +255,7 @@ export class BudgetHandlers {
   ) {
     try {
       const categories
-        = await this.budgetService.getBudgetCategories(request.params.budget_id);
+        = await this.budgetService.getBudgetCategories(request.user.user_id, request.params.budget_id);
       reply.send(
         prepareResponse(
           categories,
@@ -289,7 +289,7 @@ export class BudgetHandlers {
   ) {
     try {
       const category
-        = await this.budgetService.getBudgetCategoryById(request.params.budget_id, request.params.category_id);
+        = await this.budgetService.getBudgetCategoryById(request.user.user_id, request.params.budget_id, request.params.category_id);
       reply.send(
         prepareResponse(
           category,
@@ -330,7 +330,7 @@ export class BudgetHandlers {
         budget_id,
       };
       const createdCategory
-        = await this.budgetService.createBudgetCategory(new_category);
+        = await this.budgetService.createBudgetCategory(request.user.user_id, new_category);
       reply.send(
         prepareResponse(
           createdCategory,
@@ -365,7 +365,7 @@ export class BudgetHandlers {
   ) {
     try {
       const updatedCategory
-        = await this.budgetService.updateBudgetCategory(request.params.budget_id, request.params.category_id, request.body);
+        = await this.budgetService.updateBudgetCategory(request.user.user_id, request.params.budget_id, request.params.category_id, request.body);
 
       if (!updatedCategory) {
         reply.send(
@@ -411,7 +411,7 @@ export class BudgetHandlers {
   ) {
     try {
       const deletedCategory
-        = await this.budgetService.deleteBudgetCategory(request.params.category_id);
+        = await this.budgetService.deleteBudgetCategory(request.user.user_id, request.params.category_id);
 
       if (!deletedCategory) {
         reply.send(
@@ -545,7 +545,7 @@ export class BudgetHandlers {
     try {
       const item = request.body;
       const createdItem
-        = await this.budgetService.createBudgetCategoryItem(item);
+        = await this.budgetService.createBudgetCategoryItem(request.user.user_id, item);
       reply.send(
         prepareResponse(
           createdItem,
@@ -582,7 +582,7 @@ export class BudgetHandlers {
       const item_id = request.params.item_id;
       const item = request.body;
       const updatedItem
-        = await this.budgetService.updateBudgetCategoryItem(item_id, item);
+        = await this.budgetService.updateBudgetCategoryItem(request.user.user_id, item_id, item);
       reply.send(
         prepareResponse(
           updatedItem,
@@ -652,7 +652,7 @@ export class BudgetHandlers {
   ) {
     try {
       const budget_id = request.params.budget_id;
-      const transactions = await this.budgetService.getTransactions(budget_id);
+      const transactions = await this.budgetService.getTransactions(request.user.user_id, budget_id);
       reply.send(
         prepareResponse(
           transactions,
@@ -688,6 +688,7 @@ export class BudgetHandlers {
       const transaction_id = request.params.transaction_id;
       const budget_id = request.params.budget_id;
       const transaction = await this.budgetService.getTransactionById(
+        request.user.user_id,
         budget_id,
         transaction_id,
       );
@@ -725,7 +726,7 @@ export class BudgetHandlers {
     try {
       const transaction = request.body;
       const createdTransaction
-        = await this.budgetService.createTransaction(transaction);
+        = await this.budgetService.createTransaction(request.user.user_id, transaction);
       reply.send(
         prepareResponse(
           createdTransaction,
@@ -762,6 +763,7 @@ export class BudgetHandlers {
       const transaction = request.body;
       const { budget_id, transaction_id } = request.params;
       const updatedTransaction = await this.budgetService.updateTransaction(
+        request.user.user_id,
         budget_id,
         transaction_id,
         transaction,
@@ -793,16 +795,17 @@ export class BudgetHandlers {
 
   async deleteTransactionHandler(
     request: FastifyRequest<{
-      Params: { transactionId: number; budget_id: number };
+      Params: { transaction_id: number; budget_id: number };
     }>,
     reply: FastifyReply,
   ) {
     try {
-      const transactionId = request.params.transactionId;
+      const transaction_id = request.params.transaction_id;
       const budget_id = request.params.budget_id;
       const deletedTransaction = await this.budgetService.deleteTransaction(
+        request.user.user_id,
         budget_id,
-        transactionId,
+        transaction_id,
       );
       reply.send(
         prepareResponse(
@@ -834,7 +837,9 @@ export class BudgetHandlers {
     reply: FastifyReply,
   ) {
     try {
-      const transactionTypes = await this.budgetService.getTransactionTypes();
+      const transactionTypes = await this.budgetService.getTransactionTypes(
+        request.user.user_id,
+      );
       reply.send(
         prepareResponse(
           transactionTypes,
@@ -862,14 +867,14 @@ export class BudgetHandlers {
 
   async getTransactionTypeByIdHandler(
     request: FastifyRequest<{
-      Params: { transactionId: number };
+      Params: { transaction_id: number };
     }>,
     reply: FastifyReply,
   ) {
     try {
-      const transactionId = request.params.transactionId;
+      const transaction_id = request.params.transaction_id;
       const transactionType
-        = await this.budgetService.getTransactionTypeById(transactionId);
+        = await this.budgetService.getTransactionTypeById(request.user.user_id, transaction_id);
       reply.send(
         prepareResponse(
           transactionType,
@@ -904,7 +909,7 @@ export class BudgetHandlers {
     try {
       const transactionType = request.body;
       const createdTransactionType
-        = await this.budgetService.createTransactionType(transactionType);
+        = await this.budgetService.createTransactionType(request.user.user_id, transactionType);
       reply.send(
         prepareResponse(
           createdTransactionType,
@@ -941,7 +946,7 @@ export class BudgetHandlers {
       const type_id = request.params.type_id;
       const transactionType = request.body;
       const updatedTransactionType
-        = await this.budgetService.updateTransactionType(type_id, transactionType);
+        = await this.budgetService.updateTransactionType(request.user.user_id, type_id, transactionType);
       reply.send(
         prepareResponse(
           updatedTransactionType,
@@ -969,14 +974,14 @@ export class BudgetHandlers {
 
   async deleteTransactionTypeHandler(
     request: FastifyRequest<{
-      Params: { transactionId: number };
+      Params: { transaction_id: number };
     }>,
     reply: FastifyReply,
   ) {
     try {
-      const transactionId = request.params.transactionId;
+      const transaction_id = request.params.transaction_id;
       const deletedTransactionType
-        = await this.budgetService.deleteTransactionType(transactionId);
+        = await this.budgetService.deleteTransactionType(request.user.user_id, transaction_id);
       reply.send(
         prepareResponse(
           deletedTransactionType,
@@ -1202,11 +1207,11 @@ export class BudgetHandlers {
       this.createBudgetCategoryItemHandler.bind(this),
     );
     server.put(
-      "/:budget_id/categories/:category_id/items/:itemId",
+      "/:budget_id/categories/:category_id/items/:item_id",
       this.updateBudgetCategoryItemHandler.bind(this),
     );
     server.delete(
-      "/:budget_id/categories/:category_id/items/:itemId",
+      "/:budget_id/categories/:category_id/items/:item_id",
       this.deleteBudgetCategoryItemHandler.bind(this),
     );
 
@@ -1215,7 +1220,7 @@ export class BudgetHandlers {
       this.getTransactionsHandler.bind(this),
     );
     server.get(
-      "/:budget_id/transactions/:transactionId",
+      "/:budget_id/transactions/:transaction_id",
       this.getTransactionByIdHandler.bind(this),
     );
     server.post(
@@ -1223,11 +1228,11 @@ export class BudgetHandlers {
       this.createTransactionHandler.bind(this),
     );
     server.put(
-      "/:budget_id/transactions/:transactionId",
+      "/:budget_id/transactions/:transaction_id",
       this.updateTransactionHandler.bind(this),
     );
     server.delete(
-      "/:budget_id/transactions/:transactionId",
+      "/:budget_id/transactions/:transaction_id",
       this.deleteTransactionHandler.bind(this),
     );
 
@@ -1236,7 +1241,7 @@ export class BudgetHandlers {
       this.getTransactionTypesHandler.bind(this),
     );
     server.get(
-      "/transaction/types/:transactionId",
+      "/transaction/types/:transaction_id",
       this.getTransactionTypeByIdHandler.bind(this),
     );
     server.post(
@@ -1248,7 +1253,7 @@ export class BudgetHandlers {
       this.updateTransactionTypeHandler.bind(this),
     );
     server.delete(
-      "/transaction/types/:transactionId",
+      "/transaction/types/:transaction_id",
       this.deleteTransactionTypeHandler.bind(this),
     );
   }
