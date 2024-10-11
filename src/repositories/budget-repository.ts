@@ -240,6 +240,8 @@ export class BudgetRepository implements IBudgetRepository {
   }
 
   async getBudgetCategoryItems(
+    user_id: number,
+    budget_id: number,
     category_id: number,
   ): Promise<Array<TBudgetCategoryItemResult>> {
     return await this.db
@@ -249,12 +251,20 @@ export class BudgetRepository implements IBudgetRepository {
   }
 
   async getBudgetCategoryItemById(
-    itemId: number,
+    user_id: number,
+    budget_id: number,
+    category_id: number,
+    item_id: number,
   ): TCommonBudgetCategoryItemResponse {
     const [item]: Array<TBudgetCategoryItemResult> = await this.db
       .select()
       .from(schema.budget_category_items)
-      .where(eq(schema.budget_category_items.id, itemId));
+      .where(
+        and(
+          eq(schema.budget_category_items.id, item_id),
+          eq(schema.budget_category_items.category_id, category_id),
+        ),
+      );
     return item;
   }
 

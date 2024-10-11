@@ -499,6 +499,18 @@ export class BudgetHandlers {
         category_id,
         item_id,
       );
+
+      if (!item) {
+        reply.send(
+          prepareResponse(
+            null,
+            STATUS_CODES.NOT_FOUND,
+            "Budget category item not found",
+            null,
+          ),
+        );
+      }
+
       reply.send(
         prepareResponse(
           item,
@@ -1182,7 +1194,7 @@ export class BudgetHandlers {
       this.getBudgetCategoryItemsHandler.bind(this),
     );
     server.get(
-      "/:budget_id/categories/:category_id/items/:itemId",
+      "/:budget_id/categories/:category_id/items/:item_id",
       this.getBudgetCategoryItemByIdHandler.bind(this),
     );
     server.post(
