@@ -18,7 +18,7 @@ export const budgets = pgTable("budgets", {
   id: serial("id").primaryKey(),
   user_id: integer("user_id").references(() => users.id, {
     onDelete: "cascade",
-  }), // when a user is deleted, all their budgets should be deleted as well
+  }).notNull(), // when a user is deleted, all their budgets should be deleted as well
   budget_name: text("budget_name").notNull(),
   budget_description: text("budget_description").default(""),
   amount: integer("amount").default(0),
@@ -30,7 +30,7 @@ export const budgets = pgTable("budgets", {
 // This table is used to store the categories that belong to a budget
 export const budget_categories = pgTable("budget_categories", {
   id: serial("id").primaryKey(),
-  user_id: integer("user_id").references(() => users.id), // no need to cascade because when a user is deleted, all their budgets get deleted, and when a budget is deleted, all its categories get deleted
+  user_id: integer("user_id").references(() => users.id).notNull(), // no need to cascade because when a user is deleted, all their budgets get deleted, and when a budget is deleted, all its categories get deleted
   budget_id: integer("budget_id").references(() => budgets.id, {
     onDelete: "cascade",
   }), // when a budget is deleted, all its categories should be deleted as well
@@ -44,7 +44,7 @@ export const budget_categories = pgTable("budget_categories", {
 // This table is used to store the items that belong to a budget category
 export const budget_category_items = pgTable("budget_category_items", {
   id: serial("id").primaryKey(),
-  user_id: integer("user_id").references(() => users.id), // no need to cascade because when a user is deleted, all their budgets get deleted, and when a budget is deleted, all its categories get deleted and since this is related to a category, it will be deleted as well
+  user_id: integer("user_id").references(() => users.id).notNull(), // no need to cascade because when a user is deleted, all their budgets get deleted, and when a budget is deleted, all its categories get deleted and since this is related to a category, it will be deleted as well
   category_id: integer("category_id").references(() => budget_categories.id, {
     onDelete: "cascade",
   }), // when a category is deleted, all its items should be deleted as well
@@ -61,7 +61,7 @@ export const transaction_types = pgTable("transaction_types", {
   id: serial("id").primaryKey(),
   user_id: integer("user_id").references(() => users.id, {
     onDelete: "cascade",
-  }),
+  }).notNull(),
   transaction_type: text("transaction_type"),
   createdAt: timestamp("created_at")
     .$defaultFn(() => new Date()),
@@ -73,7 +73,7 @@ export const transactions = pgTable("transactions", {
   id: serial("id").primaryKey(),
   user_id: integer("user_id").references(() => users.id, {
     onDelete: "cascade",
-  }), // when a user is deleted, all their transactions should be deleted as well. Also, we need to store the user id so we can query transactions by user on the frontend to show a list of transaction, irrespective of the budget category item
+  }).notNull(), // when a user is deleted, all their transactions should be deleted as well. Also, we need to store the user id so we can query transactions by user on the frontend to show a list of transaction, irrespective of the budget category item
   budget_id: integer("budget_id").references(() => budgets.id, {
     onDelete: "cascade",
   }), // when a budget is deleted, all its transactions should be deleted as well

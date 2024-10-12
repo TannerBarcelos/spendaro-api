@@ -290,6 +290,18 @@ export class BudgetHandlers {
     try {
       const category
         = await this.budgetService.getBudgetCategoryById(request.user.user_id, request.params.budget_id, request.params.category_id);
+
+      if (!category) {
+        reply.send(
+          prepareResponse(
+            null,
+            STATUS_CODES.NOT_FOUND,
+            "Budget category not found",
+            null,
+          ),
+        );
+      }
+
       reply.send(
         prepareResponse(
           category,
@@ -328,6 +340,7 @@ export class BudgetHandlers {
       const new_category: TBudgetCategory = {
         ...category,
         budget_id,
+        user_id: request.user.user_id,
       };
       const createdCategory
         = await this.budgetService.createBudgetCategory(request.user.user_id, new_category);
@@ -583,6 +596,18 @@ export class BudgetHandlers {
       const item = request.body;
       const updatedItem
         = await this.budgetService.updateBudgetCategoryItem(request.user.user_id, item_id, item);
+
+      if (!updatedItem) {
+        reply.send(
+          prepareResponse(
+            null,
+            STATUS_CODES.NOT_FOUND,
+            "Budget category item not found",
+            null,
+          ),
+        );
+      }
+
       reply.send(
         prepareResponse(
           updatedItem,
@@ -619,6 +644,18 @@ export class BudgetHandlers {
       const user_id = request.user.user_id;
       const deletedItem
         = await this.budgetService.deleteBudgetCategoryItem(user_id, item_id);
+
+      if (!deletedItem) {
+        reply.send(
+          prepareResponse(
+            null,
+            STATUS_CODES.NOT_FOUND,
+            "Budget category item not found",
+            null,
+          ),
+        );
+      }
+
       reply.send(
         prepareResponse(
           deletedItem,
@@ -692,6 +729,18 @@ export class BudgetHandlers {
         budget_id,
         transaction_id,
       );
+
+      if (!transaction) {
+        reply.send(
+          prepareResponse(
+            null,
+            STATUS_CODES.NOT_FOUND,
+            "Transaction not found",
+            null,
+          ),
+        );
+      }
+
       reply.send(
         prepareResponse(
           transaction,
@@ -768,6 +817,18 @@ export class BudgetHandlers {
         transaction_id,
         transaction,
       );
+
+      if (!updatedTransaction) {
+        reply.send(
+          prepareResponse(
+            null,
+            STATUS_CODES.NOT_FOUND,
+            "Transaction not found",
+            null,
+          ),
+        );
+      }
+
       reply.send(
         prepareResponse(
           updatedTransaction,
@@ -807,6 +868,18 @@ export class BudgetHandlers {
         budget_id,
         transaction_id,
       );
+
+      if (!deletedTransaction) {
+        reply.send(
+          prepareResponse(
+            null,
+            STATUS_CODES.NOT_FOUND,
+            "Transaction not found",
+            null,
+          ),
+        );
+      }
+
       reply.send(
         prepareResponse(
           deletedTransaction,
@@ -875,6 +948,18 @@ export class BudgetHandlers {
       const transaction_id = request.params.transaction_id;
       const transactionType
         = await this.budgetService.getTransactionTypeById(request.user.user_id, transaction_id);
+
+      if (!transactionType) {
+        reply.send(
+          prepareResponse(
+            null,
+            STATUS_CODES.NOT_FOUND,
+            "Transaction type not found",
+            null,
+          ),
+        );
+      }
+
       reply.send(
         prepareResponse(
           transactionType,
@@ -947,6 +1032,18 @@ export class BudgetHandlers {
       const transactionType = request.body;
       const updatedTransactionType
         = await this.budgetService.updateTransactionType(request.user.user_id, type_id, transactionType);
+
+      if (!updatedTransactionType) {
+        reply.send(
+          prepareResponse(
+            null,
+            STATUS_CODES.NOT_FOUND,
+            "Transaction type not found",
+            null,
+          ),
+        );
+      }
+
       reply.send(
         prepareResponse(
           updatedTransactionType,
@@ -982,6 +1079,18 @@ export class BudgetHandlers {
       const transaction_id = request.params.transaction_id;
       const deletedTransactionType
         = await this.budgetService.deleteTransactionType(request.user.user_id, transaction_id);
+
+      if (!deletedTransactionType) {
+        reply.send(
+          prepareResponse(
+            null,
+            STATUS_CODES.NOT_FOUND,
+            "Transaction type not found",
+            null,
+          ),
+        );
+      }
+
       reply.send(
         prepareResponse(
           deletedTransactionType,
