@@ -272,7 +272,13 @@ export class BudgetRepository implements IBudgetRepository {
     return await this.db
       .select()
       .from(schema.budget_category_items)
-      .where(eq(schema.budget_category_items.category_id, category_id));
+      .where(
+        and(
+          eq(schema.budget_category_items.category_id, category_id),
+          eq(schema.budget_category_items.user_id, user_id),
+          eq(schema.budget_category_items.budget_id, budget_id),
+        ),
+      );
   }
 
   async getBudgetCategoryItemById(

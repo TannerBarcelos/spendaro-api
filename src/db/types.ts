@@ -1,4 +1,4 @@
-import * as schema from "./schema.js";
+import * as schema from "./schema";
 
 // Inferring Zod schemas from the tables so we can use it in application code to validate data.
 // Also inferring the types so we can use them in function arguments and return types.
@@ -41,7 +41,7 @@ export const insertBudgetCategorySchema = createInsertSchema(
   createdAt: true,
   updatedAt: true,
 });
-export const updateBudgetCategorySchema = insertBudgetCategorySchema.partial().omit({ budget_id: true, user_id: true });
+export const updateBudgetCategorySchema = insertBudgetCategorySchema.partial().omit({ budget_id: true });
 export type TBudgetCategory = z.infer<typeof insertBudgetCategorySchema>;
 export type TUpdateBudgetCategory = z.infer<typeof updateBudgetCategorySchema>;
 
@@ -58,7 +58,7 @@ export const insertBudgetCategoryItemSchema = createInsertSchema(
   createdAt: true,
   updatedAt: true,
 });
-export const updateBudgetCategoryItemSchema = insertBudgetCategoryItemSchema.partial().omit({ category_id: true, user_id: true });
+export const updateBudgetCategoryItemSchema = insertBudgetCategoryItemSchema.partial().omit({ category_id: true });
 export type TBudgetCategoryItem = z.infer<
   typeof insertBudgetCategoryItemSchema
 >;

@@ -1,6 +1,6 @@
 {
-  "id": "3210e4f4-70a7-4bd8-8219-77dc4180071d",
-  "prevId": "e3ea5d63-d42c-455a-bd06-424d47a767a0",
+  "id": "d8373371-55be-4ea0-ae7e-01ae50ff26cd",
+  "prevId": "d197c11a-434b-4e95-bb5b-8be78209ad1b",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -13,12 +13,6 @@
           "type": "serial",
           "primaryKey": true,
           "notNull": true
-        },
-        "user_id": {
-          "name": "user_id",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false
         },
         "budget_id": {
           "name": "budget_id",
@@ -54,19 +48,6 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "budget_categories_user_id_users_id_fk": {
-          "name": "budget_categories_user_id_users_id_fk",
-          "tableFrom": "budget_categories",
-          "tableTo": "users",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        },
         "budget_categories_budget_id_budgets_id_fk": {
           "name": "budget_categories_budget_id_budgets_id_fk",
           "tableFrom": "budget_categories",
@@ -94,17 +75,17 @@
           "primaryKey": true,
           "notNull": true
         },
-        "user_id": {
-          "name": "user_id",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false
-        },
         "category_id": {
           "name": "category_id",
           "type": "integer",
           "primaryKey": false,
           "notNull": false
+        },
+        "budget_id": {
+          "name": "budget_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
         },
         "item_name": {
           "name": "item_name",
@@ -141,19 +122,6 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "budget_category_items_user_id_users_id_fk": {
-          "name": "budget_category_items_user_id_users_id_fk",
-          "tableFrom": "budget_category_items",
-          "tableTo": "users",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        },
         "budget_category_items_category_id_budget_categories_id_fk": {
           "name": "budget_category_items_category_id_budget_categories_id_fk",
           "tableFrom": "budget_category_items",
@@ -165,6 +133,19 @@
             "id"
           ],
           "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "budget_category_items_budget_id_budgets_id_fk": {
+          "name": "budget_category_items_budget_id_budgets_id_fk",
+          "tableFrom": "budget_category_items",
+          "tableTo": "budgets",
+          "columnsFrom": [
+            "budget_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
           "onUpdate": "no action"
         }
       },
@@ -185,7 +166,7 @@
           "name": "user_id",
           "type": "integer",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "budget_name": {
           "name": "budget_name",
@@ -253,7 +234,7 @@
           "name": "user_id",
           "type": "integer",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "transaction_type": {
           "name": "transaction_type",
@@ -307,7 +288,7 @@
           "name": "user_id",
           "type": "integer",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "budget_id": {
           "name": "budget_id",

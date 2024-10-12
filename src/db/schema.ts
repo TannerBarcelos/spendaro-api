@@ -30,7 +30,6 @@ export const budgets = pgTable("budgets", {
 // This table is used to store the categories that belong to a budget
 export const budget_categories = pgTable("budget_categories", {
   id: serial("id").primaryKey(),
-  user_id: integer("user_id").references(() => users.id).notNull(), // no need to cascade because when a user is deleted, all their budgets get deleted, and when a budget is deleted, all its categories get deleted
   budget_id: integer("budget_id").references(() => budgets.id, {
     onDelete: "cascade",
   }), // when a budget is deleted, all its categories should be deleted as well
@@ -44,10 +43,10 @@ export const budget_categories = pgTable("budget_categories", {
 // This table is used to store the items that belong to a budget category
 export const budget_category_items = pgTable("budget_category_items", {
   id: serial("id").primaryKey(),
-  user_id: integer("user_id").references(() => users.id).notNull(), // no need to cascade because when a user is deleted, all their budgets get deleted, and when a budget is deleted, all its categories get deleted and since this is related to a category, it will be deleted as well
   category_id: integer("category_id").references(() => budget_categories.id, {
     onDelete: "cascade",
   }), // when a category is deleted, all its items should be deleted as well
+  budget_id: integer("budget_id").references(() => budgets.id).notNull(), // no need to cascade because when a budget is deleted, all its categories get deleted and since this is related to a category, it will be deleted as well
   item_name: text("item_name").notNull(),
   item_description: text("item_description").default(""),
   item_amount: integer("item_amount").default(0),

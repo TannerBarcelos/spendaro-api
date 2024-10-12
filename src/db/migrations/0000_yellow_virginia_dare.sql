@@ -1,5 +1,6 @@
 CREATE TABLE IF NOT EXISTS "budget_categories" (
 	"id" serial PRIMARY KEY NOT NULL,
+	"user_id" integer NOT NULL,
 	"budget_id" integer,
 	"category_name" text NOT NULL,
 	"category_description" text DEFAULT '',
@@ -9,7 +10,9 @@ CREATE TABLE IF NOT EXISTS "budget_categories" (
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "budget_category_items" (
 	"id" serial PRIMARY KEY NOT NULL,
+	"user_id" integer NOT NULL,
 	"category_id" integer,
+	"budget_id" integer NOT NULL,
 	"item_name" text NOT NULL,
 	"item_description" text DEFAULT '',
 	"item_amount" integer DEFAULT 0,
@@ -19,8 +22,8 @@ CREATE TABLE IF NOT EXISTS "budget_category_items" (
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "budgets" (
 	"id" serial PRIMARY KEY NOT NULL,
-	"user_id" integer,
-	"budget_name" text,
+	"user_id" integer NOT NULL,
+	"budget_name" text NOT NULL,
 	"budget_description" text DEFAULT '',
 	"amount" integer DEFAULT 0,
 	"created_at" timestamp,
@@ -29,6 +32,7 @@ CREATE TABLE IF NOT EXISTS "budgets" (
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "transaction_types" (
 	"id" serial PRIMARY KEY NOT NULL,
+	"user_id" integer NOT NULL,
 	"transaction_type" text,
 	"created_at" timestamp,
 	"updated_at" timestamp
@@ -36,7 +40,7 @@ CREATE TABLE IF NOT EXISTS "transaction_types" (
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "transactions" (
 	"id" serial PRIMARY KEY NOT NULL,
-	"user_id" integer,
+	"user_id" integer NOT NULL,
 	"budget_id" integer,
 	"transaction_amount" integer NOT NULL,
 	"transaction_date" date NOT NULL,
@@ -58,7 +62,19 @@ CREATE TABLE IF NOT EXISTS "users" (
 );
 --> statement-breakpoint
 DO $$ BEGIN
+ ALTER TABLE "budget_categories" ADD CONSTRAINT "budget_categories_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE no action ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
  ALTER TABLE "budget_categories" ADD CONSTRAINT "budget_categories_budget_id_budgets_id_fk" FOREIGN KEY ("budget_id") REFERENCES "public"."budgets"("id") ON DELETE cascade ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "budget_category_items" ADD CONSTRAINT "budget_category_items_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE no action ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
@@ -70,7 +86,19 @@ EXCEPTION
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
+ ALTER TABLE "budget_category_items" ADD CONSTRAINT "budget_category_items_budget_id_budgets_id_fk" FOREIGN KEY ("budget_id") REFERENCES "public"."budgets"("id") ON DELETE no action ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
  ALTER TABLE "budgets" ADD CONSTRAINT "budgets_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "transaction_types" ADD CONSTRAINT "transaction_types_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
