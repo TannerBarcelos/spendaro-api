@@ -6,7 +6,7 @@ import { getReasonPhrase } from "http-status-codes";
 import type { TInsertUser } from "@/db/types";
 import type { AuthService } from "@/services/auth-service";
 
-import { insertUserSchema } from "@/db/types";
+import { $ref, signupUserSchema } from "@/db/types";
 import { prepareResponse, STATUS_CODES } from "@/utils/http";
 
 export class AuthHandlers {
@@ -16,9 +16,10 @@ export class AuthHandlers {
     this.authService = authService;
   }
 
-  async signupUserHandler(request: FastifyRequest, reply: FastifyReply) {
-    const user = insertUserSchema.parse(request.body);
-    const signedUpUser = await this.authService.signup(user);
+  async signupUserHandler(request: FastifyRequest<{
+    Body: TInsertUser;
+  }>, reply: FastifyReply) {
+    const signedUpUser = await this.authService.signup(request.body);
     const token = request.server.jwt.sign(
       {
         user_id: signedUpUser.id,
@@ -77,64 +78,7 @@ export class AuthHandlers {
       "/signup",
       {
         schema: {
-          description:
-            "Sign up a new user with an email and password and first and last name",
-          summary: "Sign up a new user",
-          tags: ["auth"],
-          body: {
-            type: "object",
-            properties: {
-              email: {
-                type: "string",
-                format: "email",
-                description: "The users email",
-              },
-              password: { type: "string", description: "The users password" },
-              firstName: {
-                type: "string",
-                description: "The users first name",
-              },
-              lastName: { type: "string", description: "The users last name" },
-            },
-            required: ["email", "password", "firstName", "lastName"],
-          },
-          response: {
-            201: {
-              type: "object",
-              properties: {
-                status: {
-                  type: "number",
-                  default: 201,
-                  description: "HTTP status code",
-                },
-                message: {
-                  type: "string",
-                  default: "User created successfully",
-                  description:
-                    "A message indicating the success of the operation",
-                },
-                data: {
-                  type: "string",
-                  description:
-                    "The actual data payload returned from the operation",
-                },
-                error: {
-                  type: "string",
-                  default: null,
-                  description: "Any error message",
-                },
-              },
-            },
-            500: {
-              type: "object",
-              properties: {
-                status: { type: "number", default: 500 },
-                message: { type: "string", default: "Internal Server Error" },
-                data: { type: "null" },
-                error: { type: "string" }, // no default value because it's an internal server error, and the error can be anything
-              },
-            },
-          },
+          body: $ref("signupUserSchema"),
         },
       },
       this.signupUserHandler.bind(this),
@@ -143,77 +87,7 @@ export class AuthHandlers {
       "/signin",
       {
         schema: {
-          description: "Sign in a new user using email and password",
-          summary: "Sign in a new user",
-          tags: ["auth"],
-          body: {
-            type: "object",
-            properties: {
-              email: {
-                type: "string",
-                format: "email",
-                description: "The users email used to sign up for Spendaro",
-              },
-              password: { type: "string", description: "The users password" },
-            },
-            required: ["email", "password"],
-          },
-          response: {
-            "200": {
-              type: "object",
-              properties: {
-                status: {
-                  type: "number",
-                  default: 200,
-                  description: "HTTP status code",
-                },
-                message: {
-                  type: "string",
-                  default: "User signed in successfully",
-                  description:
-                    "A message indicating the success of the operation",
-                },
-                data: {
-                  type: "object",
-                  description:
-                    "The actual data payload returned from the operation",
-                  properties: {
-                    access_token: {
-                      type: "string",
-                      description: "JWT access token",
-                    },
-                    // refresh_token: {
-                    //   type: 'string',
-                    //   description: 'JWT refresh token',
-                    // },
-                  },
-                },
-                error: {
-                  type: "string",
-                  default: null,
-                  description: "Any error message",
-                },
-              },
-            },
-            "401": {
-              type: "object",
-              properties: {
-                status: { type: "number", default: 401 },
-                message: { type: "string", default: "Unauthorized" },
-                data: { type: "null" },
-                error: { type: "string", default: null }, // 401 is not an error, it's a status code therefore the error message should be null
-              },
-            },
-            "5xx": {
-              type: "object",
-              properties: {
-                status: { type: "number", default: 500 },
-                message: { type: "string", default: "Internal Server Error" },
-                data: { type: "null" },
-                error: { type: "string" }, // no default value because it's an internal server error, and the error can be anything
-              },
-            },
-          },
+          body: $ref("signinUserSchema"),
         },
       },
       this.signinUserHandler.bind(this),

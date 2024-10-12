@@ -14,12 +14,18 @@ import authenticate from "@/plugins/authenticate";
 import { routes } from "@/routes/index";
 import { ALLOWED_METHODS } from "@/utils/http";
 
+import { spendaroSchemas } from "./db/types";
+
 const server = fastify({
   logger: {
     enabled: true,
     level: config.get("server.logging.level"),
   },
 });
+
+for (const schema of spendaroSchemas) {
+  server.addSchema(schema);
+}
 
 server.setErrorHandler(ErrorHandlers.handleError);
 server.setNotFoundHandler(ErrorHandlers.handleNotFoundError);

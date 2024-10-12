@@ -1,3 +1,5 @@
+import { buildJsonSchemas } from "fastify-zod";
+
 import * as schema from "./schema";
 
 // Inferring Zod schemas from the tables so we can use it in application code to validate data.
@@ -8,13 +10,14 @@ import type z from "zod";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 
 // User schema
-export const insertUserSchema = createInsertSchema(schema.users).omit({
+export const signupUserSchema = createInsertSchema(schema.users).omit({
   id: true,
   createdAt: true,
   updatedAt: true,
 });
-export const updateUserSchema = insertUserSchema.partial();
-export type TInsertUser = z.infer<typeof insertUserSchema>;
+export const signinUserSchema = signupUserSchema.pick({ email: true, password: true });
+export const updateUserSchema = signupUserSchema.partial();
+export type TInsertUser = z.infer<typeof signupUserSchema>;
 export type TUpdateUser = z.infer<typeof updateUserSchema>;
 
 export const selectUserSchema = createSelectSchema(schema.users);
@@ -26,11 +29,12 @@ export const insertBudgetSchema = createInsertSchema(schema.budgets).omit({
   createdAt: true,
   updatedAt: true,
 });
+export const selectBudgetSchema = createSelectSchema(schema.budgets);
 export const updateBudgetSchema = insertBudgetSchema.partial().omit({ user_id: true });
+export const deleteBudgetSchema = createInsertSchema(schema.budgets).pick({ id: true });
 export type TInsertBudget = z.infer<typeof insertBudgetSchema>;
 export type TUpdateBudget = z.infer<typeof updateBudgetSchema>;
-
-export const selectBudgetSchema = createSelectSchema(schema.budgets);
+export type TDeleteBudget = z.infer<typeof deleteBudgetSchema>;
 export type TBudgetResult = z.infer<typeof selectBudgetSchema>;
 
 // Budget category schema
@@ -104,3 +108,34 @@ export const selectTransactionTypeSchema = createSelectSchema(
 export type TTransactionTypeResult = z.infer<
   typeof selectTransactionTypeSchema
 >;
+
+// **************************************************
+// **************************************************
+// **************************************************
+// **************************************************
+// **************************************************
+
+export const { schemas: spendaroSchemas, $ref } = buildJsonSchemas({
+  signupUserSchema,
+  signinUserSchema,
+  updateUserSchema,
+  selectUserSchema,
+  insertBudgetSchema,
+  selectBudgetSchema,
+  updateBudgetSchema,
+  deleteBudgetSchema,
+  insertBudgetCategorySchema,
+  updateBudgetCategorySchema,
+  selectBudgetCategorySchema,
+  insertBudgetCategoryItemSchema,
+  updateBudgetCategoryItemSchema,
+  selectBudgetCategoryItemSchema,
+  insertTransactionSchema,
+  updateTransactionSchema,
+  selectTransactionSchema,
+  insertTransactionTypeSchema,
+  updateTransactionTypeSchema,
+  selectTransactionTypeSchema,
+
+  // Add more schemas here
+});
