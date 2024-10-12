@@ -8,6 +8,7 @@ import type {
   TTransactionType,
   TUpdateBudget,
   TUpdateBudgetCategory,
+  TUpdateBudgetCategoryItem,
 } from "@/db/types";
 import type { BudgetService } from "@/services/budget-service";
 
@@ -25,7 +26,7 @@ export class BudgetHandlers {
       const userId = request.user.user_id; // Get the user_id from the authenticated user, which is available via the fastify/jwt plugin as the plugin protects the routes and sends the user object to the request object if the user is authenticated
       const budgets = await this.budgetService.getBudgets(userId);
       reply
-        .status(STATUS_CODES.OK)
+        .code(STATUS_CODES.OK)
         .send(
           prepareResponse(
             budgets,
@@ -41,7 +42,7 @@ export class BudgetHandlers {
           ? error.message
           : "An error occurred while fetching the budgets";
       reply
-        .status(STATUS_CODES.BAD_REQUEST)
+        .code(STATUS_CODES.BAD_REQUEST)
         .send(
           prepareResponse(
             null,
@@ -72,7 +73,7 @@ export class BudgetHandlers {
         );
       }
       reply
-        .status(STATUS_CODES.OK)
+        .code(STATUS_CODES.OK)
         .send(
           prepareResponse(
             budget,
@@ -88,7 +89,7 @@ export class BudgetHandlers {
           ? error.message
           : "An error occurred while fetching the budget";
       reply
-        .status(STATUS_CODES.BAD_REQUEST)
+        .code(STATUS_CODES.BAD_REQUEST)
         .send(
           prepareResponse(
             null,
@@ -113,7 +114,7 @@ export class BudgetHandlers {
       };
       const createdBudget = await this.budgetService.createBudget(budget);
       reply
-        .status(STATUS_CODES.CREATED)
+        .code(STATUS_CODES.CREATED)
         .send(
           prepareResponse(
             createdBudget,
@@ -129,7 +130,7 @@ export class BudgetHandlers {
           ? error.message
           : "An error occurred while creating the budget";
       reply
-        .status(STATUS_CODES.BAD_REQUEST)
+        .code(STATUS_CODES.BAD_REQUEST)
         .send(
           prepareResponse(
             null,
@@ -163,7 +164,7 @@ export class BudgetHandlers {
       }
 
       reply
-        .status(STATUS_CODES.OK)
+        .code(STATUS_CODES.OK)
         .send(
           prepareResponse(
             updatedBudget,
@@ -179,7 +180,7 @@ export class BudgetHandlers {
           ? error.message
           : "An error occurred while updating the budget";
       reply
-        .status(STATUS_CODES.BAD_REQUEST)
+        .code(STATUS_CODES.BAD_REQUEST)
         .send(
           prepareResponse(
             null,
@@ -243,8 +244,24 @@ export class BudgetHandlers {
     reply: FastifyReply,
   ) {
     try {
+      // Confirm the budget exists before fetching its categories
+      const budgetExists = await this.budgetService.getBudgetById(request.user.user_id, request.params.budget_id);
+
+      // If the budget does not exist, return a 404 response
+      if (!budgetExists) {
+        reply.code(STATUS_CODES.NOT_FOUND).send(
+          prepareResponse(
+            null,
+            STATUS_CODES.NOT_FOUND,
+            "Budget not found",
+            null,
+          ),
+        );
+      }
+
+      // Fetch the categories for the budget
       const categories
-        = await this.budgetService.getBudgetCategories(request.user.user_id, request.params.budget_id);
+        = await this.budgetService.getBudgetCategories(request.params.budget_id);
       reply.send(
         prepareResponse(
           categories,
@@ -277,10 +294,27 @@ export class BudgetHandlers {
     reply: FastifyReply,
   ) {
     try {
-      const category
-        = await this.budgetService.getBudgetCategoryById(request.user.user_id, request.params.budget_id, request.params.category_id);
+      // Confirm the budget exists before fetching the category
+      const budgetExists = await this.budgetService.getBudgetById(request.user.user_id, request.params.budget_id);
 
-      if (!category) {
+      // If the budget does not exist, return a 404 response
+      if (!budgetExists) {
+        reply.code(STATUS_CODES.NOT_FOUND).send(
+          prepareResponse(
+            null,
+            STATUS_CODES.NOT_FOUND,
+            "Budget not found",
+            null,
+          ),
+        );
+      }
+
+      // Fetch the category for the budget
+      const categoryExists
+        = await this.budgetService.getBudgetCategoryById(request.params.budget_id, request.params.category_id);
+
+      // If the category does not exist, return a 404 response
+      if (!categoryExists) {
         reply.code(STATUS_CODES.NOT_FOUND).send(
           prepareResponse(
             null,
@@ -291,9 +325,9 @@ export class BudgetHandlers {
         );
       }
 
-      reply.send(
+      reply.code(STATUS_CODES.OK).send(
         prepareResponse(
-          category,
+          categoryExists,
           STATUS_CODES.OK,
           "Budget category fetched successfully",
           null,
@@ -305,14 +339,16 @@ export class BudgetHandlers {
         = error instanceof Error
           ? error.message
           : "An error occurred while fetching the budget category";
-      reply.send(
-        prepareResponse(
-          error,
-          STATUS_CODES.BAD_REQUEST,
-          "Failed to fetch category for the budget",
-          new Error(errorMessage),
-        ),
-      );
+      reply
+        .code(STATUS_CODES.BAD_REQUEST)
+        .send(
+          prepareResponse(
+            error,
+            STATUS_CODES.BAD_REQUEST,
+            "Failed to fetch category for the budget",
+            new Error(errorMessage),
+          ),
+        );
     }
   }
 
@@ -324,35 +360,53 @@ export class BudgetHandlers {
     reply: FastifyReply,
   ) {
     try {
+      // Confirm the budget exists before creating the category
+      const budgetExists = await this.budgetService.getBudgetById(request.user.user_id, request.params.budget_id);
+
+      // If the budget does not exist, return a 404 response
+      if (!budgetExists) {
+        reply.code(STATUS_CODES.NOT_FOUND).send(
+          prepareResponse(
+            null,
+            STATUS_CODES.NOT_FOUND,
+            "Budget not found",
+            null,
+          ),
+        );
+      }
+
       const new_category: TBudgetCategory = {
         ...request.body,
         budget_id: request.params.budget_id,
-        user_id: request.user.user_id,
       };
       const createdCategory
         = await this.budgetService.createBudgetCategory(new_category);
-      reply.send(
-        prepareResponse(
-          createdCategory,
-          STATUS_CODES.CREATED,
-          "Budget category created successfully",
-          null,
-        ),
-      );
+      reply
+        .code(STATUS_CODES.CREATED)
+        .send(
+          prepareResponse(
+            createdCategory,
+            STATUS_CODES.CREATED,
+            "Budget category created successfully",
+            null,
+          ),
+        );
     }
     catch (error) {
       const errorMessage
         = error instanceof Error
           ? error.message
           : "An error occurred while creating the budget category";
-      reply.send(
-        prepareResponse(
-          error,
-          STATUS_CODES.BAD_REQUEST,
-          "Failed to create category for the budget",
-          new Error(errorMessage),
-        ),
-      );
+      reply
+        .code(STATUS_CODES.BAD_REQUEST)
+        .send(
+          prepareResponse(
+            error,
+            STATUS_CODES.BAD_REQUEST,
+            "Failed to create category for the budget",
+            new Error(errorMessage),
+          ),
+        );
     }
   }
 
@@ -364,10 +418,27 @@ export class BudgetHandlers {
     reply: FastifyReply,
   ) {
     try {
-      const updatedCategory
-        = await this.budgetService.updateBudgetCategory(request.user.user_id, request.params.budget_id, request.params.category_id, request.body);
+      // Confirm the budget exists before updating the category
+      const budgetExists = await this.budgetService.getBudgetById(request.user.user_id, request.params.budget_id);
 
-      if (!updatedCategory) {
+      // If the budget does not exist, return a 404 response
+      if (!budgetExists) {
+        reply.code(STATUS_CODES.NOT_FOUND).send(
+          prepareResponse(
+            null,
+            STATUS_CODES.NOT_FOUND,
+            "Budget not found",
+            null,
+          ),
+        );
+      }
+
+      // Update the category for the budget
+      const budgetToUpdateExists
+        = await this.budgetService.updateBudgetCategory(request.params.budget_id, request.params.category_id, request.body);
+
+      // If the category does not exist, return a 404 response
+      if (!budgetToUpdateExists) {
         reply.code(STATUS_CODES.NOT_FOUND).send(
           prepareResponse(
             null,
@@ -378,14 +449,16 @@ export class BudgetHandlers {
         );
       }
 
-      reply.send(
-        prepareResponse(
-          updatedCategory,
-          STATUS_CODES.OK,
-          "Budget category updated successfully",
-          null,
-        ),
-      );
+      reply
+        .code(STATUS_CODES.OK)
+        .send(
+          prepareResponse(
+            budgetToUpdateExists,
+            STATUS_CODES.OK,
+            "Budget category updated successfully",
+            null,
+          ),
+        );
     }
     catch (error) {
       const errorMessage
@@ -410,10 +483,27 @@ export class BudgetHandlers {
     reply: FastifyReply,
   ) {
     try {
-      const deletedCategory
-        = await this.budgetService.deleteBudgetCategory(request.user.user_id, request.params.category_id);
+      // Confirm the budget exists before deleting the category
+      const budgetExists = await this.budgetService.getBudgetById(request.user.user_id, request.params.budget_id);
 
-      if (!deletedCategory) {
+      // If the budget does not exist, return a 404 response
+      if (!budgetExists) {
+        reply.code(STATUS_CODES.NOT_FOUND).send(
+          prepareResponse(
+            null,
+            STATUS_CODES.NOT_FOUND,
+            "Budget not found",
+            null,
+          ),
+        );
+      }
+
+      // Delete the category for the budget
+      const categoryToDeleteExists
+        = await this.budgetService.deleteBudgetCategory(request.params.category_id);
+
+      // If the category does not exist, return a 404 response
+      if (!categoryToDeleteExists) {
         reply.code(STATUS_CODES.NOT_FOUND).send(
           prepareResponse(
             null,
@@ -424,28 +514,32 @@ export class BudgetHandlers {
         );
       }
 
-      reply.send(
-        prepareResponse(
-          deletedCategory,
-          STATUS_CODES.OK,
-          "Budget category deleted successfully",
-          null,
-        ),
-      );
+      reply
+        .code(STATUS_CODES.OK)
+        .send(
+          prepareResponse(
+            categoryToDeleteExists,
+            STATUS_CODES.OK,
+            "Budget category deleted successfully",
+            null,
+          ),
+        );
     }
     catch (error) {
       const errorMessage
         = error instanceof Error
           ? error.message
           : "An error occurred while deleting the budget category";
-      reply.send(
-        prepareResponse(
-          error,
-          STATUS_CODES.BAD_REQUEST,
-          "Failed to delete category for the budget",
-          new Error(errorMessage),
-        ),
-      );
+      reply
+        .code(STATUS_CODES.BAD_REQUEST)
+        .send(
+          prepareResponse(
+            error,
+            STATUS_CODES.BAD_REQUEST,
+            "Failed to delete category for the budget",
+            new Error(errorMessage),
+          ),
+        );
     }
   }
 
@@ -457,30 +551,65 @@ export class BudgetHandlers {
   ) {
     try {
       const { category_id, budget_id } = request.params;
-      const user_id = request.user.user_id;
-      const items = await this.budgetService.getBudgetCategoryItems(user_id, budget_id, category_id);
-      reply.send(
-        prepareResponse(
-          items,
-          STATUS_CODES.OK,
-          "Budget category items fetched successfully",
-          null,
-        ),
-      );
+
+      // Confirm the budget exists before fetching the category items
+      const budgetExists = await this.budgetService.getBudgetById(request.user.user_id, budget_id);
+
+      // If the budget does not exist, return a 404 response
+      if (!budgetExists) {
+        reply.code(STATUS_CODES.NOT_FOUND).send(
+          prepareResponse(
+            null,
+            STATUS_CODES.NOT_FOUND,
+            "Budget not found",
+            null,
+          ),
+        );
+      }
+
+      // Confirm the category exists before fetching the category items
+      const categoryExists = await this.budgetService.getBudgetCategoryById(budget_id, category_id);
+
+      // If the category does not exist, return a 404 response
+      if (!categoryExists) {
+        reply.code(STATUS_CODES.NOT_FOUND).send(
+          prepareResponse(
+            null,
+            STATUS_CODES.NOT_FOUND,
+            "Budget category not found",
+            null,
+          ),
+        );
+      }
+
+      // Fetch the items for the category
+      const items = await this.budgetService.getBudgetCategoryItems(budget_id, category_id);
+      reply
+        .code(STATUS_CODES.OK)
+        .send(
+          prepareResponse(
+            items,
+            STATUS_CODES.OK,
+            "Budget category items fetched successfully",
+            null,
+          ),
+        );
     }
     catch (error) {
       const errorMessage
         = error instanceof Error
           ? error.message
           : "An error occurred while fetching the budget category items";
-      reply.send(
-        prepareResponse(
-          error,
-          STATUS_CODES.BAD_REQUEST,
-          "Failed to fetch items for the budget category",
-          new Error(errorMessage),
-        ),
-      );
+      reply
+        .code(STATUS_CODES.BAD_REQUEST)
+        .send(
+          prepareResponse(
+            error,
+            STATUS_CODES.BAD_REQUEST,
+            "Failed to fetch items for the budget category",
+            new Error(errorMessage),
+          ),
+        );
     }
   }
 
@@ -492,100 +621,211 @@ export class BudgetHandlers {
   ) {
     try {
       const { item_id, budget_id, category_id } = request.params;
-      const user_id = request.user.user_id;
-      const item = await this.budgetService.getBudgetCategoryItemById(
-        user_id,
-        budget_id,
-        category_id,
-        item_id,
-      );
 
-      if (!item) {
-        reply.send(
+      // Confirm the budget exists before fetching the category item
+      const budgetExists = await this.budgetService.getBudgetById(request.user.user_id, budget_id);
+
+      // If the budget does not exist, return a 404 response
+      if (!budgetExists) {
+        reply.code(STATUS_CODES.NOT_FOUND).send(
           prepareResponse(
             null,
             STATUS_CODES.NOT_FOUND,
-            "Budget category item not found",
+            "Budget not found",
             null,
           ),
         );
       }
 
-      reply.send(
-        prepareResponse(
-          item,
-          STATUS_CODES.OK,
-          "Budget category item fetched successfully",
-          null,
-        ),
+      // Confirm the category exists before fetching the category item
+      const categoryExists = await this.budgetService.getBudgetCategoryById(budget_id, category_id);
+
+      // If the category does not exist, return a 404 response
+      if (!categoryExists) {
+        reply.code(STATUS_CODES.NOT_FOUND).send(
+          prepareResponse(
+            null,
+            STATUS_CODES.NOT_FOUND,
+            "Budget category not found",
+            null,
+          ),
+        );
+      }
+
+      // Fetch the item for the category
+      const itemForCategoryExists = await this.budgetService.getBudgetCategoryItemById(
+        category_id,
+        item_id,
       );
+
+      // If the item does not exist, return a 404 response
+      if (!itemForCategoryExists) {
+        reply
+          .code(STATUS_CODES.NOT_FOUND)
+          .send(
+            prepareResponse(
+              null,
+              STATUS_CODES.NOT_FOUND,
+              "Budget category item not found",
+              null,
+            ),
+          );
+      }
+
+      reply
+        .code(STATUS_CODES.OK)
+        .send(
+          prepareResponse(
+            itemForCategoryExists,
+            STATUS_CODES.OK,
+            "Budget category item fetched successfully",
+            null,
+          ),
+        );
     }
     catch (error) {
       const errorMessage
         = error instanceof Error
           ? error.message
           : "An error occurred while fetching the budget category item";
-      reply.send(
-        prepareResponse(
-          error,
-          STATUS_CODES.BAD_REQUEST,
-          "Failed to fetch item for the budget category",
-          new Error(errorMessage),
-        ),
-      );
+      reply
+        .code(STATUS_CODES.BAD_REQUEST)
+        .send(
+          prepareResponse(
+            error,
+            STATUS_CODES.BAD_REQUEST,
+            "Failed to fetch item for the budget category",
+            new Error(errorMessage),
+          ),
+        );
     }
   }
 
   async createBudgetCategoryItemHandler(
     request: FastifyRequest<{
       Body: TBudgetCategoryItem;
+      Params: { budget_id: number; category_id: number };
     }>,
     reply: FastifyReply,
   ) {
     try {
-      const item = request.body;
-      const createdItem
-        = await this.budgetService.createBudgetCategoryItem(request.user.user_id, item);
-      reply.send(
-        prepareResponse(
-          createdItem,
-          STATUS_CODES.CREATED,
-          "Budget category item created successfully",
-          null,
-        ),
-      );
+      const { budget_id, category_id } = request.params;
+
+      // Confirm the budget exists before creating the category item
+      const budgetExists = await this.budgetService.getBudgetById(request.user.user_id, budget_id);
+
+      // If the budget does not exist, return a 404 response
+      if (!budgetExists) {
+        reply.code(STATUS_CODES.NOT_FOUND).send(
+          prepareResponse(
+            null,
+            STATUS_CODES.NOT_FOUND,
+            "Budget not found",
+            null,
+          ),
+        );
+      }
+
+      // Confirm the category exists before creating the category item
+      const categoryExists = await this.budgetService.getBudgetCategoryById(budget_id, category_id);
+
+      // If the category does not exist, return a 404 response
+      if (!categoryExists) {
+        reply.code(STATUS_CODES.NOT_FOUND).send(
+          prepareResponse(
+            null,
+            STATUS_CODES.NOT_FOUND,
+            "Budget category not found",
+            null,
+          ),
+        );
+      }
+
+      const itemToCreate: TBudgetCategoryItem = {
+        ...request.body,
+        budget_id,
+        category_id,
+      };
+
+      const createdItem = await this.budgetService.createBudgetCategoryItem(itemToCreate);
+      reply
+        .code(STATUS_CODES.CREATED)
+        .send(
+          prepareResponse(
+            createdItem,
+            STATUS_CODES.CREATED,
+            "Budget category item created successfully",
+            null,
+          ),
+        );
     }
     catch (error) {
       const errorMessage
         = error instanceof Error
           ? error.message
           : "An error occurred while creating the budget category item";
-      reply.send(
-        prepareResponse(
-          error,
-          STATUS_CODES.BAD_REQUEST,
-          "Failed to create item for the budget category",
-          new Error(errorMessage),
-        ),
-      );
+      reply
+        .code(STATUS_CODES.BAD_REQUEST)
+        .send(
+          prepareResponse(
+            error,
+            STATUS_CODES.BAD_REQUEST,
+            "Failed to create item for the budget category",
+            new Error(errorMessage),
+          ),
+        );
     }
   }
 
   async updateBudgetCategoryItemHandler(
     request: FastifyRequest<{
-      Body: TBudgetCategoryItem;
-      Params: { item_id: number };
+      Body: TUpdateBudgetCategoryItem;
+      Params: { budget_id: number; category_id: number; item_id: number };
     }>,
     reply: FastifyReply,
   ) {
     try {
-      const item_id = request.params.item_id;
-      const item = request.body;
-      const updatedItem
-        = await this.budgetService.updateBudgetCategoryItem(request.user.user_id, item_id, item);
+      const { category_id, budget_id, item_id } = request.params;
 
-      if (!updatedItem) {
-        reply.send(
+      // Confirm the budget exists before updating the category item
+      const budgetExists = await this.budgetService.getBudgetById(request.user.user_id, budget_id);
+
+      // If the budget does not exist, return a 404 response
+      if (!budgetExists) {
+        reply.code(STATUS_CODES.NOT_FOUND).send(
+          prepareResponse(
+            null,
+            STATUS_CODES.NOT_FOUND,
+            "Budget not found",
+            null,
+          ),
+        );
+      }
+
+      // Confirm the category exists before updating the category item
+      const categoryExists = await this.budgetService.getBudgetCategoryById(budget_id, category_id);
+
+      // If the category does not exist, return a 404 response
+      if (!categoryExists) {
+        reply.code(STATUS_CODES.NOT_FOUND).send(
+          prepareResponse(
+            null,
+            STATUS_CODES.NOT_FOUND,
+            "Budget category not found",
+            null,
+          ),
+        );
+      }
+
+      // Confirm the item exists before updating the category item
+      const itemToUpdateExists = await this.budgetService.getBudgetCategoryItemById(
+        category_id,
+        item_id,
+      );
+
+      // If the item does not exist, return a 404 response
+      if (!itemToUpdateExists) {
+        reply.code(STATUS_CODES.NOT_FOUND).send(
           prepareResponse(
             null,
             STATUS_CODES.NOT_FOUND,
@@ -595,14 +835,19 @@ export class BudgetHandlers {
         );
       }
 
-      reply.send(
-        prepareResponse(
-          updatedItem,
-          STATUS_CODES.OK,
-          "Budget category item updated successfully",
-          null,
-        ),
-      );
+      const updatedItem
+        = await this.budgetService.updateBudgetCategoryItem(item_id, request.body);
+
+      reply
+        .code(STATUS_CODES.OK)
+        .send(
+          prepareResponse(
+            updatedItem,
+            STATUS_CODES.OK,
+            "Budget category item updated successfully",
+            null,
+          ),
+        );
     }
     catch (error) {
       const errorMessage
@@ -622,18 +867,53 @@ export class BudgetHandlers {
 
   async deleteBudgetCategoryItemHandler(
     request: FastifyRequest<{
-      Params: { item_id: number };
+      Body: TUpdateBudgetCategoryItem;
+      Params: { budget_id: number; category_id: number; item_id: number };
     }>,
     reply: FastifyReply,
   ) {
     try {
-      const item_id = request.params.item_id;
-      const user_id = request.user.user_id;
-      const deletedItem
-        = await this.budgetService.deleteBudgetCategoryItem(user_id, item_id);
+      const { category_id, budget_id, item_id } = request.params;
 
-      if (!deletedItem) {
-        reply.send(
+      // Confirm the budget exists before updating the category item
+      const budgetExists = await this.budgetService.getBudgetById(request.user.user_id, budget_id);
+
+      // If the budget does not exist, return a 404 response
+      if (!budgetExists) {
+        reply.code(STATUS_CODES.NOT_FOUND).send(
+          prepareResponse(
+            null,
+            STATUS_CODES.NOT_FOUND,
+            "Budget not found",
+            null,
+          ),
+        );
+      }
+
+      // Confirm the category exists before updating the category item
+      const categoryExists = await this.budgetService.getBudgetCategoryById(budget_id, category_id);
+
+      // If the category does not exist, return a 404 response
+      if (!categoryExists) {
+        reply.code(STATUS_CODES.NOT_FOUND).send(
+          prepareResponse(
+            null,
+            STATUS_CODES.NOT_FOUND,
+            "Budget category not found",
+            null,
+          ),
+        );
+      }
+
+      // Confirm the item exists before updating the category item
+      const itemToDeleteExists = await this.budgetService.getBudgetCategoryItemById(
+        category_id,
+        item_id,
+      );
+
+      // If the item does not exist, return a 404 response
+      if (!itemToDeleteExists) {
+        reply.code(STATUS_CODES.NOT_FOUND).send(
           prepareResponse(
             null,
             STATUS_CODES.NOT_FOUND,
@@ -643,14 +923,19 @@ export class BudgetHandlers {
         );
       }
 
-      reply.send(
-        prepareResponse(
-          deletedItem,
-          STATUS_CODES.OK,
-          "Budget category item deleted successfully",
-          null,
-        ),
-      );
+      const deletedItem
+        = await this.budgetService.deleteBudgetCategoryItem(item_id);
+
+      reply
+        .code(STATUS_CODES.OK)
+        .send(
+          prepareResponse(
+            deletedItem,
+            STATUS_CODES.OK,
+            "Budget category item deleted successfully",
+            null,
+          ),
+        );
     }
     catch (error) {
       const errorMessage
@@ -662,6 +947,90 @@ export class BudgetHandlers {
           error,
           STATUS_CODES.BAD_REQUEST,
           "Failed to delete item for the budget category",
+          new Error(errorMessage),
+        ),
+      );
+    }
+  }
+
+  async deleteAllBudgetCategoryItemsHandler(
+    request: FastifyRequest<{
+      Body: TUpdateBudgetCategoryItem;
+      Params: { budget_id: number; category_id: number };
+    }>,
+    reply: FastifyReply,
+  ) {
+    try {
+      const { category_id, budget_id } = request.params;
+
+      // Confirm the budget exists before updating the category item
+      const budgetExists = await this.budgetService.getBudgetById(request.user.user_id, budget_id);
+
+      // If the budget does not exist, return a 404 response
+      if (!budgetExists) {
+        reply.code(STATUS_CODES.NOT_FOUND).send(
+          prepareResponse(
+            null,
+            STATUS_CODES.NOT_FOUND,
+            "Budget not found",
+            null,
+          ),
+        );
+      }
+
+      // Confirm the category exists before updating the category item
+      const categoryExists = await this.budgetService.getBudgetCategoryById(budget_id, category_id);
+
+      // If the category does not exist, return a 404 response
+      if (!categoryExists) {
+        reply.code(STATUS_CODES.NOT_FOUND).send(
+          prepareResponse(
+            null,
+            STATUS_CODES.NOT_FOUND,
+            "Budget category not found",
+            null,
+          ),
+        );
+      }
+
+      // Confirm there are items to delete
+      const itemsToDelete = await this.budgetService.getBudgetCategoryItems(budget_id, category_id);
+
+      // If there are no items to delete, return a 404 response
+      if (!itemsToDelete.length) {
+        reply.code(STATUS_CODES.NOT_FOUND).send(
+          prepareResponse(
+            null,
+            STATUS_CODES.NOT_FOUND,
+            "No items found to delete",
+            null,
+          ),
+        );
+      }
+
+      const deletedItems = await this.budgetService.deleteAllBudgetCategoryItems(category_id);
+
+      reply
+        .code(STATUS_CODES.OK)
+        .send(
+          prepareResponse(
+            deletedItems,
+            STATUS_CODES.OK,
+            "Budget category items deleted successfully",
+            null,
+          ),
+        );
+    }
+    catch (error) {
+      const errorMessage
+        = error instanceof Error
+          ? error.message
+          : "An error occurred while deleting the budget category item";
+      reply.send(
+        prepareResponse(
+          error,
+          STATUS_CODES.BAD_REQUEST,
+          "Failed to delete all items for the budget category",
           new Error(errorMessage),
         ),
       );
@@ -1309,6 +1678,10 @@ export class BudgetHandlers {
     server.delete(
       "/:budget_id/categories/:category_id/items/:item_id",
       this.deleteBudgetCategoryItemHandler.bind(this),
+    );
+    server.delete(
+      "/:budget_id/categories/:category_id/items",
+      this.deleteAllBudgetCategoryItemsHandler.bind(this),
     );
 
     server.get(

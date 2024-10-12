@@ -29,20 +29,15 @@ type TCommonTransactionResponse = Promise<TTransactionResult>;
 type TCommonTransactionTypeResponse = Promise<TTransactionTypeResult>;
 
 export interface IBudgetRepository {
-  // Budgets
   getBudgets: (user_id: number) => Promise<Array<TBudgetResult>>;
   getBudgetById: (user_id: number, budget_id: number) => TCommonBudgetResponse;
   createBudget: (budget: TInsertBudget) => TCommonBudgetResponse;
   updateBudget: (user_id: number, budget_id: number, budget_to_update: TUpdateBudget) => TCommonBudgetResponse;
   deleteBudget: (user_id: number, budget_id: number) => TCommonBudgetResponse;
-
-  // Budget Categories
   getBudgetCategories: (
-    user_id: number,
     budget_id: number
   ) => Promise<Array<TBudgetCategoryResult>>;
   getBudgetCategoryById: (
-    user_id: number,
     budget_category_id: number,
     category_id: number
   ) => TCommonBudgetCategoryResponse;
@@ -50,25 +45,18 @@ export interface IBudgetRepository {
     category: TBudgetCategory
   ) => TCommonBudgetCategoryResponse;
   updateBudgetCategory: (
-    user_id: number,
     budget_id: number,
     category_id: number,
     category: TUpdateBudgetCategory
   ) => TCommonBudgetCategoryResponse;
   deleteBudgetCategory: (
-    user_id: number,
     categoryId: number
   ) => TCommonBudgetCategoryResponse;
-
-  // Budget Category Items
   getBudgetCategoryItems: (
-    user_id: number,
     budget_id: number,
     category_id: number
   ) => Promise<Array<TBudgetCategoryItemResult>>;
   getBudgetCategoryItemById: (
-    user_id: number,
-    budget_id: number,
     category_id: number,
     item_id: number
   ) => TCommonBudgetCategoryItemResponse;
@@ -80,13 +68,11 @@ export interface IBudgetRepository {
     item: TUpdateBudgetCategoryItem
   ) => TCommonBudgetCategoryItemResponse;
   deleteBudgetCategoryItem: (
-    user_id: number,
     item_id: number
   ) => TCommonBudgetCategoryItemResponse;
   deleteAllBudgetCategoryItems: (
-    user_id: number,
     category_id: number
-  ) => TCommonBudgetCategoryItemResponse;
+  ) => Promise<TBudgetCategoryItemResult[]>;
 
   // Transactions
   getTransactions: (budget_id: number) => Promise<Array<TTransactionResult>>;
@@ -195,20 +181,17 @@ export class BudgetRepository implements IBudgetRepository {
   }
 
   async getBudgetCategories(
-    user_id: number,
     budget_id: number,
   ): Promise<Array<TBudgetCategoryResult>> {
     return await this.db
       .select()
       .from(schema.budget_categories)
-      .where(and(
+      .where(
         eq(schema.budget_categories.budget_id, budget_id),
-        eq(schema.budget_categories.user_id, user_id),
-      ));
+      );
   }
 
   async getBudgetCategoryById(
-    user_id: number,
     budget_id: number,
     category_id: number,
   ): TCommonBudgetCategoryResponse {
@@ -218,7 +201,6 @@ export class BudgetRepository implements IBudgetRepository {
       .where(and(
         eq(schema.budget_categories.id, category_id),
         eq(schema.budget_categories.budget_id, budget_id),
-        eq(schema.budget_categories.user_id, user_id),
       ));
     return category;
   }
@@ -234,7 +216,7 @@ export class BudgetRepository implements IBudgetRepository {
   }
 
   async updateBudgetCategory(
-    user_id: number,
+
     budget_id: number,
     category_id: number,
     category_to_update: TUpdateBudgetCategory,
@@ -246,7 +228,6 @@ export class BudgetRepository implements IBudgetRepository {
         and(
           eq(schema.budget_categories.id, category_id),
           eq(schema.budget_categories.budget_id, budget_id),
-          eq(schema.budget_categories.user_id, user_id),
         ),
       )
       .returning();
@@ -254,18 +235,16 @@ export class BudgetRepository implements IBudgetRepository {
   }
 
   async deleteBudgetCategory(
-    user_id: number,
     category_id: number,
   ): TCommonBudgetCategoryResponse {
     const [deletedCategory]: Array<TBudgetCategoryResult> = await this.db
       .delete(schema.budget_categories)
-      .where(and(eq(schema.budget_categories.id, category_id), eq(schema.budget_categories.user_id, user_id)))
+      .where(eq(schema.budget_categories.id, category_id))
       .returning();
     return deletedCategory;
   }
 
   async getBudgetCategoryItems(
-    user_id: number,
     budget_id: number,
     category_id: number,
   ): Promise<Array<TBudgetCategoryItemResult>> {
@@ -275,15 +254,12 @@ export class BudgetRepository implements IBudgetRepository {
       .where(
         and(
           eq(schema.budget_category_items.category_id, category_id),
-          eq(schema.budget_category_items.user_id, user_id),
           eq(schema.budget_category_items.budget_id, budget_id),
         ),
       );
   }
 
   async getBudgetCategoryItemById(
-    user_id: number,
-    budget_id: number,
     category_id: number,
     item_id: number,
   ): TCommonBudgetCategoryItemResponse {
@@ -333,8 +309,8 @@ export class BudgetRepository implements IBudgetRepository {
 
   async deleteAllBudgetCategoryItems(
     categoryId: number,
-  ): TCommonBudgetCategoryItemResponse {
-    const [deletedItems]: Array<TBudgetCategoryItemResult> = await this.db
+  ): Promise<TBudgetCategoryItemResult[]> {
+    const deletedItems = await this.db
       .delete(schema.budget_category_items)
       .where(eq(schema.budget_category_items.category_id, categoryId))
       .returning();
