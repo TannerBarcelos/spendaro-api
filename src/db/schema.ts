@@ -58,10 +58,10 @@ export const budget_category_items = pgTable("budget_category_items", {
 // This table is used to store the types of transactions that can be made on a budget category item i.e. income, expense, etc. (not using enum as users can add their own transaction types)
 export const transaction_types = pgTable("transaction_types", {
   id: serial("id").primaryKey(),
-  user_id: integer("user_id").references(() => users.id, {
+  budget_id: integer("budget_id").references(() => budgets.id, {
     onDelete: "cascade",
-  }).notNull(),
-  transaction_type: text("transaction_type"),
+  }).notNull(), // when a budget is deleted, all its transaction types should be deleted as well
+  transaction_type: text("transaction_type").notNull(),
   createdAt: timestamp("created_at")
     .$defaultFn(() => new Date()),
   updatedAt: timestamp("updated_at").$onUpdateFn(() => new Date()),
@@ -70,12 +70,9 @@ export const transaction_types = pgTable("transaction_types", {
 // This table is used to store the transactions made and assign them to a budget category item
 export const transactions = pgTable("transactions", {
   id: serial("id").primaryKey(),
-  user_id: integer("user_id").references(() => users.id, {
-    onDelete: "cascade",
-  }).notNull(), // when a user is deleted, all their transactions should be deleted as well. Also, we need to store the user id so we can query transactions by user on the frontend to show a list of transaction, irrespective of the budget category item
   budget_id: integer("budget_id").references(() => budgets.id, {
     onDelete: "cascade",
-  }), // when a budget is deleted, all its transactions should be deleted as well
+  }).notNull(), // when a budget is deleted, all its transactions should be deleted as well
   transaction_amount: integer("transaction_amount").notNull(),
   transaction_date: date("transaction_date").notNull(), // date of the transaction (can be different from the created_at date, so we need to store it separately)
   transaction_description: text("transaction_description").default(""),
@@ -132,3 +129,10 @@ export const transactionsRelations = relations(
     transaction_type: one(transaction_types),
   }),
 );
+
+export const transactionTypesRelations = relations(transaction_types, ({ one }) => ({
+  budget: one(budgets, {
+    fields: [transaction_types.budget_id],
+    references: [budgets.id],
+  }),
+}));

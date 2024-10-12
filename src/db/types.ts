@@ -79,7 +79,7 @@ export const insertTransactionSchema = createInsertSchema(schema.transactions).o
   createdAt: true,
   updatedAt: true,
 });
-export const updateTransactionSchema = insertTransactionSchema.partial();
+export const updateTransactionSchema = insertTransactionSchema.partial().omit({ budget_id: true });
 export type TTransaction = z.infer<typeof insertTransactionSchema>;
 export type TUpdateTransaction = z.infer<typeof updateTransactionSchema>;
 
@@ -94,7 +94,7 @@ export const insertTransactionTypeSchema = createInsertSchema(
   createdAt: true,
   updatedAt: true,
 });
-export const updateTransactionTypeSchema = insertTransactionTypeSchema.partial();
+export const updateTransactionTypeSchema = insertTransactionTypeSchema.partial().omit({ budget_id: true });
 export type TTransactionType = z.infer<typeof insertTransactionTypeSchema>;
 export type TUpdateTransactionType = z.infer<typeof updateTransactionTypeSchema>;
 

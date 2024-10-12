@@ -50,6 +50,7 @@ export interface IBudgetRepository {
     category: TUpdateBudgetCategory
   ) => TCommonBudgetCategoryResponse;
   deleteBudgetCategory: (
+    budget_id: number,
     categoryId: number
   ) => TCommonBudgetCategoryResponse;
   getBudgetCategoryItems: (
@@ -92,22 +93,21 @@ export interface IBudgetRepository {
   ) => TCommonTransactionResponse;
 
   // Transaction Types (user defined + pre-defined i.e. income, expense, bill, etc.)
-  getTransactionTypes: (user_id: number) => Promise<Array<TTransactionTypeResult>>;
+  getTransactionTypes: (budget_id: number) => Promise<Array<TTransactionTypeResult>>;
   getTransactionTypeById: (
-    user_id: number,
+    budget_id: number,
     transaction_type_id: number
   ) => TCommonTransactionTypeResponse;
   createTransactionType: (
-    user_id: number,
     transaction_type: TTransactionType
   ) => TCommonTransactionTypeResponse;
   updateTransactionType: (
-    user_id: number,
+    budget_id: number,
     type_id: number,
     transaction_type: TUpdateTransactionType
   ) => TCommonTransactionTypeResponse;
   deleteTransactionType: (
-    user_id: number,
+    budget_id: number,
     transaction_type_id: number
   ) => TCommonTransactionTypeResponse;
 }
@@ -235,11 +235,15 @@ export class BudgetRepository implements IBudgetRepository {
   }
 
   async deleteBudgetCategory(
+    budget_id: number,
     category_id: number,
   ): TCommonBudgetCategoryResponse {
     const [deletedCategory]: Array<TBudgetCategoryResult> = await this.db
       .delete(schema.budget_categories)
-      .where(eq(schema.budget_categories.id, category_id))
+      .where(and(
+        eq(schema.budget_categories.id, category_id),
+        eq(schema.budget_categories.budget_id, budget_id),
+      ))
       .returning();
     return deletedCategory;
   }
@@ -360,30 +364,38 @@ export class BudgetRepository implements IBudgetRepository {
     return updatedTransaction;
   }
 
-  async deleteTransaction(transaction_id: number): TCommonTransactionResponse {
+  async deleteTransaction(budget_id: number, transaction_id: number): TCommonTransactionResponse {
     const [deletedTransaction]: Array<TTransactionResult> = await this.db
       .delete(schema.transactions)
-      .where(eq(schema.transactions.id, transaction_id))
+      .where(
+        and(
+          eq(schema.transactions.id, transaction_id),
+          eq(schema.transactions.budget_id, budget_id),
+        ),
+      )
       .returning();
     return deletedTransaction;
   }
 
-  async getTransactionTypes(): Promise<Array<TTransactionTypeResult>> {
-    return await this.db.select().from(schema.transaction_types);
+  async getTransactionTypes(budget_id: number): Promise<Array<TTransactionTypeResult>> {
+    return await this.db.select().from(schema.transaction_types).where(eq(schema.transaction_types.budget_id, budget_id));
   }
 
   async getTransactionTypeById(
-    transaction: number,
+    budget_id: number,
+    transaction_type_id: number,
   ): TCommonTransactionTypeResponse {
     const [transactionType]: Array<TTransactionTypeResult> = await this.db
       .select()
       .from(schema.transaction_types)
-      .where(eq(schema.transaction_types.id, transaction));
+      .where(and(
+        eq(schema.transaction_types.id, transaction_type_id),
+        eq(schema.transaction_types.budget_id, budget_id),
+      ));
     return transactionType;
   }
 
   async createTransactionType(
-    user_id: number,
     transaction: TTransactionType,
   ): TCommonTransactionTypeResponse {
     const [newTransactionType]: Array<TTransactionTypeResult> = await this.db
@@ -394,27 +406,34 @@ export class BudgetRepository implements IBudgetRepository {
   }
 
   async updateTransactionType(
-    user_id: number,
+    budget_id: number,
     type_id: number,
-    type: TTransactionType,
+    type: TUpdateTransactionType,
   ): TCommonTransactionTypeResponse {
     const [updatedTransactionType]: Array<TTransactionTypeResult>
       = await this.db
         .update(schema.transaction_types)
         .set(type)
-        .where(eq(schema.transaction_types.id, type_id))
+        .where(and(
+          eq(schema.transaction_types.id, type_id),
+          eq(schema.transaction_types.budget_id, budget_id),
+        ))
         .returning();
     return updatedTransactionType;
   }
 
   async deleteTransactionType(
-    transactionId: number,
+    budget_id: number,
+    type_id: number,
   ): TCommonTransactionTypeResponse {
-    const [deletedTransactionType]: Array<TTransactionTypeResult>
+    const [updatedTransactionType]: Array<TTransactionTypeResult>
       = await this.db
         .delete(schema.transaction_types)
-        .where(eq(schema.transaction_types.id, transactionId))
+        .where(and(
+          eq(schema.transaction_types.id, type_id),
+          eq(schema.transaction_types.budget_id, budget_id),
+        ))
         .returning();
-    return deletedTransactionType;
+    return updatedTransactionType;
   }
 }
