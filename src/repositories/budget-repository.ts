@@ -38,9 +38,11 @@ export interface IBudgetRepository {
 
   // Budget Categories
   getBudgetCategories: (
+    user_id: number,
     budget_id: number
   ) => Promise<Array<TBudgetCategoryResult>>;
   getBudgetCategoryById: (
+    user_id: number,
     budget_category_id: number,
     category_id: number
   ) => TCommonBudgetCategoryResponse;
@@ -48,11 +50,13 @@ export interface IBudgetRepository {
     category: TBudgetCategory
   ) => TCommonBudgetCategoryResponse;
   updateBudgetCategory: (
+    user_id: number,
     budget_id: number,
     category_id: number,
     category: TUpdateBudgetCategory
   ) => TCommonBudgetCategoryResponse;
   deleteBudgetCategory: (
+    user_id: number,
     categoryId: number
   ) => TCommonBudgetCategoryResponse;
 
@@ -191,12 +195,16 @@ export class BudgetRepository implements IBudgetRepository {
   }
 
   async getBudgetCategories(
+    user_id: number,
     budget_id: number,
   ): Promise<Array<TBudgetCategoryResult>> {
     return await this.db
       .select()
       .from(schema.budget_categories)
-      .where(eq(schema.budget_categories.budget_id, budget_id));
+      .where(and(
+        eq(schema.budget_categories.budget_id, budget_id),
+        eq(schema.budget_categories.user_id, user_id),
+      ));
   }
 
   async getBudgetCategoryById(

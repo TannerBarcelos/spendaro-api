@@ -151,11 +151,7 @@ export class BudgetHandlers {
     reply: FastifyReply,
   ) {
     try {
-      const budgetToUpdate: TUpdateBudget = {
-        ...request.body,
-      };
-
-      const updatedBudget = await this.budgetService.updateBudget(request.user.user_id, request.params.budget_id, budgetToUpdate);
+      const updatedBudget = await this.budgetService.updateBudget(request.user.user_id, request.params.budget_id, request.body);
 
       if (!updatedBudget) {
         reply
@@ -206,8 +202,7 @@ export class BudgetHandlers {
     reply: FastifyReply,
   ) {
     try {
-      const budget_id = request.params.budget_id;
-      const deletedBudget = await this.budgetService.deleteBudget(request.user.user_id, budget_id);
+      const deletedBudget = await this.budgetService.deleteBudget(request.user.user_id, request.params.budget_id);
 
       if (!deletedBudget) {
         reply
