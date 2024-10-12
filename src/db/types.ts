@@ -41,7 +41,7 @@ export const insertBudgetCategorySchema = createInsertSchema(
   createdAt: true,
   updatedAt: true,
 });
-export const updateBudgetCategorySchema = insertBudgetCategorySchema.partial().omit({ budget_id: true });
+export const updateBudgetCategorySchema = insertBudgetCategorySchema.partial().omit({ budget_id: true, user_id: true });
 export type TBudgetCategory = z.infer<typeof insertBudgetCategorySchema>;
 export type TUpdateBudgetCategory = z.infer<typeof updateBudgetCategorySchema>;
 
@@ -58,7 +58,7 @@ export const insertBudgetCategoryItemSchema = createInsertSchema(
   createdAt: true,
   updatedAt: true,
 });
-export const updateBudgetCategoryItemSchema = insertBudgetCategoryItemSchema.partial();
+export const updateBudgetCategoryItemSchema = insertBudgetCategoryItemSchema.partial().omit({ category_id: true, user_id: true });
 export type TBudgetCategoryItem = z.infer<
   typeof insertBudgetCategoryItemSchema
 >;

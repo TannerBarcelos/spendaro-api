@@ -62,16 +62,14 @@ export class BudgetHandlers {
     try {
       const budget = await this.budgetService.getBudgetById(request.user.user_id, request.params.budget_id);
       if (!budget) {
-        reply
-          .status(STATUS_CODES.NOT_FOUND)
-          .send(
-            prepareResponse(
-              null,
-              STATUS_CODES.NOT_FOUND,
-              "Budget not found",
-              null,
-            ),
-          );
+        reply.code(STATUS_CODES.NOT_FOUND).send(
+          prepareResponse(
+            null,
+            STATUS_CODES.NOT_FOUND,
+            "Budget not found",
+            null,
+          ),
+        );
       }
       reply
         .status(STATUS_CODES.OK)
@@ -154,16 +152,14 @@ export class BudgetHandlers {
       const updatedBudget = await this.budgetService.updateBudget(request.user.user_id, request.params.budget_id, request.body);
 
       if (!updatedBudget) {
-        reply
-          .status(STATUS_CODES.NOT_FOUND)
-          .send(
-            prepareResponse(
-              null,
-              STATUS_CODES.NOT_FOUND,
-              "Budget not found",
-              null,
-            ),
-          );
+        reply.code(STATUS_CODES.NOT_FOUND).send(
+          prepareResponse(
+            null,
+            STATUS_CODES.NOT_FOUND,
+            "Budget not found",
+            null,
+          ),
+        );
       }
 
       reply
@@ -205,16 +201,14 @@ export class BudgetHandlers {
       const deletedBudget = await this.budgetService.deleteBudget(request.user.user_id, request.params.budget_id);
 
       if (!deletedBudget) {
-        reply
-          .status(STATUS_CODES.NOT_FOUND)
-          .send(
-            prepareResponse(
-              null,
-              STATUS_CODES.NOT_FOUND,
-              "Budget not found",
-              null,
-            ),
-          );
+        reply.code(STATUS_CODES.NOT_FOUND).send(
+          prepareResponse(
+            null,
+            STATUS_CODES.NOT_FOUND,
+            "Budget not found",
+            null,
+          ),
+        );
       }
 
       reply.send(
@@ -287,7 +281,7 @@ export class BudgetHandlers {
         = await this.budgetService.getBudgetCategoryById(request.user.user_id, request.params.budget_id, request.params.category_id);
 
       if (!category) {
-        reply.send(
+        reply.code(STATUS_CODES.NOT_FOUND).send(
           prepareResponse(
             null,
             STATUS_CODES.NOT_FOUND,
@@ -324,21 +318,19 @@ export class BudgetHandlers {
 
   async createBudgetCategoryHandler(
     request: FastifyRequest<{
-      Body: Pick<TBudgetCategory, "category_name" | "category_description">; // the request body should only contain the category_name and category_description as the budget_id will be taken from the URL params (but it is a FK to the budgets table, hence it is required in the database schema and used in the insert query)
+      Body: TBudgetCategory; // the request body should only contain the category_name and category_description as the budget_id will be taken from the URL params (but it is a FK to the budgets table, hence it is required in the database schema and used in the insert query)
       Params: { budget_id: number };
     }>,
     reply: FastifyReply,
   ) {
     try {
-      const category = request.body;
-      const budget_id = request.params.budget_id;
       const new_category: TBudgetCategory = {
-        ...category,
-        budget_id,
+        ...request.body,
+        budget_id: request.params.budget_id,
         user_id: request.user.user_id,
       };
       const createdCategory
-        = await this.budgetService.createBudgetCategory(request.user.user_id, new_category);
+        = await this.budgetService.createBudgetCategory(new_category);
       reply.send(
         prepareResponse(
           createdCategory,
@@ -376,7 +368,7 @@ export class BudgetHandlers {
         = await this.budgetService.updateBudgetCategory(request.user.user_id, request.params.budget_id, request.params.category_id, request.body);
 
       if (!updatedCategory) {
-        reply.send(
+        reply.code(STATUS_CODES.NOT_FOUND).send(
           prepareResponse(
             null,
             STATUS_CODES.NOT_FOUND,
@@ -422,7 +414,7 @@ export class BudgetHandlers {
         = await this.budgetService.deleteBudgetCategory(request.user.user_id, request.params.category_id);
 
       if (!deletedCategory) {
-        reply.send(
+        reply.code(STATUS_CODES.NOT_FOUND).send(
           prepareResponse(
             null,
             STATUS_CODES.NOT_FOUND,

@@ -208,13 +208,18 @@ export class BudgetRepository implements IBudgetRepository {
   }
 
   async getBudgetCategoryById(
+    user_id: number,
     budget_id: number,
-    cateogry_id: number,
+    category_id: number,
   ): TCommonBudgetCategoryResponse {
     const [category]: Array<TBudgetCategoryResult> = await this.db
       .select()
       .from(schema.budget_categories)
-      .where(and(eq(schema.budget_categories.id, cateogry_id), eq(schema.budget_categories.budget_id, budget_id)));
+      .where(and(
+        eq(schema.budget_categories.id, category_id),
+        eq(schema.budget_categories.budget_id, budget_id),
+        eq(schema.budget_categories.user_id, user_id),
+      ));
     return category;
   }
 
@@ -229,6 +234,7 @@ export class BudgetRepository implements IBudgetRepository {
   }
 
   async updateBudgetCategory(
+    user_id: number,
     budget_id: number,
     category_id: number,
     category_to_update: TUpdateBudgetCategory,
@@ -236,17 +242,24 @@ export class BudgetRepository implements IBudgetRepository {
     const [updatedCategory]: Array<TBudgetCategoryResult> = await this.db
       .update(schema.budget_categories)
       .set(category_to_update)
-      .where(and(eq(schema.budget_categories.id, category_id), eq(schema.budget_categories.budget_id, budget_id)))
+      .where(
+        and(
+          eq(schema.budget_categories.id, category_id),
+          eq(schema.budget_categories.budget_id, budget_id),
+          eq(schema.budget_categories.user_id, user_id),
+        ),
+      )
       .returning();
     return updatedCategory;
   }
 
   async deleteBudgetCategory(
+    user_id: number,
     category_id: number,
   ): TCommonBudgetCategoryResponse {
     const [deletedCategory]: Array<TBudgetCategoryResult> = await this.db
       .delete(schema.budget_categories)
-      .where(eq(schema.budget_categories.id, category_id))
+      .where(and(eq(schema.budget_categories.id, category_id), eq(schema.budget_categories.user_id, user_id)))
       .returning();
     return deletedCategory;
   }
