@@ -1,14 +1,14 @@
 import type {
-  TBudgetCategory,
-  TBudgetCategoryItem,
+  TBudgetCategoryItemToCreate,
+  TBudgetCategoryItemToUpdate,
+  TBudgetCategoryToCreate,
+  TBudgetCategoryToUpdate,
   TBudgetToCreate,
   TBudgetToUpdate,
-  TTransaction,
-  TTransactionType,
-  TUpdateBudgetCategory,
-  TUpdateBudgetCategoryItem,
-  TUpdateTransaction,
-  TUpdateTransactionType,
+  TTransactionToCreate,
+  TTransactionToUpdate,
+  TTransactionTypeToCreate,
+  TTransactionTypeToUpdate,
 } from "@/db/types";
 import type { IBudgetRepository } from "@/repositories/budget-repository";
 
@@ -47,11 +47,11 @@ export class BudgetService {
     return this.budget_repo.getBudgetCategoryById(budget_id, category_id);
   }
 
-  createBudgetCategory(category: TBudgetCategory) {
+  createBudgetCategory(category: TBudgetCategoryToCreate) {
     return this.budget_repo.createBudgetCategory(category);
   }
 
-  updateBudgetCategory(budget_id: number, category_id: number, category: TUpdateBudgetCategory) {
+  updateBudgetCategory(budget_id: number, category_id: number, category: TBudgetCategoryToUpdate) {
     return this.budget_repo.updateBudgetCategory(budget_id, category_id, category);
   }
 
@@ -67,11 +67,11 @@ export class BudgetService {
     return this.budget_repo.getBudgetCategoryItemById(category_id, item_id);
   }
 
-  createBudgetCategoryItem(item: TBudgetCategoryItem) {
+  createBudgetCategoryItem(item: TBudgetCategoryItemToCreate) {
     return this.budget_repo.createBudgetCategoryItem(item);
   }
 
-  updateBudgetCategoryItem(item_id: number, item: TUpdateBudgetCategoryItem) {
+  updateBudgetCategoryItem(item_id: number, item: TBudgetCategoryItemToUpdate) {
     return this.budget_repo.updateBudgetCategoryItem(item_id, item);
   }
 
@@ -91,11 +91,11 @@ export class BudgetService {
     return this.budget_repo.getTransactionById(budget_id, transaction_id);
   }
 
-  createTransaction(transaction: TTransaction) {
+  createTransaction(transaction: TTransactionToCreate) {
     return this.budget_repo.createTransaction(transaction);
   }
 
-  updateTransaction(budget_id: number, transaction_id: number, transaction: TUpdateTransaction) {
+  updateTransaction(budget_id: number, transaction_id: number, transaction: TTransactionToUpdate) {
     return this.budget_repo.updateTransaction(budget_id, transaction_id, transaction);
   }
 
@@ -111,11 +111,11 @@ export class BudgetService {
     return this.budget_repo.getTransactionTypeById(budget_id, transaction_type_id);
   }
 
-  createTransactionType(transaction_type: TTransactionType) {
+  createTransactionType(transaction_type: TTransactionTypeToCreate) {
     return this.budget_repo.createTransactionType(transaction_type);
   }
 
-  updateTransactionType(budget_id: number, transaction_type_id: number, transaction_type: TUpdateTransactionType) {
+  updateTransactionType(budget_id: number, transaction_type_id: number, transaction_type: TTransactionTypeToUpdate) {
     return this.budget_repo.updateTransactionType(budget_id, transaction_type_id, transaction_type);
   }
 

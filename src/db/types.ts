@@ -77,9 +77,9 @@ export const updateTransactionTypeSchema = createTransactionTypeSchema.partial()
 export const deleteTransactionTypeSchema = z.object({ id: z.number() });
 export const foundTransactionTypeSchema = createSelectSchema(schema.transaction_types);
 
-export type TTransactionType = z.infer<typeof createTransactionTypeSchema>;
-export type TUpdateTransactionType = z.infer<typeof updateTransactionTypeSchema>;
-export type TDeleteTransactionType = z.infer<typeof deleteTransactionTypeSchema>;
+export type TTransactionTypeToCreate = z.infer<typeof createTransactionTypeSchema>;
+export type TTransactionTypeToUpdate = z.infer<typeof updateTransactionTypeSchema>;
+export type TTransactionTypeToDelete = z.infer<typeof deleteTransactionTypeSchema>;
 export type TTransactionTypeResult = z.infer<typeof foundTransactionTypeSchema>;
 
 // Exporting all schemas as JSON schemas and $ref for use in the application
