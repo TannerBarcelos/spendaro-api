@@ -8,12 +8,12 @@ import type {
   TBudgetCategoryItemResult,
   TBudgetCategoryResult,
   TBudgetResult,
-  TInsertBudget,
+  TBudgetToCreate,
+  TBudgetToUpdate,
   TTransaction,
   TTransactionResult,
   TTransactionType,
   TTransactionTypeResult,
-  TUpdateBudget,
   TUpdateBudgetCategory,
   TUpdateBudgetCategoryItem,
   TUpdateTransaction,
@@ -31,8 +31,8 @@ type TCommonTransactionTypeResponse = Promise<TTransactionTypeResult>;
 export interface IBudgetRepository {
   getBudgets: (user_id: number) => Promise<Array<TBudgetResult>>;
   getBudgetById: (user_id: number, budget_id: number) => TCommonBudgetResponse;
-  createBudget: (budget: TInsertBudget) => TCommonBudgetResponse;
-  updateBudget: (user_id: number, budget_id: number, budget_to_update: TUpdateBudget) => TCommonBudgetResponse;
+  createBudget: (budget: TBudgetToCreate) => TCommonBudgetResponse;
+  updateBudget: (user_id: number, budget_id: number, budget_to_update: TBudgetToUpdate) => TCommonBudgetResponse;
   deleteBudget: (user_id: number, budget_id: number) => TCommonBudgetResponse;
   getBudgetCategories: (
     budget_id: number
@@ -142,7 +142,7 @@ export class BudgetRepository implements IBudgetRepository {
     return budget;
   }
 
-  async createBudget(budget: TInsertBudget): TCommonBudgetResponse {
+  async createBudget(budget: TBudgetToCreate): TCommonBudgetResponse {
     const [newBudget]: Array<TBudgetResult> = await this.db
       .insert(schema.budgets)
       .values(budget)
@@ -150,7 +150,7 @@ export class BudgetRepository implements IBudgetRepository {
     return newBudget;
   }
 
-  async updateBudget(user_id: number, budget_id: number, budget_to_update: TUpdateBudget): TCommonBudgetResponse {
+  async updateBudget(user_id: number, budget_id: number, budget_to_update: TBudgetToUpdate): TCommonBudgetResponse {
     const [updatedBudget]: Array<TBudgetResult> = await this.db
       .update(schema.budgets)
       .set(budget_to_update)

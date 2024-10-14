@@ -1,6 +1,6 @@
 import type { FastifyInstance } from "fastify";
 
-import { AuthHandlers } from "@/handlers/auth-handlers";
+import { AuthHandlers } from "@/handlers/auth/auth-handlers";
 import { AuthRepository } from "@/repositories/auth-repository";
 import { AuthService } from "@/services/auth-service";
 

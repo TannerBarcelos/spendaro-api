@@ -3,10 +3,10 @@ import type { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import type {
   TBudgetCategory,
   TBudgetCategoryItem,
-  TInsertBudget,
+  TBudgetToCreate,
+  TBudgetToUpdate,
   TTransaction,
   TTransactionType,
-  TUpdateBudget,
   TUpdateBudgetCategory,
   TUpdateBudgetCategoryItem,
   TUpdateTransaction,
@@ -16,9 +16,7 @@ import type { BudgetService } from "@/services/budget-service";
 import { prepareResponse, STATUS_CODES } from "@/utils/http";
 
 export class BudgetHandlers {
-  private budgetService: BudgetService;
-
-  constructor(budgetService: BudgetService) {
+  constructor(private budgetService: BudgetService) {
     this.budgetService = budgetService;
   }
 
@@ -104,12 +102,12 @@ export class BudgetHandlers {
 
   async createBudgetHandler(
     request: FastifyRequest<{
-      Body: TInsertBudget;
+      Body: TBudgetToCreate;
     }>,
     reply: FastifyReply,
   ) {
     try {
-      const budget: TInsertBudget = {
+      const budget: TBudgetToCreate = {
         ...request.body,
         user_id: request.user.user_id,
       };
@@ -145,7 +143,7 @@ export class BudgetHandlers {
 
   async updateBudgetHandler(
     request: FastifyRequest<{
-      Body: TUpdateBudget;
+      Body: TBudgetToUpdate;
       Params: { budget_id: number };
     }>,
     reply: FastifyReply,

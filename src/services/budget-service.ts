@@ -1,10 +1,10 @@
 import type {
   TBudgetCategory,
   TBudgetCategoryItem,
-  TInsertBudget,
+  TBudgetToCreate,
+  TBudgetToUpdate,
   TTransaction,
   TTransactionType,
-  TUpdateBudget,
   TUpdateBudgetCategory,
   TUpdateBudgetCategoryItem,
   TUpdateTransaction,
@@ -27,11 +27,11 @@ export class BudgetService {
     return this.budget_repo.getBudgetById(user_id, budget_id);
   }
 
-  createBudget(budget: TInsertBudget) {
+  createBudget(budget: TBudgetToCreate) {
     return this.budget_repo.createBudget(budget);
   }
 
-  updateBudget(user_id: number, budget_id: number, budget_to_update: TUpdateBudget) {
+  updateBudget(user_id: number, budget_id: number, budget_to_update: TBudgetToUpdate) {
     return this.budget_repo.updateBudget(user_id, budget_id, budget_to_update);
   }
 

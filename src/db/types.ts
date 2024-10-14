@@ -5,63 +5,56 @@ import * as schema from "./schema";
 // Inferring Zod schemas from the tables so we can use it in application code to validate data.
 // Also inferring the types so we can use them in function arguments and return types.
 
-import type z from "zod";
-
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
+import z from "zod";
 
-// User schema
-export const signupUserSchema = createInsertSchema(schema.users).omit({
-  id: true,
-  createdAt: true,
-  updatedAt: true,
-});
+const commonFields = {
+  id: true as const,
+  createdAt: true as const,
+  updatedAt: true as const,
+};
+
+// User schemas
+export const signupUserSchema = createInsertSchema(schema.users).omit(commonFields);
 export const signinUserSchema = signupUserSchema.pick({ email: true, password: true });
 export const updateUserSchema = signupUserSchema.partial();
-export type TInsertUser = z.infer<typeof signupUserSchema>;
-export type TUpdateUser = z.infer<typeof updateUserSchema>;
+export const deleteUserSchema = z.object({ id: z.number() });
+export const foundUserSchema = createSelectSchema(schema.users);
 
-export const selectUserSchema = createSelectSchema(schema.users);
-export type TUserResult = z.infer<typeof selectUserSchema>;
+export type TUserToCreate = z.infer<typeof signupUserSchema>;
+export type TUserToUpdate = z.infer<typeof updateUserSchema>;
+export type TUserToDelete = z.infer<typeof deleteUserSchema>;
+export type TCandidateUser = z.infer<typeof signinUserSchema>;
+export type TFoundUserResult = z.infer<typeof foundUserSchema>;
 
-// Budget schema
-export const insertBudgetSchema = createInsertSchema(schema.budgets).omit({
-  id: true,
-  createdAt: true,
-  updatedAt: true,
-});
+// Budget schemas
+export const createBudgetSchema = createInsertSchema(schema.budgets).omit(commonFields);
 export const selectBudgetSchema = createSelectSchema(schema.budgets);
-export const updateBudgetSchema = insertBudgetSchema.partial().omit({ user_id: true });
+export const updateBudgetSchema = createBudgetSchema.partial().omit({ user_id: true });
 export const deleteBudgetSchema = createInsertSchema(schema.budgets).pick({ id: true });
-export type TInsertBudget = z.infer<typeof insertBudgetSchema>;
-export type TUpdateBudget = z.infer<typeof updateBudgetSchema>;
-export type TDeleteBudget = z.infer<typeof deleteBudgetSchema>;
+
+export type TBudgetToCreate = z.infer<typeof createBudgetSchema>;
+export type TBudgetToUpdate = z.infer<typeof updateBudgetSchema>;
+export type TBudgetToDelete = z.infer<typeof deleteBudgetSchema>;
 export type TBudgetResult = z.infer<typeof selectBudgetSchema>;
 
-// Budget category schema
+// Budget category schemas
 export const insertBudgetCategorySchema = createInsertSchema(
   schema.budget_categories,
-).omit({
-  id: true,
-  createdAt: true,
-  updatedAt: true,
-});
+).omit(commonFields);
 export const updateBudgetCategorySchema = insertBudgetCategorySchema.partial().omit({ budget_id: true });
-export type TBudgetCategory = z.infer<typeof insertBudgetCategorySchema>;
-export type TUpdateBudgetCategory = z.infer<typeof updateBudgetCategorySchema>;
-
 export const selectBudgetCategorySchema = createSelectSchema(
   schema.budget_categories,
 );
+
+export type TBudgetCategory = z.infer<typeof insertBudgetCategorySchema>;
+export type TUpdateBudgetCategory = z.infer<typeof updateBudgetCategorySchema>;
 export type TBudgetCategoryResult = z.infer<typeof selectBudgetCategorySchema>;
 
 // Budget category item schema
 export const insertBudgetCategoryItemSchema = createInsertSchema(
   schema.budget_category_items,
-).omit({
-  id: true,
-  createdAt: true,
-  updatedAt: true,
-});
+).omit(commonFields);
 export const updateBudgetCategoryItemSchema = insertBudgetCategoryItemSchema.partial().omit({ category_id: true, budget_id: true });
 export type TBudgetCategoryItem = z.infer<
   typeof insertBudgetCategoryItemSchema
@@ -119,8 +112,8 @@ export const { schemas: spendaroSchemas, $ref } = buildJsonSchemas({
   signupUserSchema,
   signinUserSchema,
   updateUserSchema,
-  selectUserSchema,
-  insertBudgetSchema,
+  foundUserSchema,
+  createBudgetSchema,
   selectBudgetSchema,
   updateBudgetSchema,
   deleteBudgetSchema,
@@ -136,6 +129,4 @@ export const { schemas: spendaroSchemas, $ref } = buildJsonSchemas({
   insertTransactionTypeSchema,
   updateTransactionTypeSchema,
   selectTransactionTypeSchema,
-
-  // Add more schemas here
 });

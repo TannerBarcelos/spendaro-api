@@ -2,33 +2,30 @@ import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 
 import { eq } from "drizzle-orm";
 
-import type { TInsertUser, TUserResult } from "@/db/types";
+import type { TCandidateUser, TFoundUserResult, TUserToCreate } from "@/db/types";
 
 import * as schema from "@/db/schema";
 
-type TCommonUserResponse = Promise<TUserResult>;
 export interface IAuthRepository {
-  signup: (user: TInsertUser) => TCommonUserResponse;
-  signin: (user: Pick<TInsertUser, "email" | "password">) => TCommonUserResponse;
+  signup: (user: TUserToCreate) => Promise<TFoundUserResult>;
+  signin: (user: TCandidateUser) => Promise<TFoundUserResult>;
 }
 
 export class AuthRepository implements IAuthRepository {
-  private db: PostgresJsDatabase<typeof schema>;
-
-  constructor(db: PostgresJsDatabase<typeof schema>) {
+  constructor(private db: PostgresJsDatabase<typeof schema>) {
     this.db = db;
   }
 
-  async signin(candidateUser: Pick<TInsertUser, "email" | "password">): TCommonUserResponse {
-    const [foundUser]: Array<TUserResult> = await this.db
+  async signin(TCandidateUser: TCandidateUser): Promise<TFoundUserResult> {
+    const [foundUser]: Array<TFoundUserResult> = await this.db
       .select()
       .from(schema.users)
-      .where(eq(schema.users.email, candidateUser.email));
+      .where(eq(schema.users.email, TCandidateUser.email));
     return foundUser;
   }
 
-  async signup(user: TInsertUser): TCommonUserResponse {
-    const [newUser]: Array<TUserResult> = await this.db
+  async signup(user: TUserToCreate): Promise<TFoundUserResult> {
+    const [newUser]: Array<TFoundUserResult> = await this.db
       .insert(schema.users)
       .values(user)
       .returning();

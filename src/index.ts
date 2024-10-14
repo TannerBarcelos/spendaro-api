@@ -8,7 +8,7 @@ import fastify from "fastify";
 import { fastifyBcrypt } from "fastify-bcrypt";
 
 import db from "@/db/index";
-import { ErrorHandlers } from "@/handlers/error-handlers";
+import { ErrorHandlers } from "@/handlers/error/error-handlers";
 import { swaggerConfig } from "@/open-api";
 import authenticate from "@/plugins/authenticate";
 import { routes } from "@/routes/index";

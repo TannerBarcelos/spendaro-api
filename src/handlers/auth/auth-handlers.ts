@@ -3,21 +3,19 @@ import type { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import config from "config";
 import { getReasonPhrase } from "http-status-codes";
 
-import type { TInsertUser } from "@/db/types";
+import type { TCandidateUser, TUserToCreate } from "@/db/types";
 import type { AuthService } from "@/services/auth-service";
 
-import { $ref, signupUserSchema } from "@/db/types";
+import { $ref } from "@/db/types";
 import { prepareResponse, STATUS_CODES } from "@/utils/http";
 
 export class AuthHandlers {
-  private authService: AuthService;
-
-  constructor(authService: AuthService) {
+  constructor(private authService: AuthService) {
     this.authService = authService;
   }
 
   async signupUserHandler(request: FastifyRequest<{
-    Body: TInsertUser;
+    Body: TUserToCreate;
   }>, reply: FastifyReply) {
     const signedUpUser = await this.authService.signup(request.body);
     const token = request.server.jwt.sign(
@@ -38,9 +36,10 @@ export class AuthHandlers {
     );
   }
 
-  async signinUserHandler(request: FastifyRequest, reply: FastifyReply) {
-    const user = request.body as Pick<TInsertUser, "email" | "password">;
-    const signedInUser = await this.authService.signin(user);
+  async signinUserHandler(request: FastifyRequest<{
+    Body: TCandidateUser;
+  }>, reply: FastifyReply) {
+    const signedInUser = await this.authService.signin(request.body);
 
     if (!signedInUser) {
       reply.send(
@@ -88,6 +87,14 @@ export class AuthHandlers {
       {
         schema: {
           body: $ref("signinUserSchema"),
+          response: {
+            [STATUS_CODES.OK]: {
+              type: "object",
+              properties: {
+                access_token: { type: "string" },
+              },
+            },
+          },
         },
       },
       this.signinUserHandler.bind(this),

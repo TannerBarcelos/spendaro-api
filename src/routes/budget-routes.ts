@@ -1,6 +1,6 @@
 import type { FastifyInstance } from "fastify";
 
-import { BudgetHandlers } from "@/handlers/budget-handlers";
+import { BudgetHandlers } from "@/handlers/budget/budget-handlers";
 import { BudgetRepository } from "@/repositories/budget-repository";
 import { BudgetService } from "@/services/budget-service";
 
