@@ -5,7 +5,7 @@ import { getReasonPhrase } from "http-status-codes";
 import pg from "postgres";
 
 import { env } from "@/env";
-import { prepareResponse, STATUS_CODES } from "@/utils/http";
+import { STATUS_CODES } from "@/utils/http";
 
 export class ErrorHandlers {
   static async handleNotFoundError(
@@ -65,8 +65,7 @@ export class ErrorHandlers {
     // Handle Postgres errors (db calls will fail for things like duplicate keys, etc.)
     if (error instanceof pg.PostgresError) {
       switch (error.code) {
-        // Duplicate key error code check
-        case "23505":{
+        case "23505": {
           return reply.code(STATUS_CODES.CONFLICT).send({
             error: "Conflict - Duplicate Resource",
             message: error.detail ?? "The requested resource already exists",
@@ -78,8 +77,53 @@ export class ErrorHandlers {
             },
           });
         }
+        case "23503": {
+          return reply.code(STATUS_CODES.BAD_REQUEST).send({
+            error: "Bad Request - Foreign Key Violation",
+            message: error.detail ?? "Foreign key constraint violation",
+            details: {
+              issues: error.message,
+              method: request.method,
+              url: request.url,
+              stack: env.NODE_ENV === "development" ? error.stack : undefined,
+            },
+          });
+        }
+        case "23514": {
+          return reply.code(STATUS_CODES.BAD_REQUEST).send({
+            error: "Bad Request - Check Violation",
+            message: error.detail ?? "Check constraint violation",
+            details: {
+              issues: error.message,
+              method: request.method,
+              url: request.url,
+              stack: env.NODE_ENV === "development" ? error.stack : undefined,
+            },
+          });
+        }
+        case "42703": {
+          return reply.code(STATUS_CODES.BAD_REQUEST).send({
+            error: "Bad Request - Undefined Column",
+            message: error.detail ?? "Undefined column in the request",
+            details: {
+              issues: error.message,
+              method: request.method,
+              url: request.url,
+              stack: env.NODE_ENV === "development" ? error.stack : undefined,
+            },
+          });
+        }
         default:
-          break;
+          return reply.code(STATUS_CODES.INTERNAL_SERVER_ERROR).send({
+            error: "Internal Server Error",
+            message: "An unexpected error occurred",
+            details: {
+              issues: error.message,
+              method: request.method,
+              url: request.url,
+              stack: env.NODE_ENV === "development" ? error.stack : undefined,
+            },
+          });
       }
     }
 
