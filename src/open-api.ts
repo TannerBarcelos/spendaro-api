@@ -1,5 +1,7 @@
 import type { SwaggerOptions } from "@fastify/swagger";
 
+import { createJsonSchemaTransform } from "fastify-type-provider-zod";
+
 // Learn more here -> https://github.com/fastify/fastify-swagger
 export const swaggerConfig: SwaggerOptions = {
   openapi: {
@@ -9,7 +11,7 @@ export const swaggerConfig: SwaggerOptions = {
       title: "Spendaro REST API",
       version: "1.0.0",
       description:
-        "A feature-rich REST API for managing your personal finances on the Spendaro platform",
+        "The official REST API for managing your personal finances on the Spendaro platform",
     },
     // available servers to run the API methods on from the Swagger UI
     servers: [
@@ -44,4 +46,7 @@ export const swaggerConfig: SwaggerOptions = {
       },
     ],
   },
+  transform: createJsonSchemaTransform({
+    skipList: ["/docs/**/*"],
+  }),
 };

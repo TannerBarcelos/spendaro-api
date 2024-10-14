@@ -14,19 +14,6 @@ const commonFields = {
   updatedAt: true as const,
 };
 
-// User schemas
-export const signupUserSchema = createInsertSchema(schema.users).omit(commonFields);
-export const signinUserSchema = signupUserSchema.pick({ email: true, password: true });
-export const updateUserSchema = signupUserSchema.partial();
-export const deleteUserSchema = z.object({ id: z.number() });
-export const foundUserSchema = createSelectSchema(schema.users);
-
-export type TUserToCreate = z.infer<typeof signupUserSchema>;
-export type TUserToUpdate = z.infer<typeof updateUserSchema>;
-export type TUserToDelete = z.infer<typeof deleteUserSchema>;
-export type TCandidateUser = z.infer<typeof signinUserSchema>;
-export type TFoundUserResult = z.infer<typeof foundUserSchema>;
-
 // Budget schemas
 export const createBudgetSchema = createInsertSchema(schema.budgets).omit(commonFields);
 export const updateBudgetSchema = createBudgetSchema.partial().omit({ user_id: true });
@@ -84,10 +71,6 @@ export type TTransactionTypeResult = z.infer<typeof foundTransactionTypeSchema>;
 
 // Exporting all schemas as JSON schemas and $ref for use in the application
 export const { schemas: spendaroSchemas, $ref } = buildJsonSchemas({
-  signupUserSchema,
-  signinUserSchema,
-  updateUserSchema,
-  foundUserSchema,
   createBudgetSchema,
   foundBudgetSchema,
   updateBudgetSchema,

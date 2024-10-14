@@ -1,8 +1,9 @@
 import type { FastifyInstance } from "fastify";
 
 import { StatusCodes } from "http-status-codes";
+import postgres from "postgres";
 
-import type { TCandidateUser, TFoundUserResult, TUserToCreate } from "@/db/types";
+import type { TCandidateUser, TFoundUserResult, TUserToCreate } from "@/handlers/auth/auth-schemas";
 import type { IAuthRepository } from "@/repositories/auth-repository";
 
 import { SpendaroError } from "@/utils/error";
@@ -15,10 +16,11 @@ export class AuthService {
 
   async signup(user: TUserToCreate): Promise<TFoundUserResult> {
     const hashedPassword = await this.server.bcrypt.hash(user.password);
-    return await this.authRepo.signup({
+    const signedUpUser = await this.authRepo.signup({
       ...user,
       password: hashedPassword,
     });
+    return signedUpUser;
   }
 
   async signin(

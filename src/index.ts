@@ -6,6 +6,7 @@ import scalar from "@scalar/fastify-api-reference";
 import config from "config";
 import fastify from "fastify";
 import { fastifyBcrypt } from "fastify-bcrypt";
+import { serializerCompiler, validatorCompiler } from "fastify-type-provider-zod";
 
 import db from "@/db/index";
 import { ErrorHandlers } from "@/handlers/error/error-handlers";
@@ -14,8 +15,6 @@ import authenticate from "@/plugins/authenticate";
 import { routes } from "@/routes/index";
 import { ALLOWED_METHODS } from "@/utils/http";
 
-import { spendaroSchemas } from "./db/types";
-
 const server = fastify({
   logger: {
     enabled: true,
@@ -23,9 +22,8 @@ const server = fastify({
   },
 });
 
-for (const schema of spendaroSchemas) {
-  server.addSchema(schema);
-}
+server.setValidatorCompiler(validatorCompiler);
+server.setSerializerCompiler(serializerCompiler);
 
 server.setErrorHandler(ErrorHandlers.handleError);
 server.setNotFoundHandler(ErrorHandlers.handleNotFoundError);
@@ -54,8 +52,8 @@ function registerServerPlugins(server: FastifyInstance) {
     configuration: {
       theme: "purple",
       defaultHttpClient: {
-        targetKey: "javascript",
-        clientKey: "fetch",
+        targetKey: "shell",
+        clientKey: "curl",
       },
       metaData: {
         title: "Spendaro API Docs",
