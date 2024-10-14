@@ -1,8 +1,17 @@
 import type { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 
 import type {
+  TBudgetCategoryItemToCreate,
+  TBudgetCategoryItemToDelete,
+  TBudgetCategoryItemToUpdate,
+  TBudgetCategoryToCreate,
+  TBudgetCategoryToUpdate,
   TBudgetToCreate,
   TBudgetToUpdate,
+  TTransactionToCreate,
+  TTransactionToUpdate,
+  TTransactionTypeToCreate,
+  TTransactionTypeToUpdate,
 } from "@/db/types";
 import type { BudgetService } from "@/services/budget-service";
 
@@ -346,7 +355,7 @@ export class BudgetHandlers {
 
   async createBudgetCategoryHandler(
     request: FastifyRequest<{
-      Body: TBudgetCategory; // the request body should only contain the category_name and category_description as the budget_id will be taken from the URL params (but it is a FK to the budgets table, hence it is required in the database schema and used in the insert query)
+      Body: TBudgetCategoryToCreate;
       Params: { budget_id: number };
     }>,
     reply: FastifyReply,
@@ -367,7 +376,7 @@ export class BudgetHandlers {
         );
       }
 
-      const new_category: TBudgetCategory = {
+      const new_category: TBudgetCategoryToCreate = {
         ...request.body,
         budget_id: request.params.budget_id,
       };
@@ -404,7 +413,7 @@ export class BudgetHandlers {
 
   async updateBudgetCategoryHandler(
     request: FastifyRequest<{
-      Body: TUpdateBudgetCategory;
+      Body: TBudgetCategoryToUpdate;
       Params: { category_id: number; budget_id: number };
     }>,
     reply: FastifyReply,
@@ -701,7 +710,7 @@ export class BudgetHandlers {
 
   async createBudgetCategoryItemHandler(
     request: FastifyRequest<{
-      Body: TBudgetCategoryItem;
+      Body: TBudgetCategoryItemToCreate;
       Params: { budget_id: number; category_id: number };
     }>,
     reply: FastifyReply,
@@ -739,7 +748,7 @@ export class BudgetHandlers {
         );
       }
 
-      const itemToCreate: TBudgetCategoryItem = {
+      const itemToCreate: TBudgetCategoryItemToCreate = {
         ...request.body,
         budget_id,
         category_id,
@@ -777,7 +786,7 @@ export class BudgetHandlers {
 
   async updateBudgetCategoryItemHandler(
     request: FastifyRequest<{
-      Body: TUpdateBudgetCategoryItem;
+      Body: TBudgetCategoryItemToUpdate;
       Params: { budget_id: number; category_id: number; item_id: number };
     }>,
     reply: FastifyReply,
@@ -867,7 +876,6 @@ export class BudgetHandlers {
 
   async deleteBudgetCategoryItemHandler(
     request: FastifyRequest<{
-      Body: TUpdateBudgetCategoryItem;
       Params: { budget_id: number; category_id: number; item_id: number };
     }>,
     reply: FastifyReply,
@@ -957,7 +965,6 @@ export class BudgetHandlers {
 
   async deleteAllBudgetCategoryItemsHandler(
     request: FastifyRequest<{
-      Body: TUpdateBudgetCategoryItem;
       Params: { budget_id: number; category_id: number };
     }>,
     reply: FastifyReply,
@@ -1173,7 +1180,7 @@ export class BudgetHandlers {
   async createTransactionHandler(
     request: FastifyRequest<{
       Params: { budget_id: number };
-      Body: TTransaction;
+      Body: TTransactionToCreate;
     }>,
     reply: FastifyReply,
   ) {
@@ -1195,7 +1202,7 @@ export class BudgetHandlers {
         );
       }
 
-      const transactionToCreate: TTransaction = {
+      const transactionToCreate: TTransactionToCreate = {
         ...request.body,
         budget_id,
       };
@@ -1233,7 +1240,7 @@ export class BudgetHandlers {
 
   async updateTransactionHandler(
     request: FastifyRequest<{
-      Body: TUpdateTransaction;
+      Body: TTransactionToUpdate;
       Params: { transaction_id: number; budget_id: number };
     }>,
     reply: FastifyReply,
@@ -1302,7 +1309,6 @@ export class BudgetHandlers {
 
   async deleteTransactionHandler(
     request: FastifyRequest<{
-      Body: TUpdateTransaction;
       Params: { transaction_id: number; budget_id: number };
     }>,
     reply: FastifyReply,
@@ -1495,7 +1501,7 @@ export class BudgetHandlers {
 
   async createTransactionTypeHandler(
     request: FastifyRequest<{
-      Body: TTransactionType;
+      Body: TTransactionTypeToCreate;
       Params: { budget_id: number };
     }>,
     reply: FastifyReply,
@@ -1518,7 +1524,7 @@ export class BudgetHandlers {
         );
       }
 
-      const transactionType: TTransactionType = {
+      const transactionType: TTransactionTypeToCreate = {
         ...request.body,
         budget_id,
       };
@@ -1557,7 +1563,7 @@ export class BudgetHandlers {
 
   async updateTransactionTypeHandler(
     request: FastifyRequest<{
-      Body: TTransactionType;
+      Body: TTransactionTypeToUpdate;
       Params: { budget_id: number; transaction_type_id: number };
     }>,
     reply: FastifyReply,
@@ -1628,7 +1634,6 @@ export class BudgetHandlers {
 
   async deleteTransactionTypeHandler(
     request: FastifyRequest<{
-      Body: TTransactionType;
       Params: { budget_id: number; transaction_type_id: number };
     }>,
     reply: FastifyReply,
