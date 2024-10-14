@@ -29,104 +29,79 @@ export type TFoundUserResult = z.infer<typeof foundUserSchema>;
 
 // Budget schemas
 export const createBudgetSchema = createInsertSchema(schema.budgets).omit(commonFields);
-export const selectBudgetSchema = createSelectSchema(schema.budgets);
 export const updateBudgetSchema = createBudgetSchema.partial().omit({ user_id: true });
-export const deleteBudgetSchema = createInsertSchema(schema.budgets).pick({ id: true });
+export const deleteBudgetSchema = z.object({ id: z.number() });
+export const foundBudgetSchema = createSelectSchema(schema.budgets);
 
 export type TBudgetToCreate = z.infer<typeof createBudgetSchema>;
 export type TBudgetToUpdate = z.infer<typeof updateBudgetSchema>;
 export type TBudgetToDelete = z.infer<typeof deleteBudgetSchema>;
-export type TBudgetResult = z.infer<typeof selectBudgetSchema>;
+export type TBudgetResult = z.infer<typeof foundBudgetSchema>;
 
 // Budget category schemas
-export const insertBudgetCategorySchema = createInsertSchema(
-  schema.budget_categories,
-).omit(commonFields);
-export const updateBudgetCategorySchema = insertBudgetCategorySchema.partial().omit({ budget_id: true });
-export const selectBudgetCategorySchema = createSelectSchema(
-  schema.budget_categories,
-);
+export const createBudgetCategorySchema = createInsertSchema(schema.budget_categories).omit(commonFields);
+export const updateBudgetCategorySchema = createBudgetCategorySchema.partial().omit({ budget_id: true });
+export const deleteBudgetCategorySchema = z.object({ id: z.number() });
+export const foundBudgetCategorySchema = createSelectSchema(schema.budget_categories);
 
-export type TBudgetCategory = z.infer<typeof insertBudgetCategorySchema>;
-export type TUpdateBudgetCategory = z.infer<typeof updateBudgetCategorySchema>;
-export type TBudgetCategoryResult = z.infer<typeof selectBudgetCategorySchema>;
+export type TBudgetCategoryToCreate = z.infer<typeof createBudgetCategorySchema>;
+export type TBudgetCategoryToUpdate = z.infer<typeof updateBudgetCategorySchema>;
+export type TBudgetCategoryToDelete = z.infer<typeof deleteBudgetCategorySchema>;
+export type TBudgetCategoryResult = z.infer<typeof foundBudgetCategorySchema>;
 
-// Budget category item schema
-export const insertBudgetCategoryItemSchema = createInsertSchema(
-  schema.budget_category_items,
-).omit(commonFields);
-export const updateBudgetCategoryItemSchema = insertBudgetCategoryItemSchema.partial().omit({ category_id: true, budget_id: true });
-export type TBudgetCategoryItem = z.infer<
-  typeof insertBudgetCategoryItemSchema
->;
-export type TUpdateBudgetCategoryItem = z.infer<
-  typeof updateBudgetCategoryItemSchema
->;
+// Budget category item schemas
+export const createBudgetCategoryItemSchema = createInsertSchema(schema.budget_category_items).omit(commonFields);
+export const updateBudgetCategoryItemSchema = createBudgetCategoryItemSchema.partial().omit({ category_id: true, budget_id: true });
+export const deleteBudgetCategoryItemSchema = z.object({ id: z.number() });
+export const foundBudgetCategoryItemSchema = createSelectSchema(schema.budget_category_items);
 
-export const selectBudgetCategoryItemSchema = createSelectSchema(
-  schema.budget_category_items,
-);
-export type TBudgetCategoryItemResult = z.infer<
-  typeof selectBudgetCategoryItemSchema
->;
+export type TBudgetCategoryItemToCreate = z.infer<typeof createBudgetCategoryItemSchema>;
+export type TBudgetCategoryItemToUpdate = z.infer<typeof updateBudgetCategoryItemSchema>;
+export type TBudgetCategoryItemToDelete = z.infer<typeof deleteBudgetCategoryItemSchema>;
+export type TBudgetCategoryItemResult = z.infer<typeof foundBudgetCategoryItemSchema>;
 
-// Budget category item transaction schema
-export const insertTransactionSchema = createInsertSchema(schema.transactions).omit({
-  id: true,
-  createdAt: true,
-  updatedAt: true,
-});
-export const updateTransactionSchema = insertTransactionSchema.partial().omit({ budget_id: true });
-export type TTransaction = z.infer<typeof insertTransactionSchema>;
-export type TUpdateTransaction = z.infer<typeof updateTransactionSchema>;
+// Transaction schemas
+export const createTransactionSchema = createInsertSchema(schema.transactions).omit(commonFields);
+export const updateTransactionSchema = createTransactionSchema.partial().omit({ budget_id: true });
+export const deleteTransactionSchema = z.object({ id: z.number() });
+export const foundTransactionSchema = createSelectSchema(schema.transactions);
 
-export const selectTransactionSchema = createSelectSchema(schema.transactions);
-export type TTransactionResult = z.infer<typeof selectTransactionSchema>;
+export type TTransactionToCreate = z.infer<typeof createTransactionSchema>;
+export type TTransactionToUpdate = z.infer<typeof updateTransactionSchema>;
+export type TTransactionToDelete = z.infer<typeof deleteTransactionSchema>;
+export type TTransactionResult = z.infer<typeof foundTransactionSchema>;
 
-// Budget category item transaction type schema
-export const insertTransactionTypeSchema = createInsertSchema(
-  schema.transaction_types,
-).omit({
-  id: true,
-  createdAt: true,
-  updatedAt: true,
-});
-export const updateTransactionTypeSchema = insertTransactionTypeSchema.partial().omit({ budget_id: true });
-export type TTransactionType = z.infer<typeof insertTransactionTypeSchema>;
+// Transaction type schemas
+export const createTransactionTypeSchema = createInsertSchema(schema.transaction_types).omit(commonFields);
+export const updateTransactionTypeSchema = createTransactionTypeSchema.partial().omit({ budget_id: true });
+export const deleteTransactionTypeSchema = z.object({ id: z.number() });
+export const foundTransactionTypeSchema = createSelectSchema(schema.transaction_types);
+
+export type TTransactionType = z.infer<typeof createTransactionTypeSchema>;
 export type TUpdateTransactionType = z.infer<typeof updateTransactionTypeSchema>;
+export type TDeleteTransactionType = z.infer<typeof deleteTransactionTypeSchema>;
+export type TTransactionTypeResult = z.infer<typeof foundTransactionTypeSchema>;
 
-export const selectTransactionTypeSchema = createSelectSchema(
-  schema.transaction_types,
-);
-export type TTransactionTypeResult = z.infer<
-  typeof selectTransactionTypeSchema
->;
-
-// **************************************************
-// **************************************************
-// **************************************************
-// **************************************************
-// **************************************************
-
+// Exporting all schemas as JSON schemas and $ref for use in the application
 export const { schemas: spendaroSchemas, $ref } = buildJsonSchemas({
   signupUserSchema,
   signinUserSchema,
   updateUserSchema,
   foundUserSchema,
   createBudgetSchema,
-  selectBudgetSchema,
+  foundBudgetSchema,
   updateBudgetSchema,
   deleteBudgetSchema,
-  insertBudgetCategorySchema,
+  createBudgetCategorySchema,
   updateBudgetCategorySchema,
-  selectBudgetCategorySchema,
-  insertBudgetCategoryItemSchema,
+  foundBudgetCategorySchema,
+  createBudgetCategoryItemSchema,
   updateBudgetCategoryItemSchema,
-  selectBudgetCategoryItemSchema,
-  insertTransactionSchema,
+  foundBudgetCategoryItemSchema,
+  createTransactionSchema,
   updateTransactionSchema,
-  selectTransactionSchema,
-  insertTransactionTypeSchema,
+  foundTransactionSchema,
+  createTransactionTypeSchema,
   updateTransactionTypeSchema,
-  selectTransactionTypeSchema,
+  foundTransactionTypeSchema,
 });
