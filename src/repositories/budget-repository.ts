@@ -4,12 +4,20 @@ import { and, eq } from "drizzle-orm";
 
 import type {
   TBudgetCategoryItemResult,
+  TBudgetCategoryItemToCreate,
+  TBudgetCategoryItemToUpdate,
   TBudgetCategoryResult,
+  TBudgetCategoryToCreate,
+  TBudgetCategoryToUpdate,
   TBudgetResult,
   TBudgetToCreate,
   TBudgetToUpdate,
   TTransactionResult,
+  TTransactionToCreate,
+  TTransactionToUpdate,
   TTransactionTypeResult,
+  TTransactionTypeToCreate,
+  TTransactionTypeToUpdate,
 } from "@/db/types";
 
 import * as schema from "@/db/schema";
@@ -26,88 +34,31 @@ export interface IBudgetRepository {
   createBudget: (budget: TBudgetToCreate) => TCommonBudgetResponse;
   updateBudget: (user_id: number, budget_id: number, budget_to_update: TBudgetToUpdate) => TCommonBudgetResponse;
   deleteBudget: (user_id: number, budget_id: number) => TCommonBudgetResponse;
-  getBudgetCategories: (
-    budget_id: number
-  ) => Promise<Array<TBudgetCategoryResult>>;
-  getBudgetCategoryById: (
-    budget_category_id: number,
-    category_id: number
-  ) => TCommonBudgetCategoryResponse;
-  createBudgetCategory: (
-    category: TBudgetCategory
-  ) => TCommonBudgetCategoryResponse;
-  updateBudgetCategory: (
-    budget_id: number,
-    category_id: number,
-    category: TUpdateBudgetCategory
-  ) => TCommonBudgetCategoryResponse;
-  deleteBudgetCategory: (
-    budget_id: number,
-    categoryId: number
-  ) => TCommonBudgetCategoryResponse;
-  getBudgetCategoryItems: (
-    budget_id: number,
-    category_id: number
-  ) => Promise<Array<TBudgetCategoryItemResult>>;
-  getBudgetCategoryItemById: (
-    category_id: number,
-    item_id: number
-  ) => TCommonBudgetCategoryItemResponse;
-  createBudgetCategoryItem: (
-    item: TBudgetCategoryItem
-  ) => TCommonBudgetCategoryItemResponse;
-  updateBudgetCategoryItem: (
-    item_id: number,
-    item: TUpdateBudgetCategoryItem
-  ) => TCommonBudgetCategoryItemResponse;
-  deleteBudgetCategoryItem: (
-    item_id: number
-  ) => TCommonBudgetCategoryItemResponse;
-  deleteAllBudgetCategoryItems: (
-    category_id: number
-  ) => Promise<TBudgetCategoryItemResult[]>;
-
-  // Transactions
+  getBudgetCategories: (budget_id: number) => Promise<Array<TBudgetCategoryResult>>;
+  getBudgetCategoryById: (budget_category_id: number, category_id: number) => TCommonBudgetCategoryResponse;
+  createBudgetCategory: (category: TBudgetCategoryToCreate) => TCommonBudgetCategoryResponse;
+  updateBudgetCategory: (budget_id: number, category_id: number, category: TBudgetCategoryToUpdate) => TCommonBudgetCategoryResponse;
+  deleteBudgetCategory: (budget_id: number, categoryId: number) => TCommonBudgetCategoryResponse;
+  getBudgetCategoryItems: (budget_id: number, category_id: number) => Promise<Array<TBudgetCategoryItemResult>>;
+  getBudgetCategoryItemById: (category_id: number, item_id: number) => TCommonBudgetCategoryItemResponse;
+  createBudgetCategoryItem: (item: TBudgetCategoryItemToCreate) => TCommonBudgetCategoryItemResponse;
+  updateBudgetCategoryItem: (item_id: number, item: TBudgetCategoryItemToUpdate) => TCommonBudgetCategoryItemResponse;
+  deleteBudgetCategoryItem: (item_id: number) => TCommonBudgetCategoryItemResponse;
+  deleteAllBudgetCategoryItems: (category_id: number) => Promise<TBudgetCategoryItemResult[]>;
   getTransactions: (budget_id: number) => Promise<Array<TTransactionResult>>;
-  getTransactionById: (
-    budget_id: number,
-    transaction_id: number
-  ) => TCommonTransactionResponse;
-  createTransaction: (transaction: TTransaction) => TCommonTransactionResponse;
-  updateTransaction: (
-    budget_id: number,
-    transaction_id: number,
-    transaction: TUpdateTransaction
-  ) => TCommonTransactionResponse;
-  deleteTransaction: (
-    budget_id: number,
-    transaction_id: number
-  ) => TCommonTransactionResponse;
-
-  // Transaction Types (user defined + pre-defined i.e. income, expense, bill, etc.)
+  getTransactionById: (budget_id: number, transaction_id: number) => TCommonTransactionResponse;
+  createTransaction: (transaction: TTransactionToCreate) => TCommonTransactionResponse;
+  updateTransaction: (budget_id: number, transaction_id: number, transaction: TTransactionToUpdate) => TCommonTransactionResponse;
+  deleteTransaction: (budget_id: number, transaction_id: number) => TCommonTransactionResponse;
   getTransactionTypes: (budget_id: number) => Promise<Array<TTransactionTypeResult>>;
-  getTransactionTypeById: (
-    budget_id: number,
-    transaction_type_id: number
-  ) => TCommonTransactionTypeResponse;
-  createTransactionType: (
-    transaction_type: TTransactionType
-  ) => TCommonTransactionTypeResponse;
-  updateTransactionType: (
-    budget_id: number,
-    type_id: number,
-    transaction_type: TUpdateTransactionType
-  ) => TCommonTransactionTypeResponse;
-  deleteTransactionType: (
-    budget_id: number,
-    transaction_type_id: number
-  ) => TCommonTransactionTypeResponse;
+  getTransactionTypeById: (budget_id: number, transaction_type_id: number) => TCommonTransactionTypeResponse;
+  createTransactionType: (transaction_type: TTransactionTypeToCreate) => TCommonTransactionTypeResponse;
+  updateTransactionType: (budget_id: number, type_id: number, transaction_type: TTransactionTypeToUpdate) => TCommonTransactionTypeResponse;
+  deleteTransactionType: (budget_id: number, transaction_type_id: number) => TCommonTransactionTypeResponse;
 }
 
 export class BudgetRepository implements IBudgetRepository {
-  private db: PostgresJsDatabase<typeof schema>;
-
-  constructor(db: PostgresJsDatabase<typeof schema>) {
+  constructor(private db: PostgresJsDatabase<typeof schema>) {
     this.db = db;
   }
 
@@ -198,7 +149,7 @@ export class BudgetRepository implements IBudgetRepository {
   }
 
   async createBudgetCategory(
-    category: TBudgetCategory,
+    category: TBudgetCategoryToCreate,
   ): TCommonBudgetCategoryResponse {
     const [newCategory]: Array<TBudgetCategoryResult> = await this.db
       .insert(schema.budget_categories)
@@ -211,7 +162,7 @@ export class BudgetRepository implements IBudgetRepository {
 
     budget_id: number,
     category_id: number,
-    category_to_update: TUpdateBudgetCategory,
+    category_to_update: TBudgetCategoryToUpdate,
   ): TCommonBudgetCategoryResponse {
     const [updatedCategory]: Array<TBudgetCategoryResult> = await this.db
       .update(schema.budget_categories)
@@ -272,7 +223,7 @@ export class BudgetRepository implements IBudgetRepository {
   }
 
   async createBudgetCategoryItem(
-    item: TBudgetCategoryItem,
+    item: TBudgetCategoryItemToCreate,
   ): TCommonBudgetCategoryItemResponse {
     const [newItem]: Array<TBudgetCategoryItemResult> = await this.db
       .insert(schema.budget_category_items)
@@ -283,7 +234,7 @@ export class BudgetRepository implements IBudgetRepository {
 
   async updateBudgetCategoryItem(
     item_id: number,
-    item: TUpdateBudgetCategoryItem,
+    item: TBudgetCategoryItemToUpdate,
   ): TCommonBudgetCategoryItemResponse {
     const [updatedItem]: Array<TBudgetCategoryItemResult> = await this.db
       .update(schema.budget_category_items)
@@ -329,7 +280,7 @@ export class BudgetRepository implements IBudgetRepository {
   }
 
   async createTransaction(
-    transaction: TTransaction,
+    transaction: TTransactionToCreate,
   ): TCommonTransactionResponse {
     const [newTransaction]: Array<TTransactionResult> = await this.db
       .insert(schema.transactions)
@@ -341,7 +292,7 @@ export class BudgetRepository implements IBudgetRepository {
   async updateTransaction(
     budget_id: number,
     transaction_id: number,
-    transaction: TUpdateTransaction,
+    transaction: TTransactionToUpdate,
   ): TCommonTransactionResponse {
     const [updatedTransaction]: Array<TTransactionResult> = await this.db
       .update(schema.transactions)
@@ -388,7 +339,7 @@ export class BudgetRepository implements IBudgetRepository {
   }
 
   async createTransactionType(
-    transaction: TTransactionType,
+    transaction: TTransactionTypeToCreate,
   ): TCommonTransactionTypeResponse {
     const [newTransactionType]: Array<TTransactionTypeResult> = await this.db
       .insert(schema.transaction_types)
@@ -400,7 +351,7 @@ export class BudgetRepository implements IBudgetRepository {
   async updateTransactionType(
     budget_id: number,
     type_id: number,
-    type: TUpdateTransactionType,
+    type: TTransactionTypeToUpdate,
   ): TCommonTransactionTypeResponse {
     const [updatedTransactionType]: Array<TTransactionTypeResult>
       = await this.db
