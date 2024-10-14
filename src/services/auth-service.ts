@@ -2,20 +2,18 @@ import type { FastifyInstance } from "fastify";
 
 import { StatusCodes } from "http-status-codes";
 
-import type { TInsertUser, TUserResult } from "@/db/types";
+import type { TCandidateUser, TFoundUserResult, TUserToCreate } from "@/db/types";
 import type { IAuthRepository } from "@/repositories/auth-repository";
 
 import { SpendaroError } from "@/utils/error";
 
 export class AuthService {
-  authRepo: IAuthRepository;
-  server: FastifyInstance;
-  constructor(server: FastifyInstance, authRepo: IAuthRepository) {
+  constructor(private server: FastifyInstance, private authRepo: IAuthRepository) {
     this.authRepo = authRepo;
     this.server = server;
   }
 
-  async signup(user: TInsertUser): Promise<TUserResult> {
+  async signup(user: TUserToCreate): Promise<TFoundUserResult> {
     const hashedPassword = await this.server.bcrypt.hash(user.password);
     return await this.authRepo.signup({
       ...user,
@@ -24,8 +22,8 @@ export class AuthService {
   }
 
   async signin(
-    candidateUser: Pick<TInsertUser, "email" | "password">,
-  ): Promise<TUserResult> {
+    candidateUser: TCandidateUser,
+  ): Promise<TFoundUserResult> {
     const signedInUser = await this.authRepo.signin(candidateUser);
 
     if (!signedInUser) {

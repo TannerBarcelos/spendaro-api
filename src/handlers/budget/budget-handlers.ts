@@ -1,15 +1,8 @@
 import type { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 
 import type {
-  TBudgetCategory,
-  TBudgetCategoryItem,
   TBudgetToCreate,
   TBudgetToUpdate,
-  TTransaction,
-  TTransactionType,
-  TUpdateBudgetCategory,
-  TUpdateBudgetCategoryItem,
-  TUpdateTransaction,
 } from "@/db/types";
 import type { BudgetService } from "@/services/budget-service";
 
