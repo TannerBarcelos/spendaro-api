@@ -108,16 +108,46 @@ export class BudgetService {
     return deletedCategory;
   }
 
-  getBudgetCategoryItems(budget_id: number, category_id: number) {
-    return this.budget_repo.getBudgetCategoryItems(budget_id, category_id);
+  async getBudgetCategoryItems(user_id: number, budget_id: number, category_id: number) {
+    const budget = await this.getBudgetById(user_id, budget_id);
+    if (!budget) {
+      throw new NotFoundError("Budget not found", [`budget with id ${budget_id} could not be found`]);
+    }
+    const category = await this.getBudgetCategoryById(user_id, budget_id, category_id);
+    if (!category) {
+      throw new NotFoundError("Budget category not found", [`category with id ${category_id} could not be found`]);
+    }
+    const items = await this.budget_repo.getBudgetCategoryItems(budget_id, category_id);
+    return items;
   }
 
-  getBudgetCategoryItemById(category_id: number, item_id: number) {
-    return this.budget_repo.getBudgetCategoryItemById(category_id, item_id);
+  async getBudgetCategoryItemById(user_id: number, budget_id: number, category_id: number, item_id: number) {
+    const budget = await this.getBudgetById(user_id, budget_id);
+    if (!budget) {
+      throw new NotFoundError("Budget not found", [`budget with id ${budget_id} could not be found`]);
+    }
+    const category = await this.getBudgetCategoryById(user_id, budget_id, category_id);
+    if (!category) {
+      throw new NotFoundError("Budget category not found", [`category with id ${category_id} could not be found`]);
+    }
+    const item = await this.budget_repo.getBudgetCategoryItemById(category_id, item_id);
+    if (!item) {
+      throw new NotFoundError("Budget category item not found", [`item with id ${item_id} could not be found`]);
+    }
+    return item;
   }
 
-  createBudgetCategoryItem(item: TBudgetCategoryItemToCreate) {
-    return this.budget_repo.createBudgetCategoryItem(item);
+  async createBudgetCategoryItem(user_id: number, budget_id: number, category_id: number, item: TBudgetCategoryItemToCreate) {
+    const budget = await this.getBudgetById(user_id, budget_id);
+    if (!budget) {
+      throw new NotFoundError("Budget not found", [`budget with id ${budget_id} could not be found`]);
+    }
+    const category = await this.getBudgetCategoryById(user_id, budget_id, category_id);
+    if (!category) {
+      throw new NotFoundError("Budget category not found", [`category with id ${category_id} could not be found`]);
+    }
+    const createdItem = await this.budget_repo.createBudgetCategoryItem(item);
+    return createdItem;
   }
 
   updateBudgetCategoryItem(item_id: number, item: TBudgetCategoryItemToUpdate) {

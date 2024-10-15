@@ -255,11 +255,14 @@ export class BudgetRepository implements IBudgetRepository {
       .where(eq(schema.transactions.budget_id, budget_id));
   }
 
-  async getTransactionById(transactionId: number): TCommonTransactionResponse {
+  async getTransactionById(budget_id: number, transactionId: number): TCommonTransactionResponse {
     const [transaction]: Array<TTransactionResult> = await this.db
       .select()
       .from(schema.transactions)
-      .where(eq(schema.transactions.id, transactionId));
+      .where(and(
+        eq(schema.transactions.id, transactionId),
+        eq(schema.transactions.budget_id, budget_id),
+      ));
     return transaction;
   }
 
