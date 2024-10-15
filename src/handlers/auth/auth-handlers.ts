@@ -1,13 +1,12 @@
 import type { FastifyInstance } from "fastify";
 import type { ZodTypeProvider } from "fastify-type-provider-zod";
 
-import config from "config";
-
 import type { AuthService } from "@/services/auth-service";
 
 import { duplicateSignupUserSchema, signinResponseSchema, signinResponseUnauthorizedSchema, signinUserSchema, signupResponseSchema, signupUserSchema } from "@/handlers/auth/auth-schemas";
 import { errorResponseSchema } from "@/handlers/error/error-schemas";
 import { STATUS_CODES } from "@/utils/http";
+import { generateAccessToken } from "@/utils/jwt";
 
 export class AuthHandlers {
   constructor(private authService: AuthService) {
@@ -30,16 +29,8 @@ export class AuthHandlers {
           },
         },
         handler: async (request, reply) => {
-          const signedUpUser = await this.authService.signup(request.body);
-
-          const token = request.server.jwt.sign(
-            {
-              user_id: signedUpUser.id,
-            },
-            {
-              expiresIn: config.get<string>("security.jwt.expires_in") ?? "15m",
-            },
-          );
+          const createdUser = await this.authService.createUser(request.body);
+          const token = generateAccessToken(request, createdUser.id);
           reply
             .code(STATUS_CODES.CREATED)
             .send(
@@ -58,7 +49,7 @@ export class AuthHandlers {
         url: "/signin",
         schema: {
           tags: ["auth"],
-          body: signinUserSchema,
+          body: signinUserSchema, // body is validated against the signinUserSchema and provided as fully-type-safe request.body to our handler (all provided by the fastify-type-provider-zod plugin)
           response: {
             [STATUS_CODES.OK]: signinResponseSchema,
             [STATUS_CODES.UNAUTHORIZED]: signinResponseUnauthorizedSchema,
@@ -66,17 +57,8 @@ export class AuthHandlers {
           },
         },
         handler: async (request, reply) => {
-          const signedInUser = await this.authService.signin(request.body);
-
-          const token = request.server.jwt.sign(
-            {
-              user_id: signedInUser.id,
-            },
-            {
-              expiresIn: config.get("security.jwt.expires_in") ?? "15m",
-            },
-          );
-
+          const validatedUser = await this.authService.findUserAndValidateToken(request.body);
+          const token = generateAccessToken(request, validatedUser.id);
           reply
             .code(STATUS_CODES.OK)
             .send(

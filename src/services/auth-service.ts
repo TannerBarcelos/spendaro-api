@@ -1,11 +1,9 @@
 import type { FastifyInstance } from "fastify";
 
-import { StatusCodes } from "http-status-codes";
-
 import type { TCandidateUser, TFoundUserResult, TUserToCreate } from "@/handlers/auth/auth-schemas";
 import type { IAuthRepository } from "@/repositories/auth-repository";
 
-import { SpendaroError } from "@/utils/error";
+import { BadRequestError, NotFoundError, UnauthorizedError } from "@/utils/error";
 
 export class AuthService {
   constructor(private server: FastifyInstance, private authRepo: IAuthRepository) {
@@ -13,31 +11,40 @@ export class AuthService {
     this.server = server;
   }
 
-  async signup(user: TUserToCreate): Promise<TFoundUserResult> {
-    const hashedPassword = await this.server.bcrypt.hash(user.password);
-    const signedUpUser = await this.authRepo.signup({
-      ...user,
+  async createUser(candidateUser: TUserToCreate): Promise<TFoundUserResult> {
+    const foundUser = await this.authRepo.findUserByEmail(candidateUser.email);
+
+    if (foundUser) {
+      throw new BadRequestError("User already exists. Please sign in.", {
+        email: candidateUser.email,
+      });
+    }
+
+    const hashedPassword = await this.server.bcrypt.hash(candidateUser.password);
+    const createdUser = await this.authRepo.createUser({
+      ...candidateUser,
       password: hashedPassword,
     });
-    return signedUpUser;
+    return createdUser;
   }
 
-  async signin(
+  async findUserAndValidateToken(
     candidateUser: TCandidateUser,
   ): Promise<TFoundUserResult> {
-    const foundUser = await this.authRepo.signin(candidateUser);
+    const foundUser = await this.authRepo.findUserByEmail(candidateUser.email);
 
     if (!foundUser) {
-      throw new SpendaroError("User does not exist", StatusCodes.UNAUTHORIZED);
+      throw new NotFoundError("The requested user does not exist", {
+        email: candidateUser.email,
+      });
     }
 
     const isValid = await this.server.bcrypt.compare(candidateUser.password, foundUser.password);
 
     if (!isValid) {
-      throw new SpendaroError(
-        "Invalid credentials. Passwords do not match.",
-        StatusCodes.UNAUTHORIZED,
-      );
+      throw new UnauthorizedError("Invalid email or password", {
+        email: candidateUser.email,
+      });
     }
 
     return foundUser;

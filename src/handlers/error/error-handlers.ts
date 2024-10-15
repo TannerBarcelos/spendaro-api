@@ -5,6 +5,7 @@ import { getReasonPhrase } from "http-status-codes";
 import pg from "postgres";
 
 import { env } from "@/env";
+import { SpendaroError } from "@/utils/error";
 import { STATUS_CODES } from "@/utils/http";
 
 export class ErrorHandlers {
@@ -67,10 +68,10 @@ export class ErrorHandlers {
       switch (error.code) {
         case "23505": {
           return reply.code(STATUS_CODES.CONFLICT).send({
-            error: "Conflict - Duplicate Resource",
+            error: getReasonPhrase(STATUS_CODES.CONFLICT),
             message: error.detail ?? "The requested resource already exists",
             details: {
-              issues: error.message,
+              issues: [error.message],
               method: request.method,
               url: request.url,
               stack: env.NODE_ENV === "development" ? error.stack : undefined,
@@ -79,10 +80,10 @@ export class ErrorHandlers {
         }
         case "23503": {
           return reply.code(STATUS_CODES.BAD_REQUEST).send({
-            error: "Bad Request - Foreign Key Violation",
+            error: getReasonPhrase(STATUS_CODES.BAD_REQUEST),
             message: error.detail ?? "Foreign key constraint violation",
             details: {
-              issues: error.message,
+              issues: [error.message],
               method: request.method,
               url: request.url,
               stack: env.NODE_ENV === "development" ? error.stack : undefined,
@@ -91,10 +92,10 @@ export class ErrorHandlers {
         }
         case "23514": {
           return reply.code(STATUS_CODES.BAD_REQUEST).send({
-            error: "Bad Request - Check Violation",
+            error: getReasonPhrase(STATUS_CODES.BAD_REQUEST),
             message: error.detail ?? "Check constraint violation",
             details: {
-              issues: error.message,
+              issues: [error.message],
               method: request.method,
               url: request.url,
               stack: env.NODE_ENV === "development" ? error.stack : undefined,
@@ -103,10 +104,10 @@ export class ErrorHandlers {
         }
         case "42703": {
           return reply.code(STATUS_CODES.BAD_REQUEST).send({
-            error: "Bad Request - Undefined Column",
+            error: getReasonPhrase(STATUS_CODES.BAD_REQUEST),
             message: error.detail ?? "Undefined column in the request",
             details: {
-              issues: error.message,
+              issues: [error.message],
               method: request.method,
               url: request.url,
               stack: env.NODE_ENV === "development" ? error.stack : undefined,
@@ -115,10 +116,10 @@ export class ErrorHandlers {
         }
         default:
           return reply.code(STATUS_CODES.INTERNAL_SERVER_ERROR).send({
-            error: "Internal Server Error",
+            error: getReasonPhrase(STATUS_CODES.INTERNAL_SERVER_ERROR),
             message: "An unexpected error occurred",
             details: {
-              issues: error.message,
+              issues: [error.message],
               method: request.method,
               url: request.url,
               stack: env.NODE_ENV === "development" ? error.stack : undefined,
@@ -127,20 +128,29 @@ export class ErrorHandlers {
       }
     }
 
-    // Handle other errors if none of the above match
-    reply
-      .code(error.statusCode ?? STATUS_CODES.INTERNAL_SERVER_ERROR)
-      .send(
-        {
-          error: error.message,
-          message: getReasonPhrase(error.statusCode ?? STATUS_CODES.INTERNAL_SERVER_ERROR),
-          details: {
-            issues: [],
-            method: request.method,
-            url: request.url,
-            stack: env.NODE_ENV === "development" ? error.stack : [],
-          },
+    if (error instanceof SpendaroError) {
+      return reply.code(error.statusCode).send({
+        error: getReasonPhrase(error.statusCode),
+        message: error.message,
+        details: {
+          issues: Object.entries(error.ctx ?? {}).map(([key, value]) => ({ [key]: value })),
+          method: request.method,
+          url: request.url,
+          stack: env.NODE_ENV === "development" ? error.stack : undefined,
         },
-      );
+      });
+    }
+
+    // Handle unexpected errors as the fallback case
+    reply.code(STATUS_CODES.INTERNAL_SERVER_ERROR).send({
+      error: getReasonPhrase(STATUS_CODES.INTERNAL_SERVER_ERROR),
+      message: "An unexpected error occurred",
+      details: {
+        issues: [error.message],
+        method: request.method,
+        url: request.url,
+        stack: env.NODE_ENV === "development" ? error.stack : undefined,
+      },
+    });
   }
 }

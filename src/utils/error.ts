@@ -1,12 +1,53 @@
 import { StatusCodes } from "http-status-codes";
 
+type Tctx = Record<string, unknown>;
+
 /**
- * Custom error class for handling errors in the application. This class extends the native Error class and adds a statusCode property to it so that we can use it to send the appropriate HTTP status code in the response in the Fastify error handler.
+ * Custom error class for Spendaro
+ *
+ * @class SpendaroError
+ * @extends {Error}
+ * @param {string} message - Error message
+ * @param {StatusCodes} statusCode - HTTP status code
+ * @param {Tctx} ctx - Context of the error - Can contain additional information in the form of key-value pairs i.e `{ "reason": "Budget not found" }`
+ * @returns {void}
  */
 export class SpendaroError extends Error {
-  statusCode: number;
-  constructor(message: string, statusCode: StatusCodes = StatusCodes.INTERNAL_SERVER_ERROR) {
+  constructor(public message: string, public statusCode: StatusCodes, public ctx?: Tctx) {
     super(message);
+    this.name = this.constructor.name;
     this.statusCode = statusCode;
+    this.ctx = ctx;
+    Error.captureStackTrace(this, this.constructor);
+  }
+}
+
+export class NotFoundError extends SpendaroError {
+  constructor(message: string, ctx?: Tctx) {
+    super(message, StatusCodes.NOT_FOUND, ctx);
+  }
+}
+
+export class BadRequestError extends SpendaroError {
+  constructor(message: string, ctx?: Tctx) {
+    super(message, StatusCodes.BAD_REQUEST, ctx);
+  }
+}
+
+export class UnauthorizedError extends SpendaroError {
+  constructor(message: string, ctx?: Tctx) {
+    super(message, StatusCodes.UNAUTHORIZED, ctx);
+  }
+}
+
+export class ForbiddenError extends SpendaroError {
+  constructor(message: string, ctx?: Tctx) {
+    super(message, StatusCodes.FORBIDDEN, ctx);
+  }
+}
+
+export class InternalServerError extends SpendaroError {
+  constructor(message: string, ctx?: Tctx) {
+    super(message, StatusCodes.INTERNAL_SERVER_ERROR, ctx);
   }
 }
