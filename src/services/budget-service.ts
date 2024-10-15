@@ -1,12 +1,4 @@
-import type {
-  TBudgetCategoryItemToCreate,
-  TBudgetCategoryItemToUpdate,
-  TTransactionToCreate,
-  TTransactionToUpdate,
-  TTransactionTypeToCreate,
-  TTransactionTypeToUpdate,
-} from "@/db/types";
-import type { TBudgetCategoryToCreate, TBudgetCategoryToUpdate, TBudgetToCreate, TBudgetToUpdate } from "@/handlers/budget/budget-schemas";
+import type { TBudgetCategoryItemToCreate, TBudgetCategoryItemToUpdate, TBudgetCategoryToCreate, TBudgetCategoryToUpdate, TBudgetToCreate, TBudgetToUpdate, TTransactionToCreate, TTransactionToUpdate, TTransactionTypeToCreate, TTransactionTypeToUpdate } from "@/handlers/budget/budget-schemas";
 import type { IBudgetRepository } from "@/repositories/budget-repository";
 
 import { NotFoundError } from "@/utils/error";
