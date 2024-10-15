@@ -133,7 +133,7 @@ export class ErrorHandlers {
         error: getReasonPhrase(error.statusCode),
         message: error.message,
         details: {
-          issues: Object.entries(error.ctx ?? {}).map(([key, value]) => ({ [key]: value })),
+          issues: error.ctx,
           method: request.method,
           url: request.url,
           stack: env.NODE_ENV === "development" ? error.stack : undefined,

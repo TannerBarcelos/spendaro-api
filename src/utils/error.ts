@@ -1,6 +1,6 @@
 import { StatusCodes } from "http-status-codes";
 
-type Tctx = Record<string, unknown>;
+type Tctx = Array<any>;
 
 /**
  * Custom error class for Spendaro
@@ -13,7 +13,7 @@ type Tctx = Record<string, unknown>;
  * @returns {void}
  */
 export class SpendaroError extends Error {
-  constructor(public message: string, public statusCode: StatusCodes, public ctx?: Tctx) {
+  constructor(public message: string, public statusCode: StatusCodes, public ctx: Tctx = []) {
     super(message);
     this.name = this.constructor.name;
     this.statusCode = statusCode;

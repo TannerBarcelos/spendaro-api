@@ -1,4 +1,7 @@
 import type { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
+import type { ZodTypeProvider } from "fastify-type-provider-zod";
+
+import { z } from "zod";
 
 import type {
   TBudgetCategoryItemToCreate,
@@ -15,227 +18,14 @@ import type {
 } from "@/db/types";
 import type { BudgetService } from "@/services/budget-service";
 
+import { NotFoundError } from "@/utils/error";
 import { prepareResponse, STATUS_CODES } from "@/utils/http";
+
+import { budgetNotFoundResponseSchema, createBudgetSchema, createdBudgetResponseSchema, deletedBudgetResponseSchema, foundBudgetResponseSchema, foundBudgetSchema, foundBudgetsResponseSchema, foundBudgetsSchema, updateBudgetSchema, updatedBudgetResponseSchema } from "./budget-schemas";
 
 export class BudgetHandlers {
   constructor(private budgetService: BudgetService) {
     this.budgetService = budgetService;
-  }
-
-  async getBudgetsHandler(request: FastifyRequest, reply: FastifyReply) {
-    try {
-      const userId = request.user.user_id; // Get the user_id from the authenticated user, which is available via the fastify/jwt plugin as the plugin protects the routes and sends the user object to the request object if the user is authenticated
-      const budgets = await this.budgetService.getBudgets(userId);
-      reply
-        .code(STATUS_CODES.OK)
-        .send(
-          prepareResponse(
-            budgets,
-            STATUS_CODES.OK,
-            "Budgets fetched successfully",
-            null,
-          ),
-        );
-    }
-    catch (error) {
-      const errorMessage
-        = error instanceof Error
-          ? error.message
-          : "An error occurred while fetching the budgets";
-      reply
-        .code(STATUS_CODES.BAD_REQUEST)
-        .send(
-          prepareResponse(
-            null,
-            STATUS_CODES.BAD_REQUEST,
-            "Failed to fetch budgets",
-            new Error(errorMessage),
-          ),
-        );
-    }
-  }
-
-  async getBudgetByIdHandler(
-    request: FastifyRequest<{
-      Params: { budget_id: number };
-    }>,
-    reply: FastifyReply,
-  ) {
-    try {
-      const budget = await this.budgetService.getBudgetById(request.user.user_id, request.params.budget_id);
-      if (!budget) {
-        reply.code(STATUS_CODES.NOT_FOUND).send(
-          prepareResponse(
-            null,
-            STATUS_CODES.NOT_FOUND,
-            "Budget not found",
-            null,
-          ),
-        );
-      }
-      reply
-        .code(STATUS_CODES.OK)
-        .send(
-          prepareResponse(
-            budget,
-            STATUS_CODES.OK,
-            "Budget fetched successfully",
-            null,
-          ),
-        );
-    }
-    catch (error) {
-      const errorMessage
-        = error instanceof Error
-          ? error.message
-          : "An error occurred while fetching the budget";
-      reply
-        .code(STATUS_CODES.BAD_REQUEST)
-        .send(
-          prepareResponse(
-            null,
-            STATUS_CODES.BAD_REQUEST,
-            "Failed to fetch budget",
-            new Error(errorMessage),
-          ),
-        );
-    }
-  }
-
-  async createBudgetHandler(
-    request: FastifyRequest<{
-      Body: TBudgetToCreate;
-    }>,
-    reply: FastifyReply,
-  ) {
-    try {
-      const budget: TBudgetToCreate = {
-        ...request.body,
-        user_id: request.user.user_id,
-      };
-      const createdBudget = await this.budgetService.createBudget(budget);
-      reply
-        .code(STATUS_CODES.CREATED)
-        .send(
-          prepareResponse(
-            createdBudget,
-            STATUS_CODES.CREATED,
-            "Budget created successfully",
-            null,
-          ),
-        );
-    }
-    catch (error) {
-      const errorMessage
-        = error instanceof Error
-          ? error.message
-          : "An error occurred while creating the budget";
-      reply
-        .code(STATUS_CODES.BAD_REQUEST)
-        .send(
-          prepareResponse(
-            null,
-            STATUS_CODES.BAD_REQUEST,
-            errorMessage,
-            new Error(errorMessage),
-          ),
-        );
-    }
-  }
-
-  async updateBudgetHandler(
-    request: FastifyRequest<{
-      Body: TBudgetToUpdate;
-      Params: { budget_id: number };
-    }>,
-    reply: FastifyReply,
-  ) {
-    try {
-      const updatedBudget = await this.budgetService.updateBudget(request.user.user_id, request.params.budget_id, request.body);
-
-      if (!updatedBudget) {
-        reply.code(STATUS_CODES.NOT_FOUND).send(
-          prepareResponse(
-            null,
-            STATUS_CODES.NOT_FOUND,
-            "Budget not found",
-            null,
-          ),
-        );
-      }
-
-      reply
-        .code(STATUS_CODES.OK)
-        .send(
-          prepareResponse(
-            updatedBudget,
-            STATUS_CODES.OK,
-            "Budget updated successfully",
-            null,
-          ),
-        );
-    }
-    catch (error) {
-      const errorMessage
-        = error instanceof Error
-          ? error.message
-          : "An error occurred while updating the budget";
-      reply
-        .code(STATUS_CODES.BAD_REQUEST)
-        .send(
-          prepareResponse(
-            null,
-            STATUS_CODES.BAD_REQUEST,
-            "Failed to update budget",
-            new Error(errorMessage),
-          ),
-        );
-    }
-  }
-
-  async deleteBudgetHandler(
-    request: FastifyRequest<{
-      Params: { budget_id: number };
-    }>,
-    reply: FastifyReply,
-  ) {
-    try {
-      const deletedBudget = await this.budgetService.deleteBudget(request.user.user_id, request.params.budget_id);
-
-      if (!deletedBudget) {
-        reply.code(STATUS_CODES.NOT_FOUND).send(
-          prepareResponse(
-            null,
-            STATUS_CODES.NOT_FOUND,
-            "Budget not found",
-            null,
-          ),
-        );
-      }
-
-      reply.send(
-        prepareResponse(
-          deletedBudget,
-          STATUS_CODES.OK,
-          "Budget deleted successfully",
-          null,
-        ),
-      );
-    }
-    catch (error) {
-      const errorMessage
-        = error instanceof Error
-          ? error.message
-          : "An error occurred while deleting the budget";
-      reply.send(
-        prepareResponse(
-          null,
-          STATUS_CODES.BAD_REQUEST,
-          "Failed to delete budget",
-          new Error(errorMessage),
-        ),
-      );
-    }
   }
 
   async getBudgetCategoriesHandler(
@@ -1703,14 +1493,144 @@ export class BudgetHandlers {
   }
 
   registerHandlers(server: FastifyInstance) {
-    server.get(
-      "",
-      this.getBudgetsHandler.bind(this),
-    );
-    server.get("/:budget_id", this.getBudgetByIdHandler.bind(this));
-    server.post("", this.createBudgetHandler.bind(this));
-    server.put("/:budget_id", this.updateBudgetHandler.bind(this));
-    server.delete("/:budget_id", this.deleteBudgetHandler.bind(this));
+    server
+      .withTypeProvider<ZodTypeProvider>()
+      .route({
+        method: "GET",
+        url: "",
+        schema: {
+          summary: "Get all budgets",
+          tags: ["budgets"],
+          response: {
+            [STATUS_CODES.OK]: foundBudgetsResponseSchema,
+          },
+        },
+        handler: async (request, reply) => {
+          const userId = request.user.user_id; // Get the user_id from the authenticated user, which is available via the fastify/jwt plugin as the plugin protects the routes and sends the user object to the request object if the user is authenticated
+          const budgets = await this.budgetService.getBudgets(userId);
+          reply
+            .code(STATUS_CODES.OK)
+            .send({
+              data: budgets,
+              message: "Budgets fetched successfully",
+            });
+        },
+      });
+    server
+      .withTypeProvider<ZodTypeProvider>()
+      .route({
+        method: "GET",
+        url: "/:budget_id",
+        schema: {
+          summary: "Get budget by id",
+          tags: ["budgets"],
+          params: z.object({
+            budget_id: z.string(),
+          }),
+          response: {
+            [STATUS_CODES.OK]: foundBudgetResponseSchema,
+            [STATUS_CODES.NOT_FOUND]: budgetNotFoundResponseSchema,
+          },
+        },
+        handler: async (request, reply) => {
+          const { budget_id } = request.params;
+          const budget = await this.budgetService.getBudgetById(request.user.user_id, Number.parseInt(budget_id));
+          if (!budget) {
+            throw new NotFoundError("Budget not found", [`budget with id ${budget_id} could not be found`]);
+          }
+          reply
+            .code(STATUS_CODES.OK)
+            .send({
+              data: budget,
+              message: "Budget fetched successfully",
+            });
+        },
+      });
+    server
+      .withTypeProvider<ZodTypeProvider>()
+      .route({
+        url: "",
+        method: "POST",
+        schema: {
+          summary: "Create a budget",
+          tags: ["budgets"],
+          body: createBudgetSchema.omit({ user_id: true }), // Omit the user_id field from the schema as it is not required in the request body (used from the authenticated user on the request object)
+          response: {
+            [STATUS_CODES.CREATED]: createdBudgetResponseSchema,
+          },
+        },
+        handler: async (request, reply) => {
+          const budget: TBudgetToCreate = {
+            ...request.body,
+            user_id: request.user.user_id,
+          };
+          const createdBudget = await this.budgetService.createBudget(budget);
+          reply
+            .code(STATUS_CODES.CREATED)
+            .send({
+              data: createdBudget,
+              message: "Budget created successfully",
+            });
+        },
+      });
+    server
+      .withTypeProvider<ZodTypeProvider>()
+      .route({
+        url: "/:budget_id",
+        method: "PUT",
+        schema: {
+          summary: "Update a budget",
+          tags: ["budgets"],
+          params: z.object({
+            budget_id: z.string(),
+          }),
+          body: updateBudgetSchema,
+          response: {
+            [STATUS_CODES.OK]: updatedBudgetResponseSchema,
+            [STATUS_CODES.NOT_FOUND]: budgetNotFoundResponseSchema,
+          },
+        },
+        handler: async (request, reply) => {
+          const { budget_id } = request.params;
+          const updatedBudget = await this.budgetService.updateBudget(request.user.user_id, Number.parseInt(budget_id), request.body);
+          reply
+            .code(STATUS_CODES.OK)
+            .send({
+              data: updatedBudget,
+              message: "Budget updated successfully",
+            });
+        },
+      });
+    server
+      .withTypeProvider<ZodTypeProvider>()
+      .route({
+        url: "/:budget_id",
+        method: "DELETE",
+        schema: {
+          summary: "Delete a budget",
+          tags: ["budgets"],
+          params: z.object({
+            budget_id: z.string(),
+          }),
+          response: {
+            [STATUS_CODES.OK]: deletedBudgetResponseSchema,
+            [STATUS_CODES.NOT_FOUND]: budgetNotFoundResponseSchema,
+          },
+        },
+        handler: async (request, reply) => {
+          const { budget_id } = request.params;
+          const deletedBudget = await this.budgetService.deleteBudget(request.user.user_id, Number.parseInt(budget_id));
+          if (!deletedBudget) {
+            throw new NotFoundError("Budget not found", [`budget with id ${budget_id} could not be found`]);
+          }
+          reply
+            .code(STATUS_CODES.OK)
+            .send({
+              data: deletedBudget,
+              message: "Budget deleted successfully",
+            });
+        },
+      });
     server.get(
       "/:budget_id/categories",
       this.getBudgetCategoriesHandler.bind(this),

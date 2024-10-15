@@ -12,6 +12,8 @@ import type {
 } from "@/db/types";
 import type { IBudgetRepository } from "@/repositories/budget-repository";
 
+import { NotFoundError } from "@/utils/error";
+
 export class BudgetService {
   private budget_repo: IBudgetRepository;
 
@@ -20,11 +22,16 @@ export class BudgetService {
   }
 
   getBudgets(user_id: number) {
-    return this.budget_repo.getBudgets(user_id);
+    const budgets = this.budget_repo.getBudgets(user_id);
+    return budgets;
   }
 
   getBudgetById(user_id: number, budget_id: number) {
-    return this.budget_repo.getBudgetById(user_id, budget_id);
+    const budget = this.budget_repo.getBudgetById(user_id, budget_id);
+    if (!budget) {
+      throw new NotFoundError("Budget not found", [user_id, budget_id]);
+    }
+    return budget;
   }
 
   createBudget(budget: TBudgetToCreate) {
@@ -32,11 +39,24 @@ export class BudgetService {
   }
 
   updateBudget(user_id: number, budget_id: number, budget_to_update: TBudgetToUpdate) {
-    return this.budget_repo.updateBudget(user_id, budget_id, budget_to_update);
+    const budget = this.getBudgetById(user_id, budget_id);
+
+    if (!budget) {
+      throw new NotFoundError("Budget not found", [user_id, budget_id]);
+    }
+
+    const updatedBudget = this.budget_repo.updateBudget(user_id, budget_id, budget_to_update);
+    return updatedBudget;
   }
 
   deleteBudget(user_id: number, budget_id: number) {
-    return this.budget_repo.deleteBudget(user_id, budget_id);
+    const budget = this.getBudgetById(user_id, budget_id);
+
+    if (!budget) {
+      throw new NotFoundError("Budget not found", [user_id, budget_id]);
+    }
+    const deletedBudget = this.budget_repo.deleteBudget(user_id, budget_id);
+    return deletedBudget;
   }
 
   getBudgetCategories(budget_id: number) {

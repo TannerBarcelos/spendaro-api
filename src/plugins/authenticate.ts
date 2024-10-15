@@ -9,6 +9,7 @@ import jwt from "@fastify/jwt";
 import fp from "fastify-plugin";
 
 import { env } from "@/env";
+import { UnauthorizedError } from "@/utils/error";
 import { STATUS_CODES } from "@/utils/http";
 
 const authenticate: FastifyPluginCallback = async (
@@ -22,12 +23,14 @@ const authenticate: FastifyPluginCallback = async (
   // Decorate the fastify instance with an authenticate method which we can call that uses this plugin to verify the JWT
   fastify.decorate(
     "authenticate",
-    async (request: FastifyRequest, reply: FastifyReply) => {
+    async (request: FastifyRequest) => {
       try {
         await request.jwtVerify(); // adds a user object to the request if the JWT is valid, containing the decoded JWT payload (which is just the user ID in our case since that's all we stored in the token when we signed it)
       }
       catch (err) {
-        reply.status(STATUS_CODES.UNAUTHORIZED).send(err);
+        if (err instanceof Error) {
+          throw new UnauthorizedError(err.message, [err.message]);
+        }
       }
     },
   );
