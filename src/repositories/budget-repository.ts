@@ -2,15 +2,7 @@ import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 
 import { and, eq } from "drizzle-orm";
 
-import type {
-  TTransactionResult,
-  TTransactionToCreate,
-  TTransactionToUpdate,
-  TTransactionTypeResult,
-  TTransactionTypeToCreate,
-  TTransactionTypeToUpdate,
-} from "@/db/types";
-import type { TBudgetCategoryItemResult, TBudgetCategoryItemToCreate, TBudgetCategoryItemToUpdate, TBudgetCategoryResult, TBudgetCategoryToCreate, TBudgetCategoryToUpdate, TBudgetResult, TBudgetToCreate, TBudgetToUpdate } from "@/handlers/budget/budget-schemas";
+import type { TBudgetCategoryItemResult, TBudgetCategoryItemToCreate, TBudgetCategoryItemToUpdate, TBudgetCategoryResult, TBudgetCategoryToCreate, TBudgetCategoryToUpdate, TBudgetResult, TBudgetToCreate, TBudgetToUpdate, TTransactionResult, TTransactionToCreate, TTransactionToUpdate, TTransactionTypeResult, TTransactionTypeToCreate, TTransactionTypeToUpdate } from "@/handlers/budget/budget-schemas";
 
 import * as schema from "@/db/schema";
 
