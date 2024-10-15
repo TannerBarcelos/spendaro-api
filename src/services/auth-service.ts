@@ -1,7 +1,6 @@
 import type { FastifyInstance } from "fastify";
 
 import { StatusCodes } from "http-status-codes";
-import postgres from "postgres";
 
 import type { TCandidateUser, TFoundUserResult, TUserToCreate } from "@/handlers/auth/auth-schemas";
 import type { IAuthRepository } from "@/repositories/auth-repository";

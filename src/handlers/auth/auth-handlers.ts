@@ -2,11 +2,10 @@ import type { FastifyInstance } from "fastify";
 import type { ZodTypeProvider } from "fastify-type-provider-zod";
 
 import config from "config";
-import { getReasonPhrase } from "http-status-codes";
 
 import type { AuthService } from "@/services/auth-service";
 
-import { duplicateSignupUserSchema, signinResponseSchema, signinResponseUnauthorizedSchema, signinUserSchema, signupResponseSchema, signupUserSchema } from "@/handlers/auth/auth-schemas";
+import { signinResponseSchema, signinResponseUnauthorizedSchema, signinUserSchema, signupResponseSchema, signupUserSchema } from "@/handlers/auth/auth-schemas";
 import { errorResponseSchema } from "@/handlers/error/error-schemas";
 import { STATUS_CODES } from "@/utils/http";
 
@@ -47,7 +46,6 @@ export class AuthHandlers {
               {
                 data: { access_token: token },
                 message: "User created successfully",
-                error: null,
               },
             );
         },
@@ -63,7 +61,7 @@ export class AuthHandlers {
           body: signinUserSchema,
           response: {
             [STATUS_CODES.OK]: signinResponseSchema,
-            [STATUS_CODES.UNAUTHORIZED]: errorResponseSchema,
+            [STATUS_CODES.UNAUTHORIZED]: signinResponseUnauthorizedSchema,
             "5xx": errorResponseSchema,
           },
         },
@@ -85,7 +83,6 @@ export class AuthHandlers {
               {
                 data: { access_token: token },
                 message: "User signed in successfully",
-                error: null,
               },
             );
         },
