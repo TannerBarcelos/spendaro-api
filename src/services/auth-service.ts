@@ -25,13 +25,13 @@ export class AuthService {
   async signin(
     candidateUser: TCandidateUser,
   ): Promise<TFoundUserResult> {
-    const signedInUser = await this.authRepo.signin(candidateUser);
+    const foundUser = await this.authRepo.signin(candidateUser);
 
-    if (!signedInUser) {
+    if (!foundUser) {
       throw new SpendaroError("User does not exist", StatusCodes.UNAUTHORIZED);
     }
 
-    const isValid = await this.server.bcrypt.compare(candidateUser.password, signedInUser.password);
+    const isValid = await this.server.bcrypt.compare(candidateUser.password, foundUser.password);
 
     if (!isValid) {
       throw new SpendaroError(
@@ -40,6 +40,6 @@ export class AuthService {
       );
     }
 
-    return signedInUser;
+    return foundUser;
   }
 }
