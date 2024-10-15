@@ -21,7 +21,7 @@ import type { BudgetService } from "@/services/budget-service";
 import { NotFoundError } from "@/utils/error";
 import { prepareResponse, STATUS_CODES } from "@/utils/http";
 
-import { budgetNotFoundResponseSchema, createBudgetSchema, createdBudgetResponseSchema, deletedBudgetResponseSchema, foundBudgetCategoriesResponseSchema, foundBudgetResponseSchema, foundBudgetSchema, foundBudgetsResponseSchema, foundBudgetsSchema, updateBudgetSchema, updatedBudgetResponseSchema } from "./budget-schemas";
+import { budgetCategoryNotFoundResponseSchema, budgetNotFoundResponseSchema, createBudgetCategorySchema, createBudgetSchema, createdBudgetCategoryResponseSchema, createdBudgetResponseSchema, deletedBudgetCategoryResponseSchema, deletedBudgetResponseSchema, foundBudgetCategoriesResponseSchema, foundBudgetCategoryResponseSchema, foundBudgetResponseSchema, foundBudgetSchema, foundBudgetsResponseSchema, foundBudgetsSchema, updateBudgetCategorySchema, updateBudgetSchema, updatedBudgetCategoryResponseSchema, updatedBudgetResponseSchema } from "./budget-schemas";
 
 export class BudgetHandlers {
   constructor(private budgetService: BudgetService) {
@@ -1588,13 +1588,13 @@ export class BudgetHandlers {
         method: "GET",
         schema: {
           summary: "Get all categories for a budget",
-          tags: ["budgets"],
+          tags: ["categories"],
           params: z.object({
             budget_id: z.string(),
           }),
           response: {
             [STATUS_CODES.OK]: foundBudgetCategoriesResponseSchema,
-            [STATUS_CODES.NOT_FOUND]: budgetNotFoundResponseSchema,
+            [STATUS_CODES.NOT_FOUND]: budgetCategoryNotFoundResponseSchema,
           },
         },
         handler: async (request, reply) => {
@@ -1608,22 +1608,122 @@ export class BudgetHandlers {
             });
         },
       });
-    server.get(
-      "/:budget_id/categories/:category_id",
-      this.getBudgetCategoryByIdHandler.bind(this),
-    );
-    server.post(
-      "/:budget_id/categories",
-      this.createBudgetCategoryHandler.bind(this),
-    );
-    server.put(
-      "/:budget_id/categories/:category_id",
-      this.updateBudgetCategoryHandler.bind(this),
-    );
-    server.delete(
-      "/:budget_id/categories/:category_id",
-      this.deleteBudgetCategoryHandler.bind(this),
-    );
+    server
+      .withTypeProvider<ZodTypeProvider>()
+      .route({
+        url: "/:budget_id/categories/:category_id",
+        method: "GET",
+        schema: {
+          summary: "Get a category by id for a budget",
+          tags: ["categories"],
+          params: z.object({
+            budget_id: z.string(),
+            category_id: z.string(),
+          }),
+          response: {
+            [STATUS_CODES.OK]: foundBudgetCategoryResponseSchema,
+            [STATUS_CODES.NOT_FOUND]: budgetCategoryNotFoundResponseSchema,
+          },
+        },
+        handler: async (request, reply) => {
+          const { budget_id, category_id } = request.params;
+          const category = await this.budgetService.getBudgetCategoryById(request.user.user_id, Number.parseInt(budget_id), Number.parseInt(category_id));
+          reply
+            .code(STATUS_CODES.OK)
+            .send({
+              data: category,
+              message: "Budget category fetched successfully",
+            });
+        },
+      });
+    server
+      .withTypeProvider<ZodTypeProvider>()
+      .route({
+        url: "/:budget_id/categories",
+        method: "POST",
+        schema: {
+          summary: "Create a category for a budget",
+          tags: ["categories"],
+          params: z.object({
+            budget_id: z.string(),
+          }),
+          body: createBudgetCategorySchema.omit({ budget_id: true }), // Omit the budget_id field from the schema as it is not required in the request body (used from the request params)
+          response: {
+            [STATUS_CODES.CREATED]: createdBudgetCategoryResponseSchema,
+          },
+        },
+        handler: async (request, reply) => {
+          const { budget_id } = request.params;
+          const category: TBudgetCategoryToCreate = {
+            ...request.body,
+            budget_id: Number.parseInt(budget_id),
+          };
+          const createdCategory = await this.budgetService.createBudgetCategory(request.user.user_id, category);
+          reply
+            .code(STATUS_CODES.CREATED)
+            .send({
+              data: createdCategory,
+              message: "Budget category created successfully",
+            });
+        },
+      });
+    server
+      .withTypeProvider<ZodTypeProvider>()
+      .route({
+        url: "/:budget_id/categories/:category_id",
+        method: "PUT",
+        schema: {
+          summary: "Update a category for a budget",
+          tags: ["categories"],
+          params: z.object({
+            budget_id: z.string(),
+            category_id: z.string(),
+          }),
+          body: updateBudgetCategorySchema,
+          response: {
+            [STATUS_CODES.OK]: updatedBudgetCategoryResponseSchema,
+            [STATUS_CODES.NOT_FOUND]: budgetCategoryNotFoundResponseSchema,
+          },
+        },
+        handler: async (request, reply) => {
+          const { budget_id, category_id } = request.params;
+          const updatedCategory = await this.budgetService.updateBudgetCategory(request.user.user_id, Number.parseInt(budget_id), Number.parseInt(category_id), request.body);
+          reply
+            .code(STATUS_CODES.OK)
+            .send({
+              data: updatedCategory,
+              message: "Budget category updated successfully",
+            });
+        },
+      });
+    server
+      .withTypeProvider<ZodTypeProvider>()
+      .route({
+        url: "/:budget_id/categories/:category_id",
+        method: "DELETE",
+        schema: {
+          summary: "Delete a category for a budget",
+          tags: ["categories"],
+          params: z.object({
+            budget_id: z.string(),
+            category_id: z.string(),
+          }),
+          response: {
+            [STATUS_CODES.OK]: deletedBudgetCategoryResponseSchema,
+            [STATUS_CODES.NOT_FOUND]: budgetCategoryNotFoundResponseSchema,
+          },
+        },
+        handler: async (request, reply) => {
+          const { budget_id, category_id } = request.params;
+          const deletedCategory = await this.budgetService.deleteBudgetCategory(request.user.user_id, Number.parseInt(budget_id), Number.parseInt(category_id));
+          reply
+            .code(STATUS_CODES.OK)
+            .send({
+              data: deletedCategory,
+              message: "Budget category deleted successfully",
+            });
+        },
+      });
     server.get(
       "/:budget_id/categories/:category_id/items",
       this.getBudgetCategoryItemsHandler.bind(this),

@@ -20,6 +20,7 @@ export class AuthHandlers {
         method: "POST",
         url: "/signup",
         schema: {
+          summary: "Sign up a new user",
           tags: ["auth"],
           body: signupUserSchema,
           response: {
@@ -48,6 +49,7 @@ export class AuthHandlers {
         method: "POST",
         url: "/signin",
         schema: {
+          summary: "Sign in a user",
           tags: ["auth"],
           body: signinUserSchema, // body is validated against the signinUserSchema and provided as fully-type-safe request.body to our handler (all provided by the fastify-type-provider-zod plugin)
           response: {

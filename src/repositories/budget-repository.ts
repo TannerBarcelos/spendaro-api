@@ -6,12 +6,6 @@ import type {
   TBudgetCategoryItemResult,
   TBudgetCategoryItemToCreate,
   TBudgetCategoryItemToUpdate,
-  TBudgetCategoryResult,
-  TBudgetCategoryToCreate,
-  TBudgetCategoryToUpdate,
-  TBudgetResult,
-  TBudgetToCreate,
-  TBudgetToUpdate,
   TTransactionResult,
   TTransactionToCreate,
   TTransactionToUpdate,
@@ -19,6 +13,7 @@ import type {
   TTransactionTypeToCreate,
   TTransactionTypeToUpdate,
 } from "@/db/types";
+import type { TBudgetCategoryResult, TBudgetCategoryToCreate, TBudgetCategoryToUpdate, TBudgetResult, TBudgetToCreate, TBudgetToUpdate } from "@/handlers/budget/budget-schemas";
 
 import * as schema from "@/db/schema";
 
@@ -160,7 +155,6 @@ export class BudgetRepository implements IBudgetRepository {
   }
 
   async updateBudgetCategory(
-
     budget_id: number,
     category_id: number,
     category_to_update: TBudgetCategoryToUpdate,

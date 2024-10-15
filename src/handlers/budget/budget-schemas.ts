@@ -12,8 +12,6 @@ const commonFields = {
   updatedAt: true as const,
 };
 
-export const budgetNotFoundResponseSchema = errorResponseSchema;
-
 // Budget schemas / types: Used for the actual I/O types as well as schema validation in the handlers via zod-type-provider
 export const createBudgetSchema = createInsertSchema(schema.budgets).omit(commonFields);
 export const updateBudgetSchema = createBudgetSchema.partial().omit({ user_id: true });
@@ -35,6 +33,7 @@ export const updatedBudgetResponseSchema = commonHttpResponseSchema.extend({
 export const deletedBudgetResponseSchema = commonHttpResponseSchema.extend({
   data: foundBudgetSchema,
 });
+export const budgetNotFoundResponseSchema = errorResponseSchema;
 
 export type TBudgetToCreate = z.infer<typeof createBudgetSchema>;
 export type TBudgetToUpdate = z.infer<typeof updateBudgetSchema>;
@@ -62,6 +61,7 @@ export const updatedBudgetCategoryResponseSchema = commonHttpResponseSchema.exte
 export const deletedBudgetCategoryResponseSchema = commonHttpResponseSchema.extend({
   data: foundBudgetCategorySchema,
 });
+export const budgetCategoryNotFoundResponseSchema = errorResponseSchema;
 
 export type TBudgetCategoryToCreate = z.infer<typeof createBudgetCategorySchema>;
 export type TBudgetCategoryToUpdate = z.infer<typeof updateBudgetCategorySchema>;
