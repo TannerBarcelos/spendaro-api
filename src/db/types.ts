@@ -14,28 +14,6 @@ const commonFields = {
   updatedAt: true as const,
 };
 
-// Budget schemas
-export const createBudgetSchema = createInsertSchema(schema.budgets).omit(commonFields);
-export const updateBudgetSchema = createBudgetSchema.partial().omit({ user_id: true });
-export const deleteBudgetSchema = z.object({ id: z.number() });
-export const foundBudgetSchema = createSelectSchema(schema.budgets);
-
-export type TBudgetToCreate = z.infer<typeof createBudgetSchema>;
-export type TBudgetToUpdate = z.infer<typeof updateBudgetSchema>;
-export type TBudgetToDelete = z.infer<typeof deleteBudgetSchema>;
-export type TBudgetResult = z.infer<typeof foundBudgetSchema>;
-
-// Budget category schemas
-export const createBudgetCategorySchema = createInsertSchema(schema.budget_categories).omit(commonFields);
-export const updateBudgetCategorySchema = createBudgetCategorySchema.partial().omit({ budget_id: true });
-export const deleteBudgetCategorySchema = z.object({ id: z.number() });
-export const foundBudgetCategorySchema = createSelectSchema(schema.budget_categories);
-
-export type TBudgetCategoryToCreate = z.infer<typeof createBudgetCategorySchema>;
-export type TBudgetCategoryToUpdate = z.infer<typeof updateBudgetCategorySchema>;
-export type TBudgetCategoryToDelete = z.infer<typeof deleteBudgetCategorySchema>;
-export type TBudgetCategoryResult = z.infer<typeof foundBudgetCategorySchema>;
-
 // Budget category item schemas
 export const createBudgetCategoryItemSchema = createInsertSchema(schema.budget_category_items).omit(commonFields);
 export const updateBudgetCategoryItemSchema = createBudgetCategoryItemSchema.partial().omit({ category_id: true, budget_id: true });
@@ -71,13 +49,6 @@ export type TTransactionTypeResult = z.infer<typeof foundTransactionTypeSchema>;
 
 // Exporting all schemas as JSON schemas and $ref for use in the application
 export const { schemas: spendaroSchemas, $ref } = buildJsonSchemas({
-  createBudgetSchema,
-  foundBudgetSchema,
-  updateBudgetSchema,
-  deleteBudgetSchema,
-  createBudgetCategorySchema,
-  updateBudgetCategorySchema,
-  foundBudgetCategorySchema,
   createBudgetCategoryItemSchema,
   updateBudgetCategoryItemSchema,
   foundBudgetCategoryItemSchema,

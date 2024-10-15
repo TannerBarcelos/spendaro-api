@@ -59,8 +59,15 @@ export class BudgetService {
     return deletedBudget;
   }
 
-  getBudgetCategories(budget_id: number) {
-    return this.budget_repo.getBudgetCategories(budget_id);
+  getBudgetCategories(user_id: number, budget_id: number) {
+    const budget = this.getBudgetById(user_id, budget_id);
+
+    if (!budget) {
+      throw new NotFoundError("Budget not found", [user_id, budget_id]);
+    }
+
+    const categories = this.budget_repo.getBudgetCategories(budget_id);
+    return categories;
   }
 
   getBudgetCategoryById(budget_id: number, category_id: number) {

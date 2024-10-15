@@ -21,61 +21,11 @@ import type { BudgetService } from "@/services/budget-service";
 import { NotFoundError } from "@/utils/error";
 import { prepareResponse, STATUS_CODES } from "@/utils/http";
 
-import { budgetNotFoundResponseSchema, createBudgetSchema, createdBudgetResponseSchema, deletedBudgetResponseSchema, foundBudgetResponseSchema, foundBudgetSchema, foundBudgetsResponseSchema, foundBudgetsSchema, updateBudgetSchema, updatedBudgetResponseSchema } from "./budget-schemas";
+import { budgetNotFoundResponseSchema, createBudgetSchema, createdBudgetResponseSchema, deletedBudgetResponseSchema, foundBudgetCategoriesResponseSchema, foundBudgetResponseSchema, foundBudgetSchema, foundBudgetsResponseSchema, foundBudgetsSchema, updateBudgetSchema, updatedBudgetResponseSchema } from "./budget-schemas";
 
 export class BudgetHandlers {
   constructor(private budgetService: BudgetService) {
     this.budgetService = budgetService;
-  }
-
-  async getBudgetCategoriesHandler(
-    request: FastifyRequest<{
-      Params: { budget_id: number };
-    }>,
-    reply: FastifyReply,
-  ) {
-    try {
-      // Confirm the budget exists before fetching its categories
-      const budgetExists = await this.budgetService.getBudgetById(request.user.user_id, request.params.budget_id);
-
-      // If the budget does not exist, return a 404 response
-      if (!budgetExists) {
-        reply.code(STATUS_CODES.NOT_FOUND).send(
-          prepareResponse(
-            null,
-            STATUS_CODES.NOT_FOUND,
-            "Budget not found",
-            null,
-          ),
-        );
-      }
-
-      // Fetch the categories for the budget
-      const categories
-        = await this.budgetService.getBudgetCategories(request.params.budget_id);
-      reply.send(
-        prepareResponse(
-          categories,
-          STATUS_CODES.OK,
-          "Budget categories fetched successfully",
-          null,
-        ),
-      );
-    }
-    catch (error) {
-      const errorMessage
-        = error instanceof Error
-          ? error.message
-          : "An error occurred while fetching the budget categories";
-      reply.send(
-        prepareResponse(
-          error,
-          STATUS_CODES.BAD_REQUEST,
-          "Failed to fetch categories for the budget",
-          new Error(errorMessage),
-        ),
-      );
-    }
   }
 
   async getBudgetCategoryByIdHandler(
@@ -1631,10 +1581,33 @@ export class BudgetHandlers {
             });
         },
       });
-    server.get(
-      "/:budget_id/categories",
-      this.getBudgetCategoriesHandler.bind(this),
-    );
+    server
+      .withTypeProvider<ZodTypeProvider>()
+      .route({
+        url: "/:budget_id/categories",
+        method: "GET",
+        schema: {
+          summary: "Get all categories for a budget",
+          tags: ["budgets"],
+          params: z.object({
+            budget_id: z.string(),
+          }),
+          response: {
+            [STATUS_CODES.OK]: foundBudgetCategoriesResponseSchema,
+            [STATUS_CODES.NOT_FOUND]: budgetNotFoundResponseSchema,
+          },
+        },
+        handler: async (request, reply) => {
+          const { budget_id } = request.params;
+          const categories = await this.budgetService.getBudgetCategories(request.user.user_id, Number.parseInt(budget_id));
+          reply
+            .code(STATUS_CODES.OK)
+            .send({
+              data: categories,
+              message: "Budget categories fetched successfully",
+            });
+        },
+      });
     server.get(
       "/:budget_id/categories/:category_id",
       this.getBudgetCategoryByIdHandler.bind(this),

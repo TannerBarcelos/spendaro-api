@@ -131,6 +131,7 @@ export class BudgetRepository implements IBudgetRepository {
       .from(schema.budget_categories)
       .where(
         eq(schema.budget_categories.budget_id, budget_id),
+        // no need to use user_id because budget categories are unique to a budget and cannot exist without a budget (witheld by the constraints)
       );
   }
 
