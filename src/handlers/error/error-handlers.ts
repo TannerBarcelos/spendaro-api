@@ -127,6 +127,7 @@ export class ErrorHandlers {
       }
     }
 
+    // Handle other errors if none of the above match
     reply
       .code(error.statusCode ?? STATUS_CODES.INTERNAL_SERVER_ERROR)
       .send(

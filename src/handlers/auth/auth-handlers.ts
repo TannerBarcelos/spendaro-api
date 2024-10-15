@@ -5,7 +5,7 @@ import config from "config";
 
 import type { AuthService } from "@/services/auth-service";
 
-import { signinResponseSchema, signinResponseUnauthorizedSchema, signinUserSchema, signupResponseSchema, signupUserSchema } from "@/handlers/auth/auth-schemas";
+import { duplicateSignupUserSchema, signinResponseSchema, signinResponseUnauthorizedSchema, signinUserSchema, signupResponseSchema, signupUserSchema } from "@/handlers/auth/auth-schemas";
 import { errorResponseSchema } from "@/handlers/error/error-schemas";
 import { STATUS_CODES } from "@/utils/http";
 
@@ -25,7 +25,7 @@ export class AuthHandlers {
           body: signupUserSchema,
           response: {
             [STATUS_CODES.CREATED]: signupResponseSchema,
-            [STATUS_CODES.CONFLICT]: errorResponseSchema,
+            [STATUS_CODES.CONFLICT]: duplicateSignupUserSchema,
             "5xx": errorResponseSchema,
           },
         },
