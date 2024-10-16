@@ -21,338 +21,11 @@ import type { BudgetService } from "@/services/budget-service";
 import { NotFoundError } from "@/utils/error";
 import { prepareResponse, STATUS_CODES } from "@/utils/http";
 
-import { budgetCategoryItemNotFoundResponseSchema, budgetCategoryNotFoundResponseSchema, budgetNotFoundResponseSchema, createBudgetCategoryItemSchema, createBudgetCategorySchema, createBudgetSchema, createdBudgetCategoryItemResponseSchema, createdBudgetCategoryResponseSchema, createdBudgetResponseSchema, deletedAllBudgetCategoryItemResponseSchema, deletedBudgetCategoryItemResponseSchema, deletedBudgetCategoryResponseSchema, deletedBudgetResponseSchema, foundBudgetCategoriesResponseSchema, foundBudgetCategoryItemResponseSchema, foundBudgetCategoryItemsResponseSchema, foundBudgetCategoryResponseSchema, foundBudgetResponseSchema, foundBudgetSchema, foundBudgetsResponseSchema, foundBudgetsSchema, updateBudgetCategoryItemSchema, updateBudgetCategorySchema, updateBudgetSchema, updatedBudgetCategoryItemResponseSchema, updatedBudgetCategoryResponseSchema, updatedBudgetResponseSchema } from "./budget-schemas";
+import { budgetCategoryItemNotFoundResponseSchema, budgetCategoryNotFoundResponseSchema, budgetNotFoundResponseSchema, createBudgetCategoryItemSchema, createBudgetCategorySchema, createBudgetSchema, createdBudgetCategoryItemResponseSchema, createdBudgetCategoryResponseSchema, createdBudgetResponseSchema, createdTransactionResponseSchema, createTransactionSchema, deletedAllBudgetCategoryItemResponseSchema, deletedBudgetCategoryItemResponseSchema, deletedBudgetCategoryResponseSchema, deletedBudgetResponseSchema, deletedTransactionResponseSchema, foundBudgetCategoriesResponseSchema, foundBudgetCategoryItemResponseSchema, foundBudgetCategoryItemsResponseSchema, foundBudgetCategoryResponseSchema, foundBudgetResponseSchema, foundBudgetSchema, foundBudgetsResponseSchema, foundBudgetsSchema, foundTransactionResponseSchema, foundTransactionsResponseSchema, transactionNotFoundResponseSchema, updateBudgetCategoryItemSchema, updateBudgetCategorySchema, updateBudgetSchema, updatedBudgetCategoryItemResponseSchema, updatedBudgetCategoryResponseSchema, updatedBudgetResponseSchema, updatedTransactionResponseSchema, updateTransactionSchema } from "./budget-schemas";
 
 export class BudgetHandlers {
   constructor(private budgetService: BudgetService) {
     this.budgetService = budgetService;
-  }
-
-  async getTransactionsHandler(
-    request: FastifyRequest<{
-      Params: { budget_id: number };
-    }>,
-    reply: FastifyReply,
-  ) {
-    try {
-      const { budget_id } = request.params;
-
-      // Confirm the budget exists before fetching the transactions
-      const budgetExists = await this.budgetService.getBudgetById(request.user.user_id, budget_id);
-
-      // If the budget does not exist, return a 404 response
-      if (!budgetExists) {
-        reply.code(STATUS_CODES.NOT_FOUND).send(
-          prepareResponse(
-            null,
-            STATUS_CODES.NOT_FOUND,
-            "Budget not found",
-            null,
-          ),
-        );
-      }
-
-      // Get the transactions for the budget
-      const transactions = await this.budgetService.getTransactions(budget_id);
-      reply
-        .code(STATUS_CODES.OK)
-        .send(
-          prepareResponse(
-            transactions,
-            STATUS_CODES.OK,
-            "Transactions fetched successfully",
-            null,
-          ),
-        );
-    }
-    catch (error) {
-      const errorMessage
-        = error instanceof Error
-          ? error.message
-          : "An error occurred while fetching the transactions";
-      reply
-        .code(STATUS_CODES.BAD_REQUEST)
-        .send(
-          prepareResponse(
-            error,
-            STATUS_CODES.BAD_REQUEST,
-            "Failed to fetch transactions",
-            new Error(errorMessage),
-          ),
-        );
-    }
-  }
-
-  async getTransactionByIdHandler(
-    request: FastifyRequest<{
-      Params: { transaction_id: number; budget_id: number };
-    }>,
-    reply: FastifyReply,
-  ) {
-    try {
-      const { budget_id, transaction_id } = request.params;
-
-      // Confirm the budget exists before fetching the transaction
-      const budgetExists = await this.budgetService.getBudgetById(request.user.user_id, budget_id);
-
-      // If the budget does not exist, return a 404 response
-      if (!budgetExists) {
-        reply.code(STATUS_CODES.NOT_FOUND).send(
-          prepareResponse(
-            null,
-            STATUS_CODES.NOT_FOUND,
-            "Budget not found",
-            null,
-          ),
-        );
-      }
-
-      // Get the transaction for the budget
-      const transaction = await this.budgetService.getTransactionById(
-        budget_id,
-        transaction_id,
-      );
-
-      // If the transaction does not exist, return a 404 response
-      if (!transaction) {
-        reply
-          .code(STATUS_CODES.NOT_FOUND)
-          .send(
-            prepareResponse(
-              null,
-              STATUS_CODES.NOT_FOUND,
-              "Transaction not found",
-              null,
-            ),
-          );
-      }
-
-      // Send the transaction in the response
-      reply
-        .code(STATUS_CODES.OK)
-        .send(
-          prepareResponse(
-            transaction,
-            STATUS_CODES.OK,
-            "Transaction fetched successfully",
-            null,
-          ),
-        );
-    }
-    catch (error) {
-      const errorMessage
-        = error instanceof Error
-          ? error.message
-          : "An error occurred while fetching the transaction";
-      reply
-        .code(STATUS_CODES.BAD_REQUEST)
-        .send(
-          prepareResponse(
-            error,
-            STATUS_CODES.BAD_REQUEST,
-            "Failed to fetch transaction",
-            new Error(errorMessage),
-          ),
-        );
-    }
-  }
-
-  async createTransactionHandler(
-    request: FastifyRequest<{
-      Params: { budget_id: number };
-      Body: TTransactionToCreate;
-    }>,
-    reply: FastifyReply,
-  ) {
-    try {
-      const { budget_id } = request.params;
-
-      // Confirm the budget exists before creating the transaction
-      const budgetExists = await this.budgetService.getBudgetById(request.user.user_id, budget_id);
-
-      // If the budget does not exist, return a 404 response
-      if (!budgetExists) {
-        reply.code(STATUS_CODES.NOT_FOUND).send(
-          prepareResponse(
-            null,
-            STATUS_CODES.NOT_FOUND,
-            "Budget not found",
-            null,
-          ),
-        );
-      }
-
-      const transactionToCreate: TTransactionToCreate = {
-        ...request.body,
-        budget_id,
-      };
-
-      const createdTransaction
-        = await this.budgetService.createTransaction(transactionToCreate);
-      reply
-        .code(STATUS_CODES.CREATED)
-        .send(
-          prepareResponse(
-            createdTransaction,
-            STATUS_CODES.CREATED,
-            "Transaction created successfully",
-            null,
-          ),
-        );
-    }
-    catch (error) {
-      const errorMessage
-        = error instanceof Error
-          ? error.message
-          : "An error occurred while creating the transaction";
-      reply
-        .code(STATUS_CODES.BAD_REQUEST)
-        .send(
-          prepareResponse(
-            error,
-            STATUS_CODES.BAD_REQUEST,
-            "Failed to create transaction",
-            new Error(errorMessage),
-          ),
-        );
-    }
-  }
-
-  async updateTransactionHandler(
-    request: FastifyRequest<{
-      Body: TTransactionToUpdate;
-      Params: { transaction_id: number; budget_id: number };
-    }>,
-    reply: FastifyReply,
-  ) {
-    try {
-      const { budget_id, transaction_id } = request.params;
-
-      // Confirm the budget exists before updating the transaction
-      const budgetExists = await this.budgetService.getBudgetById(request.user.user_id, budget_id);
-
-      // If the budget does not exist, return a 404 response
-      if (!budgetExists) {
-        reply.code(STATUS_CODES.NOT_FOUND).send(
-          prepareResponse(
-            null,
-            STATUS_CODES.NOT_FOUND,
-            "Budget not found",
-            null,
-          ),
-        );
-      }
-
-      const transactionToUpdate = await this.budgetService.updateTransaction(budget_id, transaction_id, request.body);
-
-      if (!transactionToUpdate) {
-        reply
-          .code(STATUS_CODES.NOT_FOUND)
-          .send(
-            prepareResponse(
-              null,
-              STATUS_CODES.NOT_FOUND,
-              "Transaction not found",
-              null,
-            ),
-          );
-      }
-
-      reply
-        .code(STATUS_CODES.OK)
-        .send(
-          prepareResponse(
-            transactionToUpdate,
-            STATUS_CODES.OK,
-            "Transaction updated successfully",
-            null,
-          ),
-        );
-    }
-    catch (error) {
-      const errorMessage
-        = error instanceof Error
-          ? error.message
-          : "An error occurred while updating the transaction";
-      reply
-        .code(STATUS_CODES.BAD_REQUEST)
-        .send(
-          prepareResponse(
-            error,
-            STATUS_CODES.BAD_REQUEST,
-            "Failed to update transaction",
-            new Error(errorMessage),
-          ),
-        );
-    }
-  }
-
-  async deleteTransactionHandler(
-    request: FastifyRequest<{
-      Params: { transaction_id: number; budget_id: number };
-    }>,
-    reply: FastifyReply,
-  ) {
-    try {
-      const { budget_id, transaction_id } = request.params;
-
-      // Confirm the budget exists before updating the transaction
-      const budgetExists = await this.budgetService.getBudgetById(request.user.user_id, budget_id);
-
-      // If the budget does not exist, return a 404 response
-      if (!budgetExists) {
-        reply.code(STATUS_CODES.NOT_FOUND).send(
-          prepareResponse(
-            null,
-            STATUS_CODES.NOT_FOUND,
-            "Budget not found",
-            null,
-          ),
-        );
-      }
-
-      const transactionToDelete = await this.budgetService.deleteTransaction(budget_id, transaction_id);
-
-      if (!transactionToDelete) {
-        reply
-          .code(STATUS_CODES.NOT_FOUND)
-          .send(
-            prepareResponse(
-              null,
-              STATUS_CODES.NOT_FOUND,
-              "Transaction not found",
-              null,
-            ),
-          );
-      }
-
-      reply
-        .code(STATUS_CODES.OK)
-        .send(
-          prepareResponse(
-            transactionToDelete,
-            STATUS_CODES.OK,
-            "Transaction deleted successfully",
-            null,
-          ),
-        );
-    }
-    catch (error) {
-      const errorMessage
-        = error instanceof Error
-          ? error.message
-          : "An error occurred while deleting the transaction";
-      reply
-        .code(STATUS_CODES.BAD_REQUEST)
-        .send(
-          prepareResponse(
-            error,
-            STATUS_CODES.BAD_REQUEST,
-            "Failed to delete transaction",
-            new Error(errorMessage),
-          ),
-        );
-    }
   }
 
   async getTransactionTypesHandler(
@@ -1141,45 +814,244 @@ export class BudgetHandlers {
             });
         },
       });
-    server.get(
-      "/:budget_id/transactions",
-      this.getTransactionsHandler.bind(this),
-    );
-    server.get(
-      "/:budget_id/transactions/:transaction_id",
-      this.getTransactionByIdHandler.bind(this),
-    );
-    server.post(
-      "/:budget_id/transactions",
-      this.createTransactionHandler.bind(this),
-    );
-    server.put(
-      "/:budget_id/transactions/:transaction_id",
-      this.updateTransactionHandler.bind(this),
-    );
-    server.delete(
-      "/:budget_id/transactions/:transaction_id",
-      this.deleteTransactionHandler.bind(this),
-    );
-    server.get(
-      "/:budget_id/transactions/types",
-      this.getTransactionTypesHandler.bind(this),
-    );
-    server.get(
-      "/:budget_id/transactions/types/:transaction_type_id",
-      this.getTransactionTypeByIdHandler.bind(this),
-    );
-    server.post(
-      "/:budget_id/transactions/types",
-      this.createTransactionTypeHandler.bind(this),
-    );
-    server.put(
-      "/:budget_id/transactions/types/:transaction_type_id",
-      this.updateTransactionTypeHandler.bind(this),
-    );
-    server.delete(
-      "/:budget_id/transactions/types/:transaction_type_id",
-      this.deleteTransactionTypeHandler.bind(this),
-    );
+    server
+      .withTypeProvider<ZodTypeProvider>()
+      .route({
+        url: "/:budget_id/transactions",
+        method: "GET",
+        schema: {
+          summary: "Get all transactions for a budget",
+          tags: ["transactions"],
+          params: z.object({
+            budget_id: z.string(),
+          }),
+          response: {
+            [STATUS_CODES.OK]: foundTransactionsResponseSchema,
+          },
+        },
+        handler: async (request, reply) => {
+          const { budget_id } = request.params;
+          const transactions = await this.budgetService.getTransactions(request.user.user_id, Number.parseInt(budget_id));
+          reply
+            .code(STATUS_CODES.OK)
+            .send({
+              data: transactions,
+              message: "Transactions fetched successfully",
+            });
+        },
+      });
+    server
+      .withTypeProvider<ZodTypeProvider>()
+      .route({
+        url: "/:budget_id/transactions/:transaction_id",
+        method: "GET",
+        schema: {
+          summary: "Get a transaction by id for a budget",
+          tags: ["transactions"],
+          params: z.object({
+            budget_id: z.string(),
+            transaction_id: z.string(),
+          }),
+          response: {
+            [STATUS_CODES.OK]: foundTransactionResponseSchema,
+            [STATUS_CODES.NOT_FOUND]: transactionNotFoundResponseSchema,
+          },
+        },
+        handler: async (request, reply) => {
+          const { budget_id, transaction_id } = request.params;
+          const transaction = await this.budgetService.getTransactionById(request.user.user_id, Number.parseInt(budget_id), Number.parseInt(transaction_id));
+          reply
+            .code(STATUS_CODES.OK)
+            .send({
+              data: transaction,
+              message: "Transaction fetched successfully",
+            });
+        },
+      });
+    server
+      .withTypeProvider<ZodTypeProvider>()
+      .route({
+        url: "/:budget_id/transactions",
+        method: "POST",
+        schema: {
+          summary: "Create a transaction for a budget",
+          tags: ["transactions"],
+          params: z.object({
+            budget_id: z.string(),
+          }),
+          body: createTransactionSchema.omit({ budget_id: true }), // Omit the budget_id field from the schema as it is not required in the request body (used from the request params)
+          response: {
+            [STATUS_CODES.CREATED]: createdTransactionResponseSchema,
+          },
+        },
+        handler: async (request, reply) => {
+          const { budget_id } = request.params;
+          const transaction: TTransactionToCreate = {
+            ...request.body,
+            budget_id: Number.parseInt(budget_id),
+          };
+          const createdTransaction = await this.budgetService.createTransaction(request.user.user_id, transaction);
+          reply
+            .code(STATUS_CODES.CREATED)
+            .send({
+              data: createdTransaction,
+              message: "Transaction created successfully",
+            });
+        },
+      });
+    server
+      .withTypeProvider<ZodTypeProvider>()
+      .route({
+        url: "/:budget_id/transactions/:transaction_id",
+        method: "PUT",
+        schema: {
+          summary: "Update a transaction for a budget",
+          tags: ["transactions"],
+          params: z.object({
+            budget_id: z.string(),
+            transaction_id: z.string(),
+          }),
+          body: updateTransactionSchema, // Omit the budget_id field from the schema as it is not required in the request body (used from the request params)
+          response: {
+            [STATUS_CODES.OK]: updatedTransactionResponseSchema,
+            [STATUS_CODES.NOT_FOUND]: transactionNotFoundResponseSchema,
+          },
+        },
+        handler: async (request, reply) => {
+          const { budget_id, transaction_id } = request.params;
+          const updatedTransaction = await this.budgetService.updateTransaction(request.user.user_id, Number.parseInt(budget_id), Number.parseInt(transaction_id), request.body);
+          reply
+            .code(STATUS_CODES.OK)
+            .send({
+              data: updatedTransaction,
+              message: "Transaction updated successfully",
+            });
+        },
+      });
+    server
+      .withTypeProvider<ZodTypeProvider>()
+      .route({
+        url: "/:budget_id/transactions/:transaction_id",
+        method: "DELETE",
+        schema: {
+          summary: "Delete a transaction for a budget",
+          tags: ["transactions"],
+          params: z.object({
+            budget_id: z.string(),
+            transaction_id: z.string(),
+          }),
+          response: {
+            [STATUS_CODES.OK]: deletedTransactionResponseSchema,
+            [STATUS_CODES.NOT_FOUND]: transactionNotFoundResponseSchema,
+          },
+        },
+        handler: async (request, reply) => {
+          const { budget_id, transaction_id } = request.params;
+          const deletedTransaction = await this.budgetService.deleteTransaction(request.user.user_id, Number.parseInt(budget_id), Number.parseInt(transaction_id));
+          reply
+            .code(STATUS_CODES.OK)
+            .send({
+              data: deletedTransaction,
+              message: "Transaction deleted successfully",
+            });
+        },
+      });
+    server
+      .withTypeProvider<ZodTypeProvider>()
+      .route({
+        url: "/:budget_id/transactions/types",
+        method: "GET",
+        schema: {
+          summary: "Get all transaction types for a budget",
+          tags: ["transaction types"],
+          params: z.object({
+            budget_id: z.string(),
+          }),
+          response: {
+            [STATUS_CODES.OK]: foundBudgetsResponseSchema,
+          },
+        },
+        handler: this.getTransactionTypesHandler.bind(this),
+      });
+    server
+      .withTypeProvider<ZodTypeProvider>()
+      .route({
+        url: "/:budget_id/transactions/types/:transaction_type_id",
+        method: "GET",
+        schema: {
+          summary: "Get a transaction type by id for a budget",
+          tags: ["transaction types"],
+          params: z.object({
+            budget_id: z.string(),
+            transaction_type_id: z.string(),
+          }),
+          response: {
+            [STATUS_CODES.OK]: foundBudgetResponseSchema,
+            [STATUS_CODES.NOT_FOUND]: budgetNotFoundResponseSchema,
+          },
+        },
+        handler: this.getTransactionTypeByIdHandler.bind(this),
+      });
+    server
+      .withTypeProvider<ZodTypeProvider>()
+      .route({
+        url: "/:budget_id/transactions/types",
+        method: "POST",
+        schema: {
+          summary: "Create a transaction type for a budget",
+          tags: ["transaction types"],
+          params: z.object({
+            budget_id: z.string(),
+          }),
+          body: z.object({
+            name: z.string(),
+          }),
+          response: {
+            [STATUS_CODES.CREATED]: createdBudgetResponseSchema,
+          },
+        },
+        handler: this.createTransactionTypeHandler.bind(this),
+      });
+    server
+      .withTypeProvider<ZodTypeProvider>()
+      .route({
+        url: "/:budget_id/transactions/types/:transaction_type_id",
+        method: "PUT",
+        schema: {
+          summary: "Update a transaction type for a budget",
+          tags: ["transaction types"],
+          params: z.object({
+            budget_id: z.string(),
+            transaction_type_id: z.string(),
+          }),
+          body: z.object({
+            name: z.string(),
+          }),
+          response: {
+            [STATUS_CODES.OK]: updatedBudgetResponseSchema,
+            [STATUS_CODES.NOT_FOUND]: budgetNotFoundResponseSchema,
+          },
+        },
+        handler: this.updateTransactionTypeHandler.bind(this),
+      });
+    server
+      .withTypeProvider<ZodTypeProvider>()
+      .route({
+        url: "/:budget_id/transactions/types/:transaction_type_id",
+        method: "DELETE",
+        schema: {
+          summary: "Delete a transaction type for a budget",
+          tags: ["transaction types"],
+          params: z.object({
+            budget_id: z.string(),
+            transaction_type_id: z.string(),
+          }),
+          response: {
+            [STATUS_CODES.OK]: deletedBudgetResponseSchema,
+            [STATUS_CODES.NOT_FOUND]: budgetNotFoundResponseSchema,
+          },
+        },
+        handler: this.deleteTransactionTypeHandler.bind(this),
+      });
   }
 }

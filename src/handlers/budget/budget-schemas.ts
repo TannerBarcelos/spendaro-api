@@ -89,6 +89,9 @@ export const updatedBudgetCategoryItemResponseSchema = commonHttpResponseSchema.
 export const deletedBudgetCategoryItemResponseSchema = commonHttpResponseSchema.extend({
   data: foundBudgetCategoryItemSchema,
 });
+export const deletedAllBudgetCategoryItemResponseSchema = commonHttpResponseSchema.extend({
+  data: z.array(foundBudgetCategoryItemSchema),
+});
 export const budgetCategoryItemNotFoundResponseSchema = errorResponseSchema;
 
 export type TBudgetCategoryItemToCreate = z.infer<typeof createBudgetCategoryItemSchema>;
@@ -117,9 +120,7 @@ export const updatedTransactionResponseSchema = commonHttpResponseSchema.extend(
 export const deletedTransactionResponseSchema = commonHttpResponseSchema.extend({
   data: foundTransactionSchema,
 });
-export const deletedAllBudgetCategoryItemResponseSchema = commonHttpResponseSchema.extend({
-  data: z.array(foundBudgetCategoryItemSchema),
-});
+
 export const transactionNotFoundResponseSchema = errorResponseSchema;
 
 export type TTransactionToCreate = z.infer<typeof createTransactionSchema>;

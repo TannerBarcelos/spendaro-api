@@ -197,43 +197,79 @@ export class BudgetService {
     return deletedItems;
   }
 
-  getTransactions(budget_id: number) {
-    return this.budget_repo.getTransactions(budget_id);
+  async getTransactions(user_id: number, budget_id: number) {
+    const budget = await this.getBudgetById(user_id, budget_id);
+    if (!budget) {
+      throw new NotFoundError("Budget not found", [`budget with id ${budget_id} could not be found`]);
+    }
+    const transactions = this.budget_repo.getTransactions(budget_id);
+    return transactions;
   }
 
-  getTransactionById(budget_id: number, transaction_id: number) {
-    return this.budget_repo.getTransactionById(budget_id, transaction_id);
+  async getTransactionById(user_id: number, budget_id: number, transaction_id: number) {
+    const budget = await this.getBudgetById(user_id, budget_id);
+    if (!budget) {
+      throw new NotFoundError("Budget not found", [`budget with id ${budget_id} could not be found`]);
+    }
+    const transaction = await this.budget_repo.getTransactionById(budget_id, transaction_id);
+    if (!transaction) {
+      throw new NotFoundError("Transaction not found", [`transaction with id ${transaction_id} could not be found`]);
+    }
+    return transaction;
   }
 
-  createTransaction(transaction: TTransactionToCreate) {
-    return this.budget_repo.createTransaction(transaction);
+  async createTransaction(user_id: number, transaction: TTransactionToCreate) {
+    const budget = await this.getBudgetById(user_id, transaction.budget_id);
+    if (!budget) {
+      throw new NotFoundError("Budget not found", [`budget with id ${transaction.budget_id} could not be found`]);
+    }
+    const createdTransaction = await this.budget_repo.createTransaction(transaction);
+    return createdTransaction;
   }
 
-  updateTransaction(budget_id: number, transaction_id: number, transaction: TTransactionToUpdate) {
-    return this.budget_repo.updateTransaction(budget_id, transaction_id, transaction);
+  async updateTransaction(user_id: number, budget_id: number, transaction_id: number, transaction: TTransactionToUpdate) {
+    const budget = await this.getBudgetById(user_id, budget_id);
+    if (!budget) {
+      throw new NotFoundError("Budget not found", [`budget with id ${budget_id} could not be found`]);
+    }
+    const transactionExists = await this.budget_repo.getTransactionById(budget_id, transaction_id);
+    if (!transactionExists) {
+      throw new NotFoundError("Transaction not found", [`transaction with id ${transaction_id} could not be found`]);
+    }
+    const updatedTransaction = await this.budget_repo.updateTransaction(budget_id, transaction_id, transaction);
+    return updatedTransaction;
   }
 
-  deleteTransaction(budget_id: number, transaction_id: number) {
-    return this.budget_repo.deleteTransaction(budget_id, transaction_id);
+  async deleteTransaction(user_id: number, budget_id: number, transaction_id: number) {
+    const budget = await this.getBudgetById(user_id, budget_id);
+    if (!budget) {
+      throw new NotFoundError("Budget not found", [`budget with id ${budget_id} could not be found`]);
+    }
+    const transactionExists = await this.budget_repo.getTransactionById(budget_id, transaction_id);
+    if (!transactionExists) {
+      throw new NotFoundError("Transaction not found", [`transaction with id ${transaction_id} could not be found`]);
+    }
+    const deletedTransaction = await this.budget_repo.deleteTransaction(budget_id, transaction_id);
+    return deletedTransaction;
   }
 
-  getTransactionTypes(budget_id: number) {
+  async getTransactionTypes(budget_id: number) {
     return this.budget_repo.getTransactionTypes(budget_id);
   }
 
-  getTransactionTypeById(budget_id: number, transaction_type_id: number) {
+  async getTransactionTypeById(budget_id: number, transaction_type_id: number) {
     return this.budget_repo.getTransactionTypeById(budget_id, transaction_type_id);
   }
 
-  createTransactionType(transaction_type: TTransactionTypeToCreate) {
+  async createTransactionType(transaction_type: TTransactionTypeToCreate) {
     return this.budget_repo.createTransactionType(transaction_type);
   }
 
-  updateTransactionType(budget_id: number, transaction_type_id: number, transaction_type: TTransactionTypeToUpdate) {
+  async updateTransactionType(budget_id: number, transaction_type_id: number, transaction_type: TTransactionTypeToUpdate) {
     return this.budget_repo.updateTransactionType(budget_id, transaction_type_id, transaction_type);
   }
 
-  deleteTransactionType(budget_id: number, transaction_id: number) {
+  async deleteTransactionType(budget_id: number, transaction_id: number) {
     return this.budget_repo.deleteTransactionType(budget_id, transaction_id);
   }
 }
