@@ -1,6 +1,5 @@
 import type { FastifyCookieOptions } from "@fastify/cookie";
 
-import config from "config";
 import { StatusCodes } from "http-status-codes";
 import { z } from "zod";
 
