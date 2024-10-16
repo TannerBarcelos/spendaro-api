@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import type { FastifyInstance, FastifyRequest } from "fastify";
 
 import cors from "@fastify/cors";
