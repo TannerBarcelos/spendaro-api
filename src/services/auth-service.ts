@@ -37,4 +37,14 @@ export class AuthService {
 
     return foundUser;
   }
+
+  async findUserById(id: number): Promise<TFoundUserResult> {
+    const foundUser = await this.authRepo.findUserById(id);
+
+    if (!foundUser) {
+      throw new NotFoundError("The requested user does not exist", [`User with id ${id} does not exist`]);
+    }
+
+    return foundUser;
+  }
 }

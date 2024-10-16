@@ -20,6 +20,13 @@ export class AuthRepository implements IAuthRepository {
     return foundUser;
   }
 
+  async findUserById(id: number): Promise<TFoundUserResult | undefined> {
+    const [foundUser] = await this.db.select()
+      .from(schema.users)
+      .where(eq(schema.users.id, id));
+    return foundUser;
+  }
+
   async createUser(user: TUserToCreate): Promise<TFoundUserResult> {
     const [newUser]: Array<TFoundUserResult> = await this.db
       .insert(schema.users)

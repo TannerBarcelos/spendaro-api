@@ -4,6 +4,7 @@ import type * as budget_schemas from "@/handlers/budget/budget-schemas";
 export interface IAuthRepository {
   createUser: (user: TUserToCreate) => Promise<TFoundUserResult>;
   findUserByEmail: (email: string) => Promise<TFoundUserResult | undefined>;
+  findUserById: (id: number) => Promise<TFoundUserResult | undefined>;
 }
 
 export interface IBudgetRepository {

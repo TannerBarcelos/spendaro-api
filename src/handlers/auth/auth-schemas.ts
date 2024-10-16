@@ -29,3 +29,7 @@ export const commonAuthResponseSchema = z.object({
 
 export const signinResponseUnauthorizedSchema = errorResponseSchema;
 export const duplicateSignupUserSchema = errorResponseSchema;
+export const userNotFoundResponseSchema = errorResponseSchema;
+export const userDetailsResponseSchema = commonHttpResponseSchema.extend({
+  data: foundUserSchema.omit({ password: true }),
+});

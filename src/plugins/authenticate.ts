@@ -1,7 +1,6 @@
 import type {
   FastifyInstance,
   FastifyPluginCallback,
-  FastifyReply,
   FastifyRequest,
 } from "fastify";
 

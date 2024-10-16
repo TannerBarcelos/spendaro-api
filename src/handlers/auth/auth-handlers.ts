@@ -116,5 +116,32 @@ export class AuthHandlers {
             );
         },
       });
+
+    server
+      .withTypeProvider<ZodTypeProvider>()
+      .addHook("onRequest", server.authenticate)
+      .route({
+        url: "/user-details",
+        method: "GET",
+        schema: {
+          summary: "Get user details",
+          description: "Get the details of the currently authenticated user",
+          tags: ["auth"],
+          response: {
+            [STATUS_CODES.OK]: auth_schemas.userDetailsResponseSchema,
+            [STATUS_CODES.UNAUTHORIZED]: auth_schemas.userNotFoundResponseSchema,
+            "5xx": errorResponseSchema,
+          },
+        },
+        handler: async (request, reply) => {
+          const foundUser = await this.authService.findUserById(request.user.user_id);
+          reply
+            .code(STATUS_CODES.OK)
+            .send({
+              message: "User details fetched successfully",
+              data: foundUser,
+            });
+        },
+      });
   }
 }
