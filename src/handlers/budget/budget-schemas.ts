@@ -117,6 +117,9 @@ export const updatedTransactionResponseSchema = commonHttpResponseSchema.extend(
 export const deletedTransactionResponseSchema = commonHttpResponseSchema.extend({
   data: foundTransactionSchema,
 });
+export const deletedAllBudgetCategoryItemResponseSchema = commonHttpResponseSchema.extend({
+  data: z.array(foundBudgetCategoryItemSchema),
+});
 export const transactionNotFoundResponseSchema = errorResponseSchema;
 
 export type TTransactionToCreate = z.infer<typeof createTransactionSchema>;

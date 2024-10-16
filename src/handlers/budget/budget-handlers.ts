@@ -21,7 +21,7 @@ import type { BudgetService } from "@/services/budget-service";
 import { NotFoundError } from "@/utils/error";
 import { prepareResponse, STATUS_CODES } from "@/utils/http";
 
-import { budgetCategoryItemNotFoundResponseSchema, budgetCategoryNotFoundResponseSchema, budgetNotFoundResponseSchema, createBudgetCategoryItemSchema, createBudgetCategorySchema, createBudgetSchema, createdBudgetCategoryItemResponseSchema, createdBudgetCategoryResponseSchema, createdBudgetResponseSchema, deletedBudgetCategoryItemResponseSchema, deletedBudgetCategoryResponseSchema, deletedBudgetResponseSchema, foundBudgetCategoriesResponseSchema, foundBudgetCategoryItemResponseSchema, foundBudgetCategoryItemsResponseSchema, foundBudgetCategoryResponseSchema, foundBudgetResponseSchema, foundBudgetSchema, foundBudgetsResponseSchema, foundBudgetsSchema, updateBudgetCategoryItemSchema, updateBudgetCategorySchema, updateBudgetSchema, updatedBudgetCategoryItemResponseSchema, updatedBudgetCategoryResponseSchema, updatedBudgetResponseSchema } from "./budget-schemas";
+import { budgetCategoryItemNotFoundResponseSchema, budgetCategoryNotFoundResponseSchema, budgetNotFoundResponseSchema, createBudgetCategoryItemSchema, createBudgetCategorySchema, createBudgetSchema, createdBudgetCategoryItemResponseSchema, createdBudgetCategoryResponseSchema, createdBudgetResponseSchema, deletedAllBudgetCategoryItemResponseSchema, deletedBudgetCategoryItemResponseSchema, deletedBudgetCategoryResponseSchema, deletedBudgetResponseSchema, foundBudgetCategoriesResponseSchema, foundBudgetCategoryItemResponseSchema, foundBudgetCategoryItemsResponseSchema, foundBudgetCategoryResponseSchema, foundBudgetResponseSchema, foundBudgetSchema, foundBudgetsResponseSchema, foundBudgetsSchema, updateBudgetCategoryItemSchema, updateBudgetCategorySchema, updateBudgetSchema, updatedBudgetCategoryItemResponseSchema, updatedBudgetCategoryResponseSchema, updatedBudgetResponseSchema } from "./budget-schemas";
 
 export class BudgetHandlers {
   constructor(private budgetService: BudgetService) {
@@ -1075,7 +1075,7 @@ export class BudgetHandlers {
         },
         handler: async (request, reply) => {
           const { budget_id, category_id, item_id } = request.params;
-          const updatedItem = await this.budgetService.updateBudgetCategoryItem(Number.parseInt(item_id), request.body);
+          const updatedItem = await this.budgetService.updateBudgetCategoryItem(request.user.user_id, Number.parseInt(budget_id), Number.parseInt(category_id), Number.parseInt(item_id), request.body);
           reply
             .code(STATUS_CODES.OK)
             .send({
@@ -1104,7 +1104,7 @@ export class BudgetHandlers {
         },
         handler: async (request, reply) => {
           const { budget_id, category_id, item_id } = request.params;
-          const deletedItem = await this.budgetService.deleteBudgetCategoryItem(Number.parseInt(item_id));
+          const deletedItem = await this.budgetService.deleteBudgetCategoryItem(request.user.user_id, Number.parseInt(budget_id), Number.parseInt(category_id), Number.parseInt(item_id));
           reply
             .code(STATUS_CODES.OK)
             .send({
@@ -1126,13 +1126,13 @@ export class BudgetHandlers {
             category_id: z.string(),
           }),
           response: {
-            [STATUS_CODES.OK]: z.array(deletedBudgetCategoryItemResponseSchema),
+            [STATUS_CODES.OK]: deletedAllBudgetCategoryItemResponseSchema,
             [STATUS_CODES.NOT_FOUND]: budgetCategoryItemNotFoundResponseSchema,
           },
         },
         handler: async (request, reply) => {
           const { budget_id, category_id } = request.params;
-          const deletedItems = await this.budgetService.deleteAllBudgetCategoryItems(Number.parseInt(category_id));
+          const deletedItems = await this.budgetService.deleteAllBudgetCategoryItems(request.user.user_id, Number.parseInt(budget_id), Number.parseInt(category_id));
           reply
             .code(STATUS_CODES.OK)
             .send({

@@ -150,16 +150,51 @@ export class BudgetService {
     return createdItem;
   }
 
-  updateBudgetCategoryItem(item_id: number, item: TBudgetCategoryItemToUpdate) {
-    return this.budget_repo.updateBudgetCategoryItem(item_id, item);
+  async updateBudgetCategoryItem(user_id: number, budget_id: number, category_id: number, item_id: number, item: TBudgetCategoryItemToUpdate) {
+    const budget = await this.getBudgetById(user_id, budget_id);
+    if (!budget) {
+      throw new NotFoundError("Budget not found", [`budget with id ${budget_id} could not be found`]);
+    }
+    const category = await this.getBudgetCategoryById(user_id, budget_id, category_id);
+    if (!category) {
+      throw new NotFoundError("Budget category not found", [`category with id ${category_id} could not be found`]);
+    }
+    const itemExists = await this.budget_repo.getBudgetCategoryItemById(category_id, item_id);
+    if (!itemExists) {
+      throw new NotFoundError("Budget category item not found", [`item with id ${item_id} could not be found`]);
+    }
+    const updatedItem = await this.budget_repo.updateBudgetCategoryItem(item_id, item);
+    return updatedItem;
   }
 
-  deleteBudgetCategoryItem(item_id: number) {
-    return this.budget_repo.deleteBudgetCategoryItem(item_id);
+  async deleteBudgetCategoryItem(user_id: number, budget_id: number, category_id: number, item_id: number) {
+    const budget = await this.getBudgetById(user_id, budget_id);
+    if (!budget) {
+      throw new NotFoundError("Budget not found", [`budget with id ${budget_id} could not be found`]);
+    }
+    const category = await this.getBudgetCategoryById(user_id, budget_id, category_id);
+    if (!category) {
+      throw new NotFoundError("Budget category not found", [`category with id ${category_id} could not be found`]);
+    }
+    const itemExists = await this.budget_repo.getBudgetCategoryItemById(category_id, item_id);
+    if (!itemExists) {
+      throw new NotFoundError("Budget category item not found", [`item with id ${item_id} could not be found`]);
+    }
+    const deletedItem = await this.budget_repo.deleteBudgetCategoryItem(item_id);
+    return deletedItem;
   }
 
-  deleteAllBudgetCategoryItems(category_id: number) {
-    return this.budget_repo.deleteAllBudgetCategoryItems(category_id);
+  async deleteAllBudgetCategoryItems(user_id: number, budget_id: number, category_id: number) {
+    const budget = await this.getBudgetById(user_id, budget_id);
+    if (!budget) {
+      throw new NotFoundError("Budget not found", [`budget with id ${budget_id} could not be found`]);
+    }
+    const category = await this.getBudgetCategoryById(user_id, budget_id, category_id);
+    if (!category) {
+      throw new NotFoundError("Budget category not found", [`category with id ${category_id} could not be found`]);
+    }
+    const deletedItems = await this.budget_repo.deleteAllBudgetCategoryItems(category_id);
+    return deletedItems;
   }
 
   getTransactions(budget_id: number) {
