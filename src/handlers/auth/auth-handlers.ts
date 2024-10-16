@@ -5,6 +5,7 @@ import type { AuthService } from "@/services/auth-service";
 
 import * as auth_schemas from "@/handlers/auth/auth-schemas";
 import { errorResponseSchema } from "@/handlers/error/error-schemas";
+import { UnauthorizedError } from "@/utils/error";
 import { STATUS_CODES } from "@/utils/http";
 import { generateAccessToken, generateRefreshToken } from "@/utils/jwt";
 
@@ -30,9 +31,9 @@ export class AuthHandlers {
           },
         },
         handler: async (request, reply) => {
-          const createdUser = await this.authService.createUser(request.body);
-          const accessToken = generateAccessToken(request.server.jwt, createdUser.id);
-          const refreshToken = generateRefreshToken(request.server.jwt, createdUser.id);
+          const { id } = await this.authService.createUser(request.body);
+          const accessToken = generateAccessToken(request.server.jwt, id);
+          const refreshToken = generateRefreshToken(request.server.jwt, id);
           reply
             .setCookie("accessToken", accessToken)
             .setCookie("refreshToken", refreshToken, {
@@ -61,9 +62,9 @@ export class AuthHandlers {
           },
         },
         handler: async (request, reply) => {
-          const validatedUser = await this.authService.findUserAndValidateToken(request.body);
-          const accessToken = generateAccessToken(request.server.jwt, validatedUser.id);
-          const refreshToken = generateRefreshToken(request.server.jwt, validatedUser.id);
+          const { id } = await this.authService.findUserAndValidateToken(request.body);
+          const accessToken = generateAccessToken(request.server.jwt, id);
+          const refreshToken = generateRefreshToken(request.server.jwt, id);
           reply
             .setCookie("accessToken", accessToken)
             .setCookie("refreshToken", refreshToken, {
@@ -91,13 +92,19 @@ export class AuthHandlers {
           },
         },
         handler: async (request, reply) => {
-          const validatedUser = await this.authService.findUserAndValidateToken(request.body);
-          const token = generateAccessToken(request.server.jwt, validatedUser.id);
+          const refreshToken = request.cookies.refreshToken;
+
+          if (!refreshToken) {
+            throw new UnauthorizedError("Refresh token not found", ["Refresh token was not provided in the request"]);
+          }
+
+          const { user_id } = request.server.jwt.verify<{ user_id: number }>(refreshToken);
+          const token = generateAccessToken(request.server.jwt, user_id);
           reply
+            .setCookie("accessToken", token)
             .code(STATUS_CODES.OK)
             .send(
               {
-                data: { access_token: token },
                 message: "Token refreshed successfully",
               },
             );
