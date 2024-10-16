@@ -12,7 +12,7 @@
   "security": {
     "jwt": {
       "salt_rounds": 10,
-      "expires_in": "10m"
+      "expires_in": "9999y"
     }
   }
 }
