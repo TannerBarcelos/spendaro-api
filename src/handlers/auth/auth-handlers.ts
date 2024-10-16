@@ -1,12 +1,9 @@
 import type { FastifyInstance } from "fastify";
 import type { ZodTypeProvider } from "fastify-type-provider-zod";
 
-import { z } from "zod";
-
 import type { AuthService } from "@/services/auth-service";
 
-import { env } from "@/env";
-import { duplicateSignupUserSchema, signinResponseSchema, signinResponseUnauthorizedSchema, signinUserSchema, signupResponseSchema, signupUserSchema } from "@/handlers/auth/auth-schemas";
+import * as auth_schemas from "@/handlers/auth/auth-schemas";
 import { errorResponseSchema } from "@/handlers/error/error-schemas";
 import { STATUS_CODES } from "@/utils/http";
 import { generateAccessToken, generateRefreshToken } from "@/utils/jwt";
@@ -25,25 +22,26 @@ export class AuthHandlers {
         schema: {
           summary: "Sign up a new user",
           tags: ["auth"],
-          body: signupUserSchema,
+          body: auth_schemas.signupUserSchema,
           response: {
-            [STATUS_CODES.CREATED]: signupResponseSchema,
-            [STATUS_CODES.CONFLICT]: duplicateSignupUserSchema,
+            [STATUS_CODES.CREATED]: auth_schemas.commonAuthResponseSchema,
+            [STATUS_CODES.CONFLICT]: auth_schemas.duplicateSignupUserSchema,
             "5xx": errorResponseSchema,
           },
         },
         handler: async (request, reply) => {
           const createdUser = await this.authService.createUser(request.body);
-          const access_token = generateAccessToken(request.server.jwt, createdUser.id);
+          const accessToken = generateAccessToken(request.server.jwt, createdUser.id);
           const refreshToken = generateRefreshToken(request.server.jwt, createdUser.id);
           reply
-            .code(STATUS_CODES.CREATED)
-            .send(
-              {
-                data: { access_token },
-                message: "User created successfully",
-              },
-            );
+            .setCookie("accessToken", accessToken)
+            .setCookie("refreshToken", refreshToken, {
+              maxAge: 60 * 60 * 24 * 7, // 7 days (refresh token expiry is 7 days)
+            })
+            .code(STATUS_CODES.OK)
+            .send({
+              message: "User created and signed in successfully",
+            });
         },
       });
 
@@ -55,12 +53,10 @@ export class AuthHandlers {
         schema: {
           summary: "Sign in a user",
           tags: ["auth"],
-          body: signinUserSchema,
+          body: auth_schemas.signinUserSchema,
           response: {
-            [STATUS_CODES.OK]: z.object({
-              message: z.string(),
-            }),
-            [STATUS_CODES.UNAUTHORIZED]: signinResponseUnauthorizedSchema,
+            [STATUS_CODES.OK]: auth_schemas.commonAuthResponseSchema,
+            [STATUS_CODES.UNAUTHORIZED]: auth_schemas.signinResponseUnauthorizedSchema,
             "5xx": errorResponseSchema,
           },
         },
@@ -89,8 +85,8 @@ export class AuthHandlers {
           summary: "Refresh user token",
           tags: ["auth"],
           response: {
-            [STATUS_CODES.OK]: signinResponseSchema,
-            [STATUS_CODES.UNAUTHORIZED]: signinResponseUnauthorizedSchema,
+            [STATUS_CODES.OK]: auth_schemas.commonAuthResponseSchema,
+            [STATUS_CODES.UNAUTHORIZED]: auth_schemas.signinResponseUnauthorizedSchema,
             "5xx": errorResponseSchema,
           },
         },

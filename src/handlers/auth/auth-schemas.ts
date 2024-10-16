@@ -23,12 +23,9 @@ export type TCandidateUser = z.infer<typeof signinUserSchema>;
 export type TFoundUserResult = z.infer<typeof foundUserSchema>;
 
 // RESPONSE SCHEMAS FOR JSONS SERIZALIZATION AND JSON SCHEMA VALIDATION
-export const signinResponseSchema = commonHttpResponseSchema.extend({
-  data: z.object({
-    access_token: z.string()
-      .describe("The JWT token to be used for authentication. Contains the user_id and expiration date."),
-  }).describe("The response data. Contains the JWT token."),
+export const commonAuthResponseSchema = z.object({
+  message: z.string(),
 });
+
 export const signinResponseUnauthorizedSchema = errorResponseSchema;
-export const signupResponseSchema = signinResponseSchema;
 export const duplicateSignupUserSchema = errorResponseSchema;
