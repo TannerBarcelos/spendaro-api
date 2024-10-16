@@ -26,19 +26,13 @@ export class AuthService {
     return createdUser;
   }
 
-  async findUserAndValidateToken(
-    candidateUser: TCandidateUser,
+  async findUserByEmail(
+    email: string,
   ): Promise<TFoundUserResult> {
-    const foundUser = await this.authRepo.findUserByEmail(candidateUser.email);
+    const foundUser = await this.authRepo.findUserByEmail(email);
 
     if (!foundUser) {
-      throw new NotFoundError("The requested user does not exist", [`User with email ${candidateUser.email} does not exist`]);
-    }
-
-    const isValid = await this.server.bcrypt.compare(candidateUser.password, foundUser.password);
-
-    if (!isValid) {
-      throw new UnauthorizedError("Invalid email or password", ["The email or password provided is incorrect"]);
+      throw new NotFoundError("The requested user does not exist", [`User with email ${email} does not exist`]);
     }
 
     return foundUser;

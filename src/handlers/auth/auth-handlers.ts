@@ -62,9 +62,14 @@ export class AuthHandlers {
           },
         },
         handler: async (request, reply) => {
-          const { id } = await this.authService.findUserAndValidateToken(request.body);
-          const accessToken = generateAccessToken(request.server.jwt, id);
-          const refreshToken = generateRefreshToken(request.server.jwt, id);
+          const foundUser = await this.authService.findUserByEmail(request.body.email);
+          const isValid = await request.server.bcrypt.compare(request.body.password, foundUser.password);
+
+          if (!isValid) {
+            throw new UnauthorizedError("Invalid email or password", ["The email or password provided is incorrect"]);
+          }
+          const accessToken = generateAccessToken(request.server.jwt, foundUser.id);
+          const refreshToken = generateRefreshToken(request.server.jwt, foundUser.id);
           reply
             .setCookie("accessToken", accessToken)
             .setCookie("refreshToken", refreshToken, {
@@ -84,6 +89,7 @@ export class AuthHandlers {
         method: "POST",
         schema: {
           summary: "Refresh user token",
+          description: "Refresh the user's access token using the refresh token. Often used after a client requests a resource and receives a 401 Unauthorized response.",
           tags: ["auth"],
           response: {
             [STATUS_CODES.OK]: auth_schemas.commonAuthResponseSchema,

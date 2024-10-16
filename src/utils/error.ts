@@ -1,6 +1,6 @@
 import { StatusCodes } from "http-status-codes";
 
-type Tctx = Array<any>;
+type Details = Array<any>;
 
 /**
  * Custom error class for Spendaro
@@ -9,45 +9,45 @@ type Tctx = Array<any>;
  * @extends {Error}
  * @param {string} message - Error message
  * @param {StatusCodes} statusCode - HTTP status code
- * @param {Tctx} ctx - Context of the error - Can contain additional information in the form of key-value pairs i.e `{ "reason": "Budget not found" }`
+ * @param {Details} details - Context of the error - Can contain additional information in the form of key-value pairs i.e `{ "reason": "Budget not found" }`
  * @returns {void}
  */
 export class SpendaroError extends Error {
-  constructor(public message: string, public statusCode: StatusCodes, public ctx: Tctx = []) {
+  constructor(public message: string, public statusCode: StatusCodes, public details: Details = []) {
     super(message);
     this.name = this.constructor.name;
     this.statusCode = statusCode;
-    this.ctx = ctx;
+    this.details = details;
     Error.captureStackTrace(this, this.constructor);
   }
 }
 
 export class NotFoundError extends SpendaroError {
-  constructor(message: string, ctx?: Tctx) {
-    super(message, StatusCodes.NOT_FOUND, ctx);
+  constructor(message: string, details?: Details) {
+    super(message, StatusCodes.NOT_FOUND, details);
   }
 }
 
 export class BadRequestError extends SpendaroError {
-  constructor(message: string, ctx?: Tctx) {
-    super(message, StatusCodes.BAD_REQUEST, ctx);
+  constructor(message: string, details?: Details) {
+    super(message, StatusCodes.BAD_REQUEST, details);
   }
 }
 
 export class UnauthorizedError extends SpendaroError {
-  constructor(message: string, ctx?: Tctx) {
-    super(message, StatusCodes.UNAUTHORIZED, ctx);
+  constructor(message: string, details?: Details) {
+    super(message, StatusCodes.UNAUTHORIZED, details);
   }
 }
 
 export class ForbiddenError extends SpendaroError {
-  constructor(message: string, ctx?: Tctx) {
-    super(message, StatusCodes.FORBIDDEN, ctx);
+  constructor(message: string, details?: Details) {
+    super(message, StatusCodes.FORBIDDEN, details);
   }
 }
 
 export class InternalServerError extends SpendaroError {
-  constructor(message: string, ctx?: Tctx) {
-    super(message, StatusCodes.INTERNAL_SERVER_ERROR, ctx);
+  constructor(message: string, details?: Details) {
+    super(message, StatusCodes.INTERNAL_SERVER_ERROR, details);
   }
 }

@@ -18,7 +18,7 @@ const authenticate: FastifyPluginCallback = async (
   fastify.register(jwt, {
     secret: env.JWT_SECRET,
     cookie: {
-      cookieName: "accessToken", // will look for the JWT in the "accessToken" cookie
+      cookieName: "accessToken", // will look for a cookie named "accessToken" to get the JWT from (instead of the Authorization header)
       signed: false,
     },
   });
