@@ -11,7 +11,7 @@
   "security": {
     "jwt": {
       "salt_rounds": 10,
-      "expiry": "9999y",
+      "expiry": "15m",
       "refresh_expiry": "1d"
     }
   }
