@@ -10,7 +10,6 @@ import fp from "fastify-plugin";
 
 import { env } from "@/env";
 import { UnauthorizedError } from "@/utils/error";
-import { STATUS_CODES } from "@/utils/http";
 
 const authenticate: FastifyPluginCallback = async (
   fastify: FastifyInstance,

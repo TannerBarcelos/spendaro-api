@@ -1,8 +1,11 @@
 import type { FastifyInstance } from "fastify";
 import type { ZodTypeProvider } from "fastify-type-provider-zod";
 
+import { z } from "zod";
+
 import type { AuthService } from "@/services/auth-service";
 
+import { env } from "@/env";
 import { duplicateSignupUserSchema, signinResponseSchema, signinResponseUnauthorizedSchema, signinUserSchema, signupResponseSchema, signupUserSchema } from "@/handlers/auth/auth-schemas";
 import { errorResponseSchema } from "@/handlers/error/error-schemas";
 import { STATUS_CODES } from "@/utils/http";
@@ -52,24 +55,28 @@ export class AuthHandlers {
         schema: {
           summary: "Sign in a user",
           tags: ["auth"],
-          body: signinUserSchema, // body is validated against the signinUserSchema and provided as fully-type-safe request.body to our handler (all provided by the fastify-type-provider-zod plugin)
+          body: signinUserSchema,
           response: {
-            [STATUS_CODES.OK]: signinResponseSchema,
+            [STATUS_CODES.OK]: z.object({
+              message: z.string(),
+            }),
             [STATUS_CODES.UNAUTHORIZED]: signinResponseUnauthorizedSchema,
             "5xx": errorResponseSchema,
           },
         },
         handler: async (request, reply) => {
           const validatedUser = await this.authService.findUserAndValidateToken(request.body);
-          const token = generateAccessToken(request.server.jwt, validatedUser.id);
+          const accessToken = generateAccessToken(request.server.jwt, validatedUser.id);
+          const refreshToken = generateRefreshToken(request.server.jwt, validatedUser.id);
           reply
+            .setCookie("accessToken", accessToken)
+            .setCookie("refreshToken", refreshToken, {
+              maxAge: 60 * 60 * 24 * 7, // 7 days (refresh token expiry is 7 days)
+            })
             .code(STATUS_CODES.OK)
-            .send(
-              {
-                data: { access_token: token },
-                message: "User signed in successfully",
-              },
-            );
+            .send({
+              message: "User signed in successfully",
+            });
         },
       });
 

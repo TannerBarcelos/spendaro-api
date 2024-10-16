@@ -1,5 +1,6 @@
 import type { FastifyCookieOptions } from "@fastify/cookie";
 
+import config from "config";
 import { StatusCodes } from "http-status-codes";
 import { z } from "zod";
 
@@ -19,6 +20,9 @@ export const cookieConfig: FastifyCookieOptions = {
   parseOptions: {
     httpOnly: env.NODE_ENV === "production",
     secure: env.NODE_ENV === "production",
+    sameSite: "lax",
+    maxAge: 15 * 60 * 1000, // 15 minutes (matches the access token expiry)
+    path: "/",
   },
 };
 
