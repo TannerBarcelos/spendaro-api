@@ -1,4 +1,5 @@
 import type { SwaggerOptions } from "@fastify/swagger";
+import type { FastifyApiReferenceOptions } from "@scalar/fastify-api-reference";
 
 import { createJsonSchemaTransform } from "fastify-type-provider-zod";
 
@@ -49,4 +50,22 @@ export const swaggerConfig: SwaggerOptions = {
   transform: createJsonSchemaTransform({
     skipList: ["/docs/**/*"],
   }),
+};
+
+export const swaggerScalarConfig: FastifyApiReferenceOptions = {
+  routePrefix: "/docs",
+  configuration: {
+    theme: "purple",
+    defaultHttpClient: {
+      targetKey: "shell",
+      clientKey: "curl",
+    },
+    metaData: {
+      title: "Spendaro API Docs",
+      description: "API documentation for the Spendaro API",
+      ogDescription: "API documentation for the Spendaro API",
+      ogTitle: "Spendaro API Docs",
+    },
+    defaultOpenAllTags: true,
+  },
 };

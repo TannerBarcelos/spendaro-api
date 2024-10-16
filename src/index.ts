@@ -1,6 +1,7 @@
 /* eslint-disable no-console */
 import type { FastifyInstance, FastifyRequest } from "fastify";
 
+import cookie from "@fastify/cookie";
 import cors from "@fastify/cors";
 import swagger from "@fastify/swagger";
 import scalar from "@scalar/fastify-api-reference";
@@ -8,13 +9,16 @@ import config from "config";
 import fastify from "fastify";
 import { fastifyBcrypt } from "fastify-bcrypt";
 import { serializerCompiler, validatorCompiler } from "fastify-type-provider-zod";
+import { getReasonPhrase, StatusCodes } from "http-status-codes";
 
 import db from "@/db/index";
 import { ErrorHandlers } from "@/handlers/error/error-handlers";
-import { swaggerConfig } from "@/open-api";
+import { swaggerConfig, swaggerScalarConfig } from "@/open-api";
 import authenticate from "@/plugins/authenticate";
 import { routes } from "@/routes/index";
-import { ALLOWED_METHODS } from "@/utils/http";
+import { cookieConfig, corsConfig } from "@/utils/http";
+
+import { bcryptSaltConfig } from "./utils/jwt";
 
 const server = fastify({
   logger: {
@@ -32,11 +36,10 @@ server.setNotFoundHandler(ErrorHandlers.handleNotFoundError);
 registerServerPlugins(server);
 
 server.get("/healthz", async (_: FastifyRequest) => {
-  return { status: "OK" };
+  return { status: getReasonPhrase(StatusCodes.OK) };
 });
 
-const apiRoutePrefix = `${config.get("server.api.prefix")}/${config.get("server.api.version")}`;
-server.register(routes, { prefix: apiRoutePrefix });
+server.register(routes, { prefix: `/api/${config.get("server.api.version")}` });
 
 server.listen({ port: config.get("server.port") }, (err, address) => {
   if (err) {
@@ -48,30 +51,10 @@ server.listen({ port: config.get("server.port") }, (err, address) => {
 
 function registerServerPlugins(server: FastifyInstance) {
   server.register(swagger, swaggerConfig);
-  server.register(scalar, {
-    routePrefix: "/docs",
-    configuration: {
-      theme: "purple",
-      defaultHttpClient: {
-        targetKey: "shell",
-        clientKey: "curl",
-      },
-      metaData: {
-        title: "Spendaro API Docs",
-        description: "API documentation for the Spendaro API",
-        ogDescription: "API documentation for the Spendaro API",
-        ogTitle: "Spendaro API Docs",
-      },
-      defaultOpenAllTags: true,
-    },
-  });
-  server.register(fastifyBcrypt, {
-    saltWorkFactor: config.get("security.jwt.salt_rounds"),
-  });
+  server.register(scalar, swaggerScalarConfig);
+  server.register(cookie, cookieConfig);
+  server.register(fastifyBcrypt, bcryptSaltConfig);
   server.register(authenticate);
-  server.register(cors, {
-    origin: "*",
-    methods: ALLOWED_METHODS,
-  });
+  server.register(cors, corsConfig);
   server.register(db);
 }

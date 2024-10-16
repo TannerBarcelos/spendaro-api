@@ -2,7 +2,6 @@
   "server": {
     "port": 8010,
     "api": {
-      "prefix": "/api",
       "version": "v1"
     },
     "logging": {
@@ -12,7 +11,8 @@
   "security": {
     "jwt": {
       "salt_rounds": 10,
-      "expires_in": "9999y"
+      "expiry": "9999y",
+      "refresh_expiry": "1d"
     }
   }
 }

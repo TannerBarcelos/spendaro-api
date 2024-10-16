@@ -55,6 +55,7 @@ To get started with the Spendaro API, follow these steps:
      DB_PASSWORD=
      DB_NAME=
      JWT_SECRET= <generate using `openssl rand -base64 32`>
+     COOKIE_SECRET= <generate using `openssl rand -base64 32`>
    ```
 
    > Note: Replace the values with your own database connection details.
