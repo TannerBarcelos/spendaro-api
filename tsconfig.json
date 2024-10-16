@@ -23,8 +23,7 @@
     "skipLibCheck": true
   },
   "tsc-alias": {
-    "verbose": false,
-    "resolveFullPaths": true
+    "resolveFullPaths": true // include full paths for all aliased modules, including the .js extension so we have esm compatibility
   },
   "include": ["src/**/*", "global.d.ts"]
 }
