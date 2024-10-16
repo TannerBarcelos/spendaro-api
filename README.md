@@ -63,11 +63,28 @@ To get started with the Spendaro API, follow these steps:
    > - If you're using Supabase, you can find your database connection details in the "Settings" tab of your Supabase project.
    > - **Docker support is coming soon so this can be automated**
 
-5. **Start the server:**
+5. **Setup the database for local development**
+
+> [!NOTE]
+>
+> Make sure you have the following completed:
+>
+> - environment variables set up
+> - database connection details are correct
+> - database is running (locally or cloud-hosted - just make sure the connection details are correct)
+> - make utility is installed (if not, you can install it using `npm install -g make-cli`)
+
+```bash
+make setup-db
+```
+
+This will generate a migration script in the `migrations` folder, run the migration against the database, and seed the database with some initial data.
+
+6. **Start the server:**
    ```bash
    pnpm dev
    ```
-6. **Test the API:**
+7. **Test the API:**
    Import the [Postman collection](postman-collection.json) into Postman to test the API endpoints and explore the available features.
 
 > Docker support is coming soon!
