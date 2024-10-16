@@ -68,7 +68,7 @@ To get started with the Spendaro API, follow these steps:
    pnpm dev
    ```
 6. **Test the API:**
-   Import the [Postman collection](Spendaro.postman_collection.json) into Postman to test the API endpoints and explore the available features.
+   Import the [Postman collection](postman-collection.json) into Postman to test the API endpoints and explore the available features.
 
 > Docker support is coming soon!
 
@@ -78,7 +78,7 @@ You can head to the [api documentation](http://localhost:8010/docs) to understan
 
 > Run the server and navigate to `http://localhost:8010/docs` to view the API documentation. (Make sure the server is running before you access the documentation.)
 >
-> You can also import the [Postman collection](Spendaro.postman_collection.json) into Postman to test the API endpoints and explore the available features.
+> You can also import the [Postman collection](postman-collection.json) into Postman to test the API endpoints and explore the available features.
 >
 > WIP: Deployment of API documentation to a public URL.
 
