@@ -1,358 +1,20 @@
-import type { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
+import type { FastifyInstance } from "fastify";
 import type { ZodTypeProvider } from "fastify-type-provider-zod";
 
 import { z } from "zod";
 
-import type {
-  TBudgetCategoryItemToCreate,
-  TBudgetCategoryItemToDelete,
-  TBudgetCategoryItemToUpdate,
-  TBudgetCategoryToCreate,
-  TBudgetCategoryToUpdate,
-  TBudgetToCreate,
-  TBudgetToUpdate,
-  TTransactionToCreate,
-  TTransactionToUpdate,
-  TTransactionTypeToCreate,
-  TTransactionTypeToUpdate,
-} from "@/db/types";
 import type { BudgetService } from "@/services/budget-service";
 
 import { NotFoundError } from "@/utils/error";
-import { prepareResponse, STATUS_CODES } from "@/utils/http";
+import { STATUS_CODES } from "@/utils/http";
 
-import { budgetCategoryItemNotFoundResponseSchema, budgetCategoryNotFoundResponseSchema, budgetNotFoundResponseSchema, createBudgetCategoryItemSchema, createBudgetCategorySchema, createBudgetSchema, createdBudgetCategoryItemResponseSchema, createdBudgetCategoryResponseSchema, createdBudgetResponseSchema, createdTransactionResponseSchema, createTransactionSchema, deletedAllBudgetCategoryItemResponseSchema, deletedBudgetCategoryItemResponseSchema, deletedBudgetCategoryResponseSchema, deletedBudgetResponseSchema, deletedTransactionResponseSchema, foundBudgetCategoriesResponseSchema, foundBudgetCategoryItemResponseSchema, foundBudgetCategoryItemsResponseSchema, foundBudgetCategoryResponseSchema, foundBudgetResponseSchema, foundBudgetSchema, foundBudgetsResponseSchema, foundBudgetsSchema, foundTransactionResponseSchema, foundTransactionsResponseSchema, transactionNotFoundResponseSchema, updateBudgetCategoryItemSchema, updateBudgetCategorySchema, updateBudgetSchema, updatedBudgetCategoryItemResponseSchema, updatedBudgetCategoryResponseSchema, updatedBudgetResponseSchema, updatedTransactionResponseSchema, updateTransactionSchema } from "./budget-schemas";
+import type { TBudgetCategoryItemToCreate, TBudgetCategoryToCreate, TBudgetToCreate, TTransactionToCreate, TTransactionTypeToCreate } from "./budget-schemas";
+
+import * as budget_schemas from "./budget-schemas";
 
 export class BudgetHandlers {
   constructor(private budgetService: BudgetService) {
     this.budgetService = budgetService;
-  }
-
-  async getTransactionTypesHandler(
-    request: FastifyRequest<{
-      Params: { budget_id: number };
-    }>,
-    reply: FastifyReply,
-  ) {
-    try {
-      const { budget_id } = request.params;
-
-      // Confirm the budget exists before fetching the transaction types
-      const budgetExists = await this.budgetService.getBudgetById(request.user.user_id, budget_id);
-
-      // If the budget does not exist, return a 404 response
-      if (!budgetExists) {
-        reply.code(STATUS_CODES.NOT_FOUND).send(
-          prepareResponse(
-            null,
-            STATUS_CODES.NOT_FOUND,
-            "Budget not found",
-            null,
-          ),
-        );
-      }
-
-      // Fetch the transaction types for the budget
-      const transactionTypes = await this.budgetService.getTransactionTypes(budget_id);
-      reply
-        .code(STATUS_CODES.OK)
-        .send(
-          prepareResponse(
-            transactionTypes,
-            STATUS_CODES.OK,
-            "Transaction types fetched successfully",
-            null,
-          ),
-        );
-    }
-    catch (error) {
-      const errorMessage
-        = error instanceof Error
-          ? error.message
-          : "An error occurred while fetching the transaction types";
-      reply
-        .code(STATUS_CODES.BAD_REQUEST)
-        .send(
-          prepareResponse(
-            error,
-            STATUS_CODES.BAD_REQUEST,
-            "Failed to fetch transaction types",
-            new Error(errorMessage),
-          ),
-        );
-    }
-  }
-
-  async getTransactionTypeByIdHandler(
-    request: FastifyRequest<{
-      Params: { budget_id: number; transaction_type_id: number };
-    }>,
-    reply: FastifyReply,
-  ) {
-    try {
-      const { budget_id, transaction_type_id } = request.params;
-
-      // Confirm the budget exists before fetching the transaction type
-      const budgetExists = await this.budgetService.getBudgetById(request.user.user_id, budget_id);
-
-      // If the budget does not exist, return a 404 response
-      if (!budgetExists) {
-        reply.code(STATUS_CODES.NOT_FOUND).send(
-          prepareResponse(
-            null,
-            STATUS_CODES.NOT_FOUND,
-            "Budget not found",
-            null,
-          ),
-        );
-      }
-
-      // Fetch the transaction type for the budget
-      const transactionType
-        = await this.budgetService.getTransactionTypeById(budget_id, transaction_type_id);
-
-      // If the transaction type does not exist, return a 404 response
-      if (!transactionType) {
-        reply
-          .code(STATUS_CODES.NOT_FOUND)
-          .send(
-            prepareResponse(
-              null,
-              STATUS_CODES.NOT_FOUND,
-              "Transaction type not found",
-              null,
-            ),
-          );
-      }
-
-      reply
-        .code(STATUS_CODES.OK)
-        .send(
-          prepareResponse(
-            transactionType,
-            STATUS_CODES.OK,
-            "Transaction type fetched successfully",
-            null,
-          ),
-        );
-    }
-    catch (error) {
-      const errorMessage
-        = error instanceof Error
-          ? error.message
-          : "An error occurred while fetching the transaction type";
-      reply.send(
-        prepareResponse(
-          error,
-          STATUS_CODES.BAD_REQUEST,
-          "Failed to fetch transaction type",
-          new Error(errorMessage),
-        ),
-      );
-    }
-  }
-
-  async createTransactionTypeHandler(
-    request: FastifyRequest<{
-      Body: TTransactionTypeToCreate;
-      Params: { budget_id: number };
-    }>,
-    reply: FastifyReply,
-  ) {
-    try {
-      const { budget_id } = request.params;
-
-      // Confirm the budget exists before creating the transaction type
-      const budgetExists = await this.budgetService.getBudgetById(request.user.user_id, budget_id);
-
-      // If the budget does not exist, return a 404 response
-      if (!budgetExists) {
-        reply.code(STATUS_CODES.NOT_FOUND).send(
-          prepareResponse(
-            null,
-            STATUS_CODES.NOT_FOUND,
-            "Budget not found",
-            null,
-          ),
-        );
-      }
-
-      const transactionType: TTransactionTypeToCreate = {
-        ...request.body,
-        budget_id,
-      };
-
-      const createdTransactionType
-        = await this.budgetService.createTransactionType(transactionType);
-
-      reply
-        .code(STATUS_CODES.CREATED)
-        .send(
-          prepareResponse(
-            createdTransactionType,
-            STATUS_CODES.CREATED,
-            "Transaction type created successfully",
-            null,
-          ),
-        );
-    }
-    catch (error) {
-      const errorMessage
-        = error instanceof Error
-          ? error.message
-          : "An error occurred while creating the transaction type";
-      reply
-        .code(STATUS_CODES.BAD_REQUEST)
-        .send(
-          prepareResponse(
-            error,
-            STATUS_CODES.BAD_REQUEST,
-            "Failed to create transaction type",
-            new Error(errorMessage),
-          ),
-        );
-    }
-  }
-
-  async updateTransactionTypeHandler(
-    request: FastifyRequest<{
-      Body: TTransactionTypeToUpdate;
-      Params: { budget_id: number; transaction_type_id: number };
-    }>,
-    reply: FastifyReply,
-  ) {
-    try {
-      const { transaction_type_id, budget_id } = request.params;
-
-      // Confirm the budget exists before updating the transaction type
-      const budgetExists = await this.budgetService.getBudgetById(request.user.user_id, budget_id);
-
-      // If the budget does not exist, return a 404 response
-      if (!budgetExists) {
-        reply.code(STATUS_CODES.NOT_FOUND).send(
-          prepareResponse(
-            null,
-            STATUS_CODES.NOT_FOUND,
-            "Budget not found",
-            null,
-          ),
-        );
-      }
-
-      // Update the transaction type for the budget
-      const transactionTypeToUpdate
-        = await this.budgetService.updateTransactionType(budget_id, transaction_type_id, request.body);
-
-      if (!transactionTypeToUpdate) {
-        reply
-          .code(STATUS_CODES.NOT_FOUND)
-          .send(
-            prepareResponse(
-              null,
-              STATUS_CODES.NOT_FOUND,
-              "Transaction type not found",
-              null,
-            ),
-          );
-      }
-
-      reply
-        .code(STATUS_CODES.OK)
-        .send(
-          prepareResponse(
-            transactionTypeToUpdate,
-            STATUS_CODES.OK,
-            "Transaction type updated successfully",
-            null,
-          ),
-        );
-    }
-    catch (error) {
-      const errorMessage
-        = error instanceof Error
-          ? error.message
-          : "An error occurred while updating the transaction type";
-      reply
-        .code(STATUS_CODES.BAD_REQUEST)
-        .send(
-          prepareResponse(
-            error,
-            STATUS_CODES.BAD_REQUEST,
-            "Failed to update transaction type",
-            new Error(errorMessage),
-          ),
-        );
-    }
-  }
-
-  async deleteTransactionTypeHandler(
-    request: FastifyRequest<{
-      Params: { budget_id: number; transaction_type_id: number };
-    }>,
-    reply: FastifyReply,
-  ) {
-    try {
-      const { transaction_type_id, budget_id } = request.params;
-
-      // Confirm the budget exists before updating the transaction type
-      const budgetExists = await this.budgetService.getBudgetById(request.user.user_id, budget_id);
-
-      // If the budget does not exist, return a 404 response
-      if (!budgetExists) {
-        reply.code(STATUS_CODES.NOT_FOUND).send(
-          prepareResponse(
-            null,
-            STATUS_CODES.NOT_FOUND,
-            "Budget not found",
-            null,
-          ),
-        );
-      }
-
-      // Delete the transaction type for the budget
-      const transactionToDelete
-        = await this.budgetService.deleteTransactionType(budget_id, transaction_type_id);
-
-      if (!transactionToDelete) {
-        reply
-          .code(STATUS_CODES.NOT_FOUND)
-          .send(
-            prepareResponse(
-              null,
-              STATUS_CODES.NOT_FOUND,
-              "Transaction type not found",
-              null,
-            ),
-          );
-      }
-
-      reply
-        .code(STATUS_CODES.OK)
-        .send(
-          prepareResponse(
-            transactionToDelete,
-            STATUS_CODES.OK,
-            "Transaction type updated successfully",
-            null,
-          ),
-        );
-    }
-    catch (error) {
-      const errorMessage
-        = error instanceof Error
-          ? error.message
-          : "An error occurred while deleting the transaction type";
-      reply
-        .code(STATUS_CODES.BAD_REQUEST)
-        .send(
-          prepareResponse(
-            error,
-            STATUS_CODES.BAD_REQUEST,
-            "Failed to delete transaction type",
-            new Error(errorMessage),
-          ),
-        );
-    }
   }
 
   registerHandlers(server: FastifyInstance) {
@@ -365,7 +27,7 @@ export class BudgetHandlers {
           summary: "Get all budgets",
           tags: ["budgets"],
           response: {
-            [STATUS_CODES.OK]: foundBudgetsResponseSchema,
+            [STATUS_CODES.OK]: budget_schemas.foundBudgetsResponseSchema,
           },
         },
         handler: async (request, reply) => {
@@ -391,8 +53,8 @@ export class BudgetHandlers {
             budget_id: z.string(),
           }),
           response: {
-            [STATUS_CODES.OK]: foundBudgetResponseSchema,
-            [STATUS_CODES.NOT_FOUND]: budgetNotFoundResponseSchema,
+            [STATUS_CODES.OK]: budget_schemas.foundBudgetResponseSchema,
+            [STATUS_CODES.NOT_FOUND]: budget_schemas.budgetNotFoundResponseSchema,
           },
         },
         handler: async (request, reply) => {
@@ -417,9 +79,9 @@ export class BudgetHandlers {
         schema: {
           summary: "Create a budget",
           tags: ["budgets"],
-          body: createBudgetSchema.omit({ user_id: true }), // Omit the user_id field from the schema as it is not required in the request body (used from the authenticated user on the request object)
+          body: budget_schemas.createBudgetSchema.omit({ user_id: true }), // Omit the user_id field from the schema as it is not required in the request body (used from the authenticated user on the request object)
           response: {
-            [STATUS_CODES.CREATED]: createdBudgetResponseSchema,
+            [STATUS_CODES.CREATED]: budget_schemas.createdBudgetResponseSchema,
           },
         },
         handler: async (request, reply) => {
@@ -447,10 +109,10 @@ export class BudgetHandlers {
           params: z.object({
             budget_id: z.string(),
           }),
-          body: updateBudgetSchema,
+          body: budget_schemas.updateBudgetSchema,
           response: {
-            [STATUS_CODES.OK]: updatedBudgetResponseSchema,
-            [STATUS_CODES.NOT_FOUND]: budgetNotFoundResponseSchema,
+            [STATUS_CODES.OK]: budget_schemas.updatedBudgetResponseSchema,
+            [STATUS_CODES.NOT_FOUND]: budget_schemas.budgetNotFoundResponseSchema,
           },
         },
         handler: async (request, reply) => {
@@ -476,8 +138,8 @@ export class BudgetHandlers {
             budget_id: z.string(),
           }),
           response: {
-            [STATUS_CODES.OK]: deletedBudgetResponseSchema,
-            [STATUS_CODES.NOT_FOUND]: budgetNotFoundResponseSchema,
+            [STATUS_CODES.OK]: budget_schemas.deletedBudgetResponseSchema,
+            [STATUS_CODES.NOT_FOUND]: budget_schemas.budgetNotFoundResponseSchema,
           },
         },
         handler: async (request, reply) => {
@@ -506,8 +168,8 @@ export class BudgetHandlers {
             budget_id: z.string(),
           }),
           response: {
-            [STATUS_CODES.OK]: foundBudgetCategoriesResponseSchema,
-            [STATUS_CODES.NOT_FOUND]: budgetCategoryNotFoundResponseSchema,
+            [STATUS_CODES.OK]: budget_schemas.foundBudgetCategoriesResponseSchema,
+            [STATUS_CODES.NOT_FOUND]: budget_schemas.budgetCategoryNotFoundResponseSchema,
           },
         },
         handler: async (request, reply) => {
@@ -534,8 +196,8 @@ export class BudgetHandlers {
             category_id: z.string(),
           }),
           response: {
-            [STATUS_CODES.OK]: foundBudgetCategoryResponseSchema,
-            [STATUS_CODES.NOT_FOUND]: budgetCategoryNotFoundResponseSchema,
+            [STATUS_CODES.OK]: budget_schemas.foundBudgetCategoryResponseSchema,
+            [STATUS_CODES.NOT_FOUND]: budget_schemas.budgetCategoryNotFoundResponseSchema,
           },
         },
         handler: async (request, reply) => {
@@ -560,9 +222,9 @@ export class BudgetHandlers {
           params: z.object({
             budget_id: z.string(),
           }),
-          body: createBudgetCategorySchema.omit({ budget_id: true }), // Omit the budget_id field from the schema as it is not required in the request body (used from the request params)
+          body: budget_schemas.createBudgetCategorySchema.omit({ budget_id: true }), // Omit the budget_id field from the schema as it is not required in the request body (used from the request params)
           response: {
-            [STATUS_CODES.CREATED]: createdBudgetCategoryResponseSchema,
+            [STATUS_CODES.CREATED]: budget_schemas.createdBudgetCategoryResponseSchema,
           },
         },
         handler: async (request, reply) => {
@@ -592,10 +254,10 @@ export class BudgetHandlers {
             budget_id: z.string(),
             category_id: z.string(),
           }),
-          body: updateBudgetCategorySchema,
+          body: budget_schemas.updateBudgetCategorySchema,
           response: {
-            [STATUS_CODES.OK]: updatedBudgetCategoryResponseSchema,
-            [STATUS_CODES.NOT_FOUND]: budgetCategoryNotFoundResponseSchema,
+            [STATUS_CODES.OK]: budget_schemas.updatedBudgetCategoryResponseSchema,
+            [STATUS_CODES.NOT_FOUND]: budget_schemas.budgetCategoryNotFoundResponseSchema,
           },
         },
         handler: async (request, reply) => {
@@ -622,8 +284,8 @@ export class BudgetHandlers {
             category_id: z.string(),
           }),
           response: {
-            [STATUS_CODES.OK]: deletedBudgetCategoryResponseSchema,
-            [STATUS_CODES.NOT_FOUND]: budgetCategoryNotFoundResponseSchema,
+            [STATUS_CODES.OK]: budget_schemas.deletedBudgetCategoryResponseSchema,
+            [STATUS_CODES.NOT_FOUND]: budget_schemas.budgetCategoryNotFoundResponseSchema,
           },
         },
         handler: async (request, reply) => {
@@ -650,8 +312,8 @@ export class BudgetHandlers {
             category_id: z.string(),
           }),
           response: {
-            [STATUS_CODES.OK]: foundBudgetCategoryItemsResponseSchema,
-            [STATUS_CODES.NOT_FOUND]: budgetCategoryItemNotFoundResponseSchema,
+            [STATUS_CODES.OK]: budget_schemas.foundBudgetCategoryItemsResponseSchema,
+            [STATUS_CODES.NOT_FOUND]: budget_schemas.budgetCategoryItemNotFoundResponseSchema,
           },
         },
         handler: async (request, reply) => {
@@ -679,8 +341,8 @@ export class BudgetHandlers {
             item_id: z.string(),
           }),
           response: {
-            [STATUS_CODES.OK]: foundBudgetCategoryItemResponseSchema,
-            [STATUS_CODES.NOT_FOUND]: budgetCategoryItemNotFoundResponseSchema,
+            [STATUS_CODES.OK]: budget_schemas.foundBudgetCategoryItemResponseSchema,
+            [STATUS_CODES.NOT_FOUND]: budget_schemas.budgetCategoryItemNotFoundResponseSchema,
           },
         },
         handler: async (request, reply) => {
@@ -706,9 +368,9 @@ export class BudgetHandlers {
             budget_id: z.string(),
             category_id: z.string(),
           }),
-          body: createBudgetCategoryItemSchema.omit({ category_id: true, budget_id: true }), // Omit the category_id field from the schema as it is not required in the request body (used from the request params)
+          body: budget_schemas.createBudgetCategoryItemSchema.omit({ category_id: true, budget_id: true }), // Omit the category_id field from the schema as it is not required in the request body (used from the request params)
           response: {
-            [STATUS_CODES.CREATED]: createdBudgetCategoryItemResponseSchema,
+            [STATUS_CODES.CREATED]: budget_schemas.createdBudgetCategoryItemResponseSchema,
           },
         },
         handler: async (request, reply) => {
@@ -740,10 +402,10 @@ export class BudgetHandlers {
             category_id: z.string(),
             item_id: z.string(),
           }),
-          body: updateBudgetCategoryItemSchema,
+          body: budget_schemas.updateBudgetCategoryItemSchema,
           response: {
-            [STATUS_CODES.OK]: updatedBudgetCategoryItemResponseSchema,
-            [STATUS_CODES.NOT_FOUND]: budgetCategoryItemNotFoundResponseSchema,
+            [STATUS_CODES.OK]: budget_schemas.updatedBudgetCategoryItemResponseSchema,
+            [STATUS_CODES.NOT_FOUND]: budget_schemas.budgetCategoryItemNotFoundResponseSchema,
           },
         },
         handler: async (request, reply) => {
@@ -771,8 +433,8 @@ export class BudgetHandlers {
             item_id: z.string(),
           }),
           response: {
-            [STATUS_CODES.OK]: deletedBudgetCategoryItemResponseSchema,
-            [STATUS_CODES.NOT_FOUND]: budgetCategoryItemNotFoundResponseSchema,
+            [STATUS_CODES.OK]: budget_schemas.deletedBudgetCategoryItemResponseSchema,
+            [STATUS_CODES.NOT_FOUND]: budget_schemas.budgetCategoryItemNotFoundResponseSchema,
           },
         },
         handler: async (request, reply) => {
@@ -799,8 +461,8 @@ export class BudgetHandlers {
             category_id: z.string(),
           }),
           response: {
-            [STATUS_CODES.OK]: deletedAllBudgetCategoryItemResponseSchema,
-            [STATUS_CODES.NOT_FOUND]: budgetCategoryItemNotFoundResponseSchema,
+            [STATUS_CODES.OK]: budget_schemas.deletedAllBudgetCategoryItemResponseSchema,
+            [STATUS_CODES.NOT_FOUND]: budget_schemas.budgetCategoryItemNotFoundResponseSchema,
           },
         },
         handler: async (request, reply) => {
@@ -826,7 +488,7 @@ export class BudgetHandlers {
             budget_id: z.string(),
           }),
           response: {
-            [STATUS_CODES.OK]: foundTransactionsResponseSchema,
+            [STATUS_CODES.OK]: budget_schemas.foundTransactionsResponseSchema,
           },
         },
         handler: async (request, reply) => {
@@ -853,8 +515,8 @@ export class BudgetHandlers {
             transaction_id: z.string(),
           }),
           response: {
-            [STATUS_CODES.OK]: foundTransactionResponseSchema,
-            [STATUS_CODES.NOT_FOUND]: transactionNotFoundResponseSchema,
+            [STATUS_CODES.OK]: budget_schemas.foundTransactionResponseSchema,
+            [STATUS_CODES.NOT_FOUND]: budget_schemas.transactionNotFoundResponseSchema,
           },
         },
         handler: async (request, reply) => {
@@ -879,9 +541,9 @@ export class BudgetHandlers {
           params: z.object({
             budget_id: z.string(),
           }),
-          body: createTransactionSchema.omit({ budget_id: true }), // Omit the budget_id field from the schema as it is not required in the request body (used from the request params)
+          body: budget_schemas.createTransactionSchema.omit({ budget_id: true }), // Omit the budget_id field from the schema as it is not required in the request body (used from the request params)
           response: {
-            [STATUS_CODES.CREATED]: createdTransactionResponseSchema,
+            [STATUS_CODES.CREATED]: budget_schemas.createdTransactionResponseSchema,
           },
         },
         handler: async (request, reply) => {
@@ -911,10 +573,10 @@ export class BudgetHandlers {
             budget_id: z.string(),
             transaction_id: z.string(),
           }),
-          body: updateTransactionSchema, // Omit the budget_id field from the schema as it is not required in the request body (used from the request params)
+          body: budget_schemas.updateTransactionSchema, // Omit the budget_id field from the schema as it is not required in the request body (used from the request params)
           response: {
-            [STATUS_CODES.OK]: updatedTransactionResponseSchema,
-            [STATUS_CODES.NOT_FOUND]: transactionNotFoundResponseSchema,
+            [STATUS_CODES.OK]: budget_schemas.updatedTransactionResponseSchema,
+            [STATUS_CODES.NOT_FOUND]: budget_schemas.transactionNotFoundResponseSchema,
           },
         },
         handler: async (request, reply) => {
@@ -941,8 +603,8 @@ export class BudgetHandlers {
             transaction_id: z.string(),
           }),
           response: {
-            [STATUS_CODES.OK]: deletedTransactionResponseSchema,
-            [STATUS_CODES.NOT_FOUND]: transactionNotFoundResponseSchema,
+            [STATUS_CODES.OK]: budget_schemas.deletedTransactionResponseSchema,
+            [STATUS_CODES.NOT_FOUND]: budget_schemas.transactionNotFoundResponseSchema,
           },
         },
         handler: async (request, reply) => {
@@ -968,10 +630,19 @@ export class BudgetHandlers {
             budget_id: z.string(),
           }),
           response: {
-            [STATUS_CODES.OK]: foundBudgetsResponseSchema,
+            [STATUS_CODES.OK]: budget_schemas.foundTransactionTypesResponseSchema,
           },
         },
-        handler: this.getTransactionTypesHandler.bind(this),
+        handler: async (request, reply) => {
+          const { budget_id } = request.params;
+          const transactionTypes = await this.budgetService.getTransactionTypes(request.user.user_id, Number.parseInt(budget_id));
+          reply
+            .code(STATUS_CODES.OK)
+            .send({
+              data: transactionTypes,
+              message: "Transaction types fetched successfully",
+            });
+        },
       });
     server
       .withTypeProvider<ZodTypeProvider>()
@@ -986,11 +657,20 @@ export class BudgetHandlers {
             transaction_type_id: z.string(),
           }),
           response: {
-            [STATUS_CODES.OK]: foundBudgetResponseSchema,
-            [STATUS_CODES.NOT_FOUND]: budgetNotFoundResponseSchema,
+            [STATUS_CODES.OK]: budget_schemas.foundTransactionTypeResponseSchema,
+            [STATUS_CODES.NOT_FOUND]: budget_schemas.transactionTypeNotFoundResponseSchema,
           },
         },
-        handler: this.getTransactionTypeByIdHandler.bind(this),
+        handler: async (request, reply) => {
+          const { budget_id, transaction_type_id } = request.params;
+          const transactionType = await this.budgetService.getTransactionTypeById(request.user.user_id, Number.parseInt(budget_id), Number.parseInt(transaction_type_id));
+          reply
+            .code(STATUS_CODES.OK)
+            .send({
+              data: transactionType,
+              message: "Transaction type fetched successfully",
+            });
+        },
       });
     server
       .withTypeProvider<ZodTypeProvider>()
@@ -1003,14 +683,25 @@ export class BudgetHandlers {
           params: z.object({
             budget_id: z.string(),
           }),
-          body: z.object({
-            name: z.string(),
-          }),
+          body: budget_schemas.createTransactionTypeSchema.omit({ budget_id: true }), // Omit the budget_id field from the schema as it is not required in the request body (used from the request params)
           response: {
-            [STATUS_CODES.CREATED]: createdBudgetResponseSchema,
+            [STATUS_CODES.CREATED]: budget_schemas.createdTransactionTypeResponseSchema,
           },
         },
-        handler: this.createTransactionTypeHandler.bind(this),
+        handler: async (request, reply) => {
+          const { budget_id } = request.params;
+          const transactionType: TTransactionTypeToCreate = {
+            ...request.body,
+            budget_id: Number.parseInt(budget_id),
+          };
+          const createdTransactionType = await this.budgetService.createTransactionType(request.user.user_id, transactionType);
+          reply
+            .code(STATUS_CODES.CREATED)
+            .send({
+              data: createdTransactionType,
+              message: "Transaction type created successfully",
+            });
+        },
       });
     server
       .withTypeProvider<ZodTypeProvider>()
@@ -1024,15 +715,22 @@ export class BudgetHandlers {
             budget_id: z.string(),
             transaction_type_id: z.string(),
           }),
-          body: z.object({
-            name: z.string(),
-          }),
+          body: budget_schemas.updateTransactionTypeSchema,
           response: {
-            [STATUS_CODES.OK]: updatedBudgetResponseSchema,
-            [STATUS_CODES.NOT_FOUND]: budgetNotFoundResponseSchema,
+            [STATUS_CODES.OK]: budget_schemas.updatedTransactionTypeResponseSchema,
+            [STATUS_CODES.NOT_FOUND]: budget_schemas.transactionTypeNotFoundResponseSchema,
           },
         },
-        handler: this.updateTransactionTypeHandler.bind(this),
+        handler: async (request, reply) => {
+          const { budget_id, transaction_type_id } = request.params;
+          const updatedTransactionType = await this.budgetService.updateTransactionType(request.user.user_id, Number.parseInt(budget_id), Number.parseInt(transaction_type_id), request.body);
+          reply
+            .code(STATUS_CODES.OK)
+            .send({
+              data: updatedTransactionType,
+              message: "Transaction type updated successfully",
+            });
+        },
       });
     server
       .withTypeProvider<ZodTypeProvider>()
@@ -1047,11 +745,20 @@ export class BudgetHandlers {
             transaction_type_id: z.string(),
           }),
           response: {
-            [STATUS_CODES.OK]: deletedBudgetResponseSchema,
-            [STATUS_CODES.NOT_FOUND]: budgetNotFoundResponseSchema,
+            [STATUS_CODES.OK]: budget_schemas.deletedTransactionTypeResponseSchema,
+            [STATUS_CODES.NOT_FOUND]: budget_schemas.transactionTypeNotFoundResponseSchema,
           },
         },
-        handler: this.deleteTransactionTypeHandler.bind(this),
+        handler: async (request, reply) => {
+          const { budget_id, transaction_type_id } = request.params;
+          const deletedTransactionType = await this.budgetService.deleteTransactionType(request.user.user_id, Number.parseInt(budget_id), Number.parseInt(transaction_type_id));
+          reply
+            .code(STATUS_CODES.OK)
+            .send({
+              data: deletedTransactionType,
+              message: "Transaction type deleted successfully",
+            });
+        },
       });
   }
 }
