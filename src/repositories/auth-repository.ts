@@ -6,9 +6,9 @@ import type { TFoundUserResult, TUserToCreate } from "@/handlers/auth/auth-schem
 
 import * as schema from "@/db/schema";
 
-import type { AuthRepository as AuthRepo } from ".";
+import type { IAuthRepository } from ".";
 
-export class AuthRepository implements AuthRepo {
+export class AuthRepository implements IAuthRepository {
   constructor(private db: PostgresJsDatabase<typeof schema>) {
     this.db = db;
   }

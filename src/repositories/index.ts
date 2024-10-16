@@ -1,12 +1,12 @@
 import type { TFoundUserResult, TUserToCreate } from "@/handlers/auth/auth-schemas";
 import type * as budget_schemas from "@/handlers/budget/budget-schemas";
 
-export interface AuthRepository {
+export interface IAuthRepository {
   createUser: (user: TUserToCreate) => Promise<TFoundUserResult>;
   findUserByEmail: (email: string) => Promise<TFoundUserResult | undefined>;
 }
 
-export interface BudgetRepository {
+export interface IBudgetRepository {
   getBudgets: (user_id: number) => Promise<Array<budget_schemas.TBudgetResult>>;
   getBudgetById: (user_id: number, budget_id: number) => Promise<budget_schemas.TBudgetResult>;
   createBudget: (budget: budget_schemas.TBudgetToCreate) => Promise<budget_schemas.TBudgetResult>;

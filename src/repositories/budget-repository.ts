@@ -6,9 +6,9 @@ import type * as budget_types from "@/handlers/budget/budget-schemas";
 
 import * as schema from "@/db/schema";
 
-import type { BudgetRepository as TBudgetRepo } from ".";
+import type { IBudgetRepository } from ".";
 
-export class BudgetRepository implements TBudgetRepo {
+export class BudgetRepository implements IBudgetRepository {
   constructor(private db: PostgresJsDatabase<typeof schema>) {
     this.db = db;
   }
