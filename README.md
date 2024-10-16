@@ -74,43 +74,13 @@ To get started with the Spendaro API, follow these steps:
 
 ## API Endpoints
 
-Here are some of the key endpoints available in the Spendaro API:
+You can head to the [api documentation](http://localhost:8010/docs) to understand all the APIs and how to consume them.
 
-- **User Authentication:**
-
-  - `POST /api/v1/auth/signup` - Signup a new user
-  - `POST /api/v1/auth/signin` - Signin an existing user
-
-- **Budgets:**
-
-  - `GET /api/v1/budgets/` - Get all budgets
-  - `POST /api/v1/budgets/` - Create a new budget
-  - `GET /api/v1/budgets/:id` - Get a specific budget
-  - `PUT /api/v1/budgets/:id` - Update a budget
-  - `DELETE /api/v1/budgets/:id` - Delete a budget
-
-- **Expenses: (coming soon)**
-
-  - `GET /api/v1/expenses` - Get all expenses
-  - `POST /api/v1/expenses` - Create a new expense
-  - `GET /api/v1/expenses/:id` - Get a specific expense
-  - `PUT /api/v1/expenses/:id` - Update an expense
-  - `DELETE /api/v1/expenses/:id` - Delete an expense
-
-- **Categories:**
-
-  - `GET /api/v1/budgets/categories` - Get all categories
-  - `POST /api/v1/budgets/categories` - Create a new category
-  - `GET /api/v1/budgets/categories/:id` - Get a specific category
-  - `PUT /api/v1/budgets/categories/:id` - Update a category
-  - `DELETE /api/v1/budgets/categories/:id` - Delete a category
-
-- **Category Items:**
-  - `GET /api/v1/budgets/categories/:id/items` - Get all items for a category
-  - `POST /api/v1/budgets/categories/:id/items` - Create a new item for a category
-  - `GET /api/v1/budgets/categories/:id/items/:itemId` - Get a specific item for a category
-  - `PUT /api/v1/budgets/categories/:id/items/:itemId` - Update an item for a category
-  - `DELETE /api/v1/budgets/categories/:id/items/:itemId` - Delete an item for a category
+> Run the server and navigate to `http://localhost:8010/docs` to view the API documentation. (Make sure the server is running before you access the documentation.)
+>
+> You can also import the [Postman collection](Spendaro.postman_collection.json) into Postman to test the API endpoints and explore the available features.
+>
+> WIP: Deployment of API documentation to a public URL.
 
 ## License
 
