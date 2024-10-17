@@ -1,9 +1,9 @@
 import type { FastifyInstance } from "fastify";
 
-import type { TCandidateUser, TFoundUserResult, TUserToCreate } from "@/handlers/auth/auth-schemas";
+import type { TFoundUserResult, TUserToCreate } from "@/handlers/auth/auth-schemas";
 import type { IAuthRepository } from "@/repositories";
 
-import { BadRequestError, NotFoundError, UnauthorizedError } from "@/utils/error";
+import { BadRequestError, NotFoundError } from "@/utils/error";
 
 export class AuthService {
   constructor(private server: FastifyInstance, private authRepo: IAuthRepository) {
@@ -30,21 +30,17 @@ export class AuthService {
     email: string,
   ): Promise<TFoundUserResult> {
     const foundUser = await this.authRepo.findUserByEmail(email);
-
     if (!foundUser) {
       throw new NotFoundError("The requested user does not exist", [`User with email ${email} does not exist`]);
     }
-
     return foundUser;
   }
 
   async findUserById(id: number): Promise<TFoundUserResult> {
     const foundUser = await this.authRepo.findUserById(id);
-
     if (!foundUser) {
       throw new NotFoundError("The requested user does not exist", [`User with id ${id} does not exist`]);
     }
-
     return foundUser;
   }
 }
