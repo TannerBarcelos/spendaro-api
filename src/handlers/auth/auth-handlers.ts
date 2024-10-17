@@ -119,8 +119,8 @@ export class AuthHandlers {
 
     server
       .withTypeProvider<ZodTypeProvider>()
-      .addHook("onRequest", server.authenticate)
       .route({
+        preHandler: server.authenticate,
         url: "/user-details",
         method: "GET",
         schema: {
