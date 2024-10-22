@@ -153,23 +153,27 @@ export class AuthHandlers {
     server
       .withTypeProvider<ZodTypeProvider>()
       .route({
-        preHandler: server.authenticate,
-        url: "/status",
         method: "GET",
+        url: "/logout",
         schema: {
-          summary: "Check authentication status",
-          description: "Returns OK if the user is authenticated",
+          summary: "Logout user",
+          description: "Logout the user by clearing the cookies",
           tags: ["auth"],
           response: {
             [STATUS_CODES.OK]: z.object({
               message: z.string(),
             }),
-            "4xx": errorResponseSchema,
             "5xx": errorResponseSchema,
           },
         },
-        handler: async (_request, reply) => {
-          reply.code(STATUS_CODES.OK).send({ message: "User is authenticated" });
+        handler: async (_, reply) => {
+          reply
+            .clearCookie("accessToken")
+            .clearCookie("refreshToken")
+            .code(STATUS_CODES.OK)
+            .send({
+              message: "User logged out successfully",
+            });
         },
       });
   }
