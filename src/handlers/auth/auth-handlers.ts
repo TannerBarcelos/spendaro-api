@@ -37,7 +37,9 @@ export class AuthHandlers {
           const accessToken = generateAccessToken(request.server.jwt, id);
           const refreshToken = generateRefreshToken(request.server.jwt, id);
           reply
-            .setCookie("accessToken", accessToken)
+            .setCookie("accessToken", accessToken, {
+              maxAge: 15 * 60, // 15 minutes (access token expiry is 15 minutes)
+            })
             .setCookie("refreshToken", refreshToken, {
               maxAge: 60 * 60 * 24 * 7, // 7 days (refresh token expiry is 7 days)
             })
@@ -73,7 +75,9 @@ export class AuthHandlers {
           const accessToken = generateAccessToken(request.server.jwt, foundUser.id);
           const refreshToken = generateRefreshToken(request.server.jwt, foundUser.id);
           reply
-            .setCookie("accessToken", accessToken)
+            .setCookie("accessToken", accessToken, {
+              maxAge: 15 * 60, // 15 minutes (access token expiry is 15 minutes)
+            })
             .setCookie("refreshToken", refreshToken, {
               maxAge: 60 * 60 * 24 * 7, // 7 days (refresh token expiry is 7 days)
             })

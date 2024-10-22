@@ -12,7 +12,7 @@
     "jwt": {
       "salt_rounds": 10,
       "expiry": "15m",
-      "refresh_expiry": "1d"
+      "refresh_expiry": "7d"
     }
   }
 }
