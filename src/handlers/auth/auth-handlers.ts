@@ -38,9 +38,11 @@ export class AuthHandlers {
           const refreshToken = generateRefreshToken(request.server.jwt, id);
           reply
             .setCookie("accessToken", accessToken, {
+              httpOnly: true,
               maxAge: 15 * 60, // 15 minutes (access token expiry is 15 minutes)
             })
             .setCookie("refreshToken", refreshToken, {
+              httpOnly: true,
               maxAge: 60 * 60 * 24 * 7, // 7 days (refresh token expiry is 7 days)
             })
             .code(STATUS_CODES.OK)
@@ -76,9 +78,11 @@ export class AuthHandlers {
           const refreshToken = generateRefreshToken(request.server.jwt, foundUser.id);
           reply
             .setCookie("accessToken", accessToken, {
+              httpOnly: true,
               maxAge: 15 * 60, // 15 minutes (access token expiry is 15 minutes)
             })
             .setCookie("refreshToken", refreshToken, {
+              httpOnly: true,
               maxAge: 60 * 60 * 24 * 7, // 7 days (refresh token expiry is 7 days)
             })
             .code(STATUS_CODES.OK)
@@ -113,7 +117,7 @@ export class AuthHandlers {
           const { user_id } = request.server.jwt.verify<{ user_id: number }>(refreshToken);
           const token = generateAccessToken(request.server.jwt, user_id);
           reply
-            .setCookie("accessToken", token)
+            .setCookie("accessToken", token, { httpOnly: true, maxAge: 15 * 60 })
             .code(STATUS_CODES.OK)
             .send(
               {
