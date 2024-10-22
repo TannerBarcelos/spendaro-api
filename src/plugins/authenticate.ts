@@ -8,7 +8,7 @@ import jwt from "@fastify/jwt";
 import fp from "fastify-plugin";
 
 import { env } from "@/env";
-import { UnauthorizedError } from "@/utils/error";
+import { ForbiddenError, UnauthorizedError } from "@/utils/error";
 
 const authenticate: FastifyPluginCallback = async (
   fastify: FastifyInstance,
@@ -31,7 +31,7 @@ const authenticate: FastifyPluginCallback = async (
       }
       catch (err) {
         if (err instanceof Error) {
-          throw new UnauthorizedError(err.message, [err.message]);
+          throw new ForbiddenError(err.message, [err.message]);
         }
       }
     },

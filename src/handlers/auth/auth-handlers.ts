@@ -1,6 +1,8 @@
 import type { FastifyInstance } from "fastify";
 import type { ZodTypeProvider } from "fastify-type-provider-zod";
 
+import { z } from "zod";
+
 import type { AuthService } from "@/services/auth-service";
 
 import * as auth_schemas from "@/handlers/auth/auth-schemas";
@@ -57,7 +59,7 @@ export class AuthHandlers {
           body: auth_schemas.signinUserSchema,
           response: {
             [STATUS_CODES.OK]: auth_schemas.commonAuthResponseSchema,
-            [STATUS_CODES.UNAUTHORIZED]: auth_schemas.signinResponseUnauthorizedSchema,
+            "4xx": auth_schemas.signinResponseUnauthorizedSchema,
             "5xx": errorResponseSchema,
           },
         },
@@ -93,7 +95,7 @@ export class AuthHandlers {
           tags: ["auth"],
           response: {
             [STATUS_CODES.OK]: auth_schemas.commonAuthResponseSchema,
-            [STATUS_CODES.UNAUTHORIZED]: auth_schemas.signinResponseUnauthorizedSchema,
+            "4xx": auth_schemas.signinResponseUnauthorizedSchema,
             "5xx": errorResponseSchema,
           },
         },
@@ -129,7 +131,7 @@ export class AuthHandlers {
           tags: ["auth"],
           response: {
             [STATUS_CODES.OK]: auth_schemas.userDetailsResponseSchema,
-            [STATUS_CODES.UNAUTHORIZED]: auth_schemas.userNotFoundResponseSchema,
+            "4xx": auth_schemas.userNotFoundResponseSchema,
             "5xx": errorResponseSchema,
           },
         },
@@ -141,6 +143,29 @@ export class AuthHandlers {
               message: "User details fetched successfully",
               data: foundUser,
             });
+        },
+      });
+
+    server
+      .withTypeProvider<ZodTypeProvider>()
+      .route({
+        preHandler: server.authenticate,
+        url: "/status",
+        method: "GET",
+        schema: {
+          summary: "Check authentication status",
+          description: "Returns OK if the user is authenticated",
+          tags: ["auth"],
+          response: {
+            [STATUS_CODES.OK]: z.object({
+              message: z.string(),
+            }),
+            "4xx": errorResponseSchema,
+            "5xx": errorResponseSchema,
+          },
+        },
+        handler: async (_request, reply) => {
+          reply.code(STATUS_CODES.OK).send({ message: "User is authenticated" });
         },
       });
   }
