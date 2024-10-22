@@ -8,6 +8,7 @@ export const users = pgTable("users", {
   lastName: text("last_name").notNull(),
   email: varchar("email").unique().notNull(),
   password: text("password_hash").notNull(),
+  profileImage: text("profile_image_url").default(""), // store the URL of the profile image - empty string if no image, will be set to a default image in the frontend
   createdAt: timestamp("created_at")
     .$defaultFn(() => new Date()),
   updatedAt: timestamp("updated_at").$onUpdateFn(() => new Date()),
