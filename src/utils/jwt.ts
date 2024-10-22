@@ -9,9 +9,10 @@ import config from "config";
  * @returns - Signed JWT token
  */
 export function generateAccessToken(jwt: JWT, user_id: number): string {
+  const expiry = config.get<string>("security.jwt.expiry") ?? "15m";
   return jwt.sign({
     user_id,
-  }, { expiresIn: config.get<string>("security.jwt.expiry") ?? "15m" });
+  }, { expiresIn: expiry });
 }
 
 /**
