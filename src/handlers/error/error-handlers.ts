@@ -1,7 +1,7 @@
 import type { FastifyError, FastifyReply, FastifyRequest } from "fastify";
 
 import { hasZodFastifySchemaValidationErrors, isResponseSerializationError } from "fastify-type-provider-zod";
-import { getReasonPhrase } from "http-status-codes";
+import { getReasonPhrase, StatusCodes } from "http-status-codes";
 import pg from "postgres";
 
 import { env } from "@/env";
@@ -35,6 +35,21 @@ export class ErrorHandlers {
   ) {
     request.log.error(error); // send to Sentry or similar service to monitor errors
 
+    // Handle rate limiting errors
+    if (error.statusCode === StatusCodes.TOO_MANY_REQUESTS) {
+      reply.code(STATUS_CODES.TOO_MANY_REQUESTS).send({
+        error: getReasonPhrase(STATUS_CODES.TOO_MANY_REQUESTS),
+        message: error.message,
+        details: {
+          issues: [error.message],
+          method: request.method,
+          url: request.url,
+          stack: env.NODE_ENV === "development" ? error.stack : undefined,
+        },
+      });
+    }
+
+    // Handle schema validation errors
     if (hasZodFastifySchemaValidationErrors(error)) {
       return reply
         .code(400)
@@ -50,6 +65,7 @@ export class ErrorHandlers {
         });
     }
 
+    // Handle response serialization errors
     if (isResponseSerializationError(error)) {
       return reply.code(500).send({
         error: "Internal Server Error",
@@ -128,6 +144,7 @@ export class ErrorHandlers {
       }
     }
 
+    // Handle custom errors thrown by the application
     if (error instanceof SpendaroError) {
       return reply.code(error.statusCode).send({
         error: getReasonPhrase(error.statusCode),

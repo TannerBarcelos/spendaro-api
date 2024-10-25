@@ -3,6 +3,7 @@ import type { FastifyInstance, FastifyRequest } from "fastify";
 
 import cookie from "@fastify/cookie";
 import cors from "@fastify/cors";
+import limiter from "@fastify/rate-limit";
 import swagger from "@fastify/swagger";
 import scalar from "@scalar/fastify-api-reference";
 import config from "config";
@@ -16,7 +17,7 @@ import { ErrorHandlers } from "@/handlers/error/error-handlers";
 import { swaggerConfig, swaggerScalarConfig } from "@/open-api";
 import authenticate from "@/plugins/authenticate";
 import { routes } from "@/routes/index";
-import { cookieConfig, corsConfig } from "@/utils/http";
+import { cookieConfig, corsConfig, rateLimiterConfig } from "@/utils/http";
 
 import { bcryptSaltConfig } from "./utils/jwt";
 
@@ -27,34 +28,35 @@ const server = fastify({
   },
 });
 
-server.setValidatorCompiler(validatorCompiler);
-server.setSerializerCompiler(serializerCompiler);
+registerServerPlugins(server).then(() => {
+  server.setValidatorCompiler(validatorCompiler);
+  server.setSerializerCompiler(serializerCompiler);
 
-server.setErrorHandler(ErrorHandlers.handleError);
-server.setNotFoundHandler(ErrorHandlers.handleNotFoundError);
+  server.setErrorHandler(ErrorHandlers.handleError);
+  server.setNotFoundHandler({ preHandler: server.rateLimit() }, ErrorHandlers.handleNotFoundError);
 
-registerServerPlugins(server);
+  server.get("/healthz", async (_: FastifyRequest) => {
+    return { status: getReasonPhrase(StatusCodes.OK) };
+  });
 
-server.get("/healthz", async (_: FastifyRequest) => {
-  return { status: getReasonPhrase(StatusCodes.OK) };
+  server.register(routes, { prefix: `/api/${config.get("server.api.version")}` });
+
+  server.listen({ port: config.get("server.port") }, (err, address) => {
+    if (err) {
+      console.error(err);
+      process.exit(1);
+    }
+    console.log(`Server listening at ${address}`);
+  });
 });
 
-server.register(routes, { prefix: `/api/${config.get("server.api.version")}` });
-
-server.listen({ port: config.get("server.port") }, (err, address) => {
-  if (err) {
-    console.error(err);
-    process.exit(1);
-  }
-  console.log(`Server listening at ${address}`);
-});
-
-function registerServerPlugins(server: FastifyInstance) {
-  server.register(swagger, swaggerConfig);
-  server.register(scalar, swaggerScalarConfig);
-  server.register(cookie, cookieConfig);
-  server.register(fastifyBcrypt, bcryptSaltConfig);
-  server.register(authenticate);
-  server.register(cors, corsConfig);
-  server.register(db);
+async function registerServerPlugins(server: FastifyInstance) {
+  await server.register(swagger, swaggerConfig);
+  await server.register(scalar, swaggerScalarConfig);
+  await server.register(cookie, cookieConfig);
+  await server.register(limiter, rateLimiterConfig);
+  await server.register(fastifyBcrypt, bcryptSaltConfig);
+  await server.register(authenticate);
+  await server.register(cors, corsConfig);
+  await server.register(db);
 }

@@ -1,5 +1,7 @@
 import type { FastifyCookieOptions } from "@fastify/cookie";
+import type { RateLimitPluginOptions } from "@fastify/rate-limit";
 
+import config from "config";
 import { StatusCodes } from "http-status-codes";
 import { z } from "zod";
 
@@ -28,4 +30,12 @@ export const cookieConfig: FastifyCookieOptions = {
 export const corsConfig = {
   origin: "*",
   methods: ALLOWED_METHODS,
+};
+
+// 3 requests every 10 seconds
+export const rateLimiterConfig: RateLimitPluginOptions = {
+  global: config.get("server.rate_limit.global") || false,
+  max: config.get("server.rate_limit.max") || 3,
+  timeWindow: config.get("server.rate_limit.time_window") || 10_000,
+  allowList: ["http://localhost:5173", "http://0.0.0.0", "http://127.0.0.1"], // Allowlist localhost and Docker container IP
 };

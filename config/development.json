@@ -6,6 +6,11 @@
     },
     "logging": {
       "level": "debug"
+    },
+    "rate_limit": {
+      "max": 3,
+      "time_window": 10000,
+      "global": true
     }
   },
   "security": {
