@@ -7,8 +7,6 @@ import { z } from "zod";
 
 import { env } from "@/env";
 
-import { cache } from "./cache";
-
 export const ALLOWED_METHODS = ["GET", "POST", "PUT", "DELETE"];
 export const STATUS_CODES = StatusCodes;
 
@@ -40,5 +38,5 @@ export const rateLimiterConfig: RateLimitPluginOptions = {
   max: config.get("server.rate_limit.max") || 3,
   timeWindow: config.get("server.rate_limit.time_window") || 10_000,
   allowList: config.get("server.rate_limit.whitelist"), // Allowlist localhost and Docker container IP
-  redis: cache,
+  keyGenerator: request => request.user?.user_id ?? request.ip, // Rate limit by user ID if authenticated, otherwise by IP
 };

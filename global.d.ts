@@ -2,6 +2,7 @@
 import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 
 import "fastify";
+import Redis from "ioredis";
 
 import * as schema from "./src/db/schema.ts";
 
@@ -12,6 +13,7 @@ declare module "fastify" {
       request: FastifyRequest,
       reply: FastifyReply
     ) => Promise<void>;
+    cache: Redis;
   }
 }
 

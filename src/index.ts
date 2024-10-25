@@ -19,7 +19,7 @@ import authenticate from "@/plugins/authenticate";
 import { routes } from "@/routes/index";
 import { cookieConfig, corsConfig, rateLimiterConfig } from "@/utils/http";
 
-import { cache, cacheConfig } from "./utils/cache";
+import cache from "./plugins/redis-cache";
 import { bcryptSaltConfig } from "./utils/jwt";
 
 const server = fastify({
@@ -54,10 +54,11 @@ registerServerPlugins(server).then(() => {
 async function registerServerPlugins(server: FastifyInstance) {
   await server.register(swagger, swaggerConfig);
   await server.register(scalar, swaggerScalarConfig);
+  await server.register(cache);
+  await server.register(db);
   await server.register(cookie, cookieConfig);
-  await server.register(limiter, rateLimiterConfig);
+  await server.register(limiter, { redis: server.cache, ...rateLimiterConfig });
   await server.register(fastifyBcrypt, bcryptSaltConfig);
   await server.register(authenticate);
   await server.register(cors, corsConfig);
-  await server.register(db);
 }
