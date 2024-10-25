@@ -11,7 +11,7 @@
       "max": 3,
       "time_window": 10000,
       "global": true,
-      "whitelist": [
+      "allow_list": [
         "http://localhost:5173",
         "http://0.0.0.0",
         "http://127.0.0.1"

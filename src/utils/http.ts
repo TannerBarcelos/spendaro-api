@@ -32,11 +32,10 @@ export const corsConfig = {
   methods: ALLOWED_METHODS,
 };
 
-// 3 requests every 10 seconds
 export const rateLimiterConfig: RateLimitPluginOptions = {
-  global: config.get("server.rate_limit.global") || false,
-  max: config.get("server.rate_limit.max") || 3,
-  timeWindow: config.get("server.rate_limit.time_window") || 10_000,
-  allowList: config.get("server.rate_limit.whitelist"), // Allowlist localhost and Docker container IP
+  global: config.get("server.rate_limit.global") ?? false,
+  max: config.get("server.rate_limit.max") ?? 3,
+  timeWindow: config.get("server.rate_limit.time_window") ?? 10_000,
+  allowList: config.get<Array<string>>("server.rate_limit.allow_list") ?? [],
   keyGenerator: request => request.user?.user_id ?? request.ip, // Rate limit by user ID if authenticated, otherwise by IP
 };
