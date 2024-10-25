@@ -51,3 +51,9 @@ export class InternalServerError extends SpendaroError {
     super(message, StatusCodes.INTERNAL_SERVER_ERROR, details);
   }
 }
+
+export class TooManyRequestError extends SpendaroError {
+  constructor(message: string, details?: Details) {
+    super(message, StatusCodes.TOO_MANY_REQUESTS, details);
+  }
+}

@@ -35,20 +35,6 @@ export class ErrorHandlers {
   ) {
     request.log.error(error); // send to Sentry or similar service to monitor errors
 
-    // Handle rate limiting errors
-    if (error.statusCode === StatusCodes.TOO_MANY_REQUESTS) {
-      return reply.code(STATUS_CODES.TOO_MANY_REQUESTS).send({
-        error: getReasonPhrase(STATUS_CODES.TOO_MANY_REQUESTS),
-        message: error.message,
-        details: {
-          issues: [error.message],
-          method: request.method,
-          url: request.url,
-          stack: env.NODE_ENV === "development" ? error.stack : undefined,
-        },
-      });
-    }
-
     // Handle schema validation errors
     if (hasZodFastifySchemaValidationErrors(error)) {
       return reply
