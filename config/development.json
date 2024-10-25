@@ -16,6 +16,13 @@
         "http://0.0.0.0",
         "http://127.0.0.1"
       ]
+    },
+    "cache": {
+      "name": "spendaro-ratelimiter-store",
+      "host": "localhost",
+      "port": 6379,
+      "connection_timeout": 5000,
+      "max_retries": 3
     }
   },
   "security": {
