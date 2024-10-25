@@ -55,7 +55,7 @@ async function registerServerPlugins(server: FastifyInstance) {
   await server.register(swagger, swaggerConfig);
   await server.register(scalar, swaggerScalarConfig);
   await server.register(cookie, cookieConfig);
-  await server.register(limiter, { redis: cache, ...rateLimiterConfig });
+  await server.register(limiter, rateLimiterConfig);
   await server.register(fastifyBcrypt, bcryptSaltConfig);
   await server.register(authenticate);
   await server.register(cors, corsConfig);

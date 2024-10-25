@@ -37,7 +37,7 @@ export class ErrorHandlers {
 
     // Handle rate limiting errors
     if (error.statusCode === StatusCodes.TOO_MANY_REQUESTS) {
-      reply.code(STATUS_CODES.TOO_MANY_REQUESTS).send({
+      return reply.code(STATUS_CODES.TOO_MANY_REQUESTS).send({
         error: getReasonPhrase(STATUS_CODES.TOO_MANY_REQUESTS),
         message: error.message,
         details: {
