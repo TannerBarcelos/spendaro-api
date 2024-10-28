@@ -1,6 +1,5 @@
-import type { z } from "zod";
-
 import { createSelectSchema } from "drizzle-zod";
+import { z } from "zod";
 
 import * as schema from "@/db/schema";
 import { commonHttpResponseSchema } from "@/utils/http";
@@ -20,4 +19,8 @@ export type TFoundUserResult = z.infer<typeof foundUserSchema>;
 
 export const userDetailsResponseSchema = commonHttpResponseSchema.extend({
   data: foundUserSchema.omit({ password: true }),
+});
+
+export const userDeletedResponseSchema = z.object({
+  message: z.string(),
 });

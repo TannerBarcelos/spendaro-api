@@ -44,6 +44,56 @@ export class UserHandlers {
         },
       });
 
+    server.withTypeProvider<ZodTypeProvider>().route({
+      preHandler: server.authenticate,
+      url: "/update",
+      method: "PUT",
+      schema: {
+        summary: "Update user details",
+        description: "Update the details of the currently authenticated user. Only the fields that need to be updated should be provided. Often used for profile image updates.",
+        tags: ["users"],
+        body: user_schemas.updateUserSchema,
+        response: {
+          [STATUS_CODES.OK]: user_schemas.userDetailsResponseSchema,
+          "4xx": errorResponseSchema,
+          "5xx": errorResponseSchema,
+        },
+      },
+      handler: async (request, reply) => {
+        const updatedUser = await this.userService.updateUser(request.user.user_id, request.body);
+        reply
+          .code(STATUS_CODES.OK)
+          .send({
+            message: "User details updated successfully",
+            data: updatedUser,
+          });
+      },
+    });
+
+    server.withTypeProvider<ZodTypeProvider>().route({
+      preHandler: server.authenticate,
+      url: "/delete",
+      method: "DELETE",
+      schema: {
+        summary: "Delete user",
+        description: "Delete the currently authenticated user",
+        tags: ["users"],
+        response: {
+          [STATUS_CODES.OK]: user_schemas.userDeletedResponseSchema,
+          "4xx": errorResponseSchema,
+          "5xx": errorResponseSchema,
+        },
+      },
+      handler: async (request, reply) => {
+        await this.userService.deleteUser(request.user.user_id);
+        reply
+          .code(STATUS_CODES.OK)
+          .send({
+            message: "User deleted successfully",
+          });
+      },
+    });
+
     server
       .withTypeProvider<ZodTypeProvider>()
       .route({
