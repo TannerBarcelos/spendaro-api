@@ -2,7 +2,6 @@ import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { z } from "zod";
 
 import * as schema from "@/db/schema";
-import { commonHttpResponseSchema } from "@/utils/http";
 
 import { errorResponseSchema } from "../error/error-schemas";
 
@@ -22,14 +21,6 @@ export type TUserToDelete = z.infer<typeof deleteUserSchema>;
 export type TCandidateUser = z.infer<typeof signinUserSchema>;
 export type TFoundUserResult = z.infer<typeof foundUserSchema>;
 
-// RESPONSE SCHEMAS FOR JSONS SERIZALIZATION AND JSON SCHEMA VALIDATION
-export const commonAuthResponseSchema = z.object({
+export const authResponseSchema = z.object({
   message: z.string(),
-});
-
-export const signinResponseUnauthorizedSchema = errorResponseSchema;
-export const duplicateSignupUserSchema = errorResponseSchema;
-export const userNotFoundResponseSchema = errorResponseSchema;
-export const userDetailsResponseSchema = commonHttpResponseSchema.extend({
-  data: foundUserSchema.omit({ password: true }),
 });

@@ -27,8 +27,8 @@ export class AuthHandlers {
           tags: ["auth"],
           body: auth_schemas.signupUserSchema,
           response: {
-            [STATUS_CODES.CREATED]: auth_schemas.commonAuthResponseSchema,
-            [STATUS_CODES.CONFLICT]: auth_schemas.duplicateSignupUserSchema,
+            [STATUS_CODES.CREATED]: auth_schemas.authResponseSchema,
+            [STATUS_CODES.CONFLICT]: errorResponseSchema,
             "5xx": errorResponseSchema,
           },
         },
@@ -62,8 +62,8 @@ export class AuthHandlers {
           tags: ["auth"],
           body: auth_schemas.signinUserSchema,
           response: {
-            [STATUS_CODES.OK]: auth_schemas.commonAuthResponseSchema,
-            "4xx": auth_schemas.signinResponseUnauthorizedSchema,
+            [STATUS_CODES.OK]: auth_schemas.authResponseSchema,
+            "4xx": errorResponseSchema,
             "5xx": errorResponseSchema,
           },
         },
@@ -102,8 +102,8 @@ export class AuthHandlers {
           description: "Refresh the user's access token using the refresh token. Often used after a client requests a resource and receives a 401 Unauthorized response.",
           tags: ["auth"],
           response: {
-            [STATUS_CODES.OK]: auth_schemas.commonAuthResponseSchema,
-            "4xx": auth_schemas.signinResponseUnauthorizedSchema,
+            [STATUS_CODES.OK]: auth_schemas.authResponseSchema,
+            "4xx": errorResponseSchema,
             "5xx": errorResponseSchema,
           },
         },
@@ -124,33 +124,6 @@ export class AuthHandlers {
                 message: "Token refreshed successfully",
               },
             );
-        },
-      });
-
-    server
-      .withTypeProvider<ZodTypeProvider>()
-      .route({
-        preHandler: server.authenticate,
-        url: "/user-details",
-        method: "GET",
-        schema: {
-          summary: "Get user details",
-          description: "Get the details of the currently authenticated user",
-          tags: ["auth"],
-          response: {
-            [STATUS_CODES.OK]: auth_schemas.userDetailsResponseSchema,
-            "4xx": auth_schemas.userNotFoundResponseSchema,
-            "5xx": errorResponseSchema,
-          },
-        },
-        handler: async (request, reply) => {
-          const foundUser = await this.authService.findUserById(request.user.user_id);
-          reply
-            .code(STATUS_CODES.OK)
-            .send({
-              message: "User details fetched successfully",
-              data: foundUser,
-            });
         },
       });
 
