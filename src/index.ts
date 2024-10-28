@@ -3,6 +3,7 @@ import type { FastifyInstance, FastifyRequest } from "fastify";
 
 import cookie from "@fastify/cookie";
 import cors from "@fastify/cors";
+import mutipart from "@fastify/multipart";
 import limiter from "@fastify/rate-limit";
 import swagger from "@fastify/swagger";
 import scalar from "@scalar/fastify-api-reference";
@@ -11,6 +12,7 @@ import fastify from "fastify";
 import { fastifyBcrypt } from "fastify-bcrypt";
 import { serializerCompiler, validatorCompiler } from "fastify-type-provider-zod";
 import { getReasonPhrase, StatusCodes } from "http-status-codes";
+import { createRouteHandler, createUploadthing } from "uploadthing/fastify";
 
 import db from "@/db/index";
 import { ErrorHandlers } from "@/handlers/error/error-handlers";
@@ -20,6 +22,7 @@ import { routes } from "@/routes/index";
 import { cookieConfig, corsConfig, rateLimiterConfig } from "@/utils/http";
 
 import cache from "./plugins/redis-cache";
+import { UnauthorizedError } from "./utils/error";
 import { bcryptSaltConfig } from "./utils/jwt";
 
 const server = fastify({
@@ -52,6 +55,7 @@ registerServerPlugins(server).then(() => {
 });
 
 async function registerServerPlugins(server: FastifyInstance) {
+  await server.register(mutipart);
   await server.register(swagger, swaggerConfig);
   await server.register(scalar, swaggerScalarConfig);
   await server.register(authenticate);

@@ -1,12 +1,9 @@
 import type { FastifyInstance } from "fastify";
 import type { ZodTypeProvider } from "fastify-type-provider-zod";
 
-import { z } from "zod";
-
 import type { UserService } from "@/services/user-service";
 
 import { errorResponseSchema } from "@/handlers/error/error-schemas";
-import { UnauthorizedError } from "@/utils/error";
 import { STATUS_CODES } from "@/utils/http";
 
 import * as user_schemas from "./user-schemas";
