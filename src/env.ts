@@ -11,6 +11,7 @@ export const env = createEnv({
     DB_NAME: z.string().default("postgres"),
     JWT_SECRET: z.string().default("supersecret"),
     COOKIE_SECRET: z.string().default("supersecret"),
+    UPLOADTHING_TOKEN: z.string().default(""),
   },
   // eslint-disable-next-line node/no-process-env
   runtimeEnv: process.env,
