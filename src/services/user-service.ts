@@ -31,4 +31,13 @@ export class UserService {
     const deletedUser = await this.userRepo.deleteUser(user_id);
     return deletedUser;
   }
+
+  // async uploadProfileImage(user_id: number, image_uri: string): Promise<user_schemas.TFoundUserResult> {
+  //   const foundUser = await this.userRepo.findUserById(user_id);
+  //   if (!foundUser) {
+  //     throw new NotFoundError("The requested user does not exist", [`User with id ${user_id} does not exist`]);
+  //   }
+  //   const updatedUser = await this.userRepo.updateUser(user_id, { profileImage: image_uri });
+  //   return updatedUser;
+  // }
 }

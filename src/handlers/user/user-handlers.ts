@@ -93,32 +93,5 @@ export class UserHandlers {
           });
       },
     });
-
-    server
-      .withTypeProvider<ZodTypeProvider>()
-      .route({
-        preHandler: server.authenticate,
-        url: "/upload-profile-image",
-        method: "POST",
-        schema: {
-          summary: "Upload users profile image",
-          description: "Upload the profile image of the currently authenticated user",
-          tags: ["users"],
-          response: {
-            [STATUS_CODES.OK]: user_schemas.userDetailsResponseSchema,
-            "4xx": errorResponseSchema,
-            "5xx": errorResponseSchema,
-          },
-        },
-        handler: async (request, reply) => {
-          const foundUser = await this.userService.findUserById(request.user.user_id);
-          reply
-            .code(STATUS_CODES.OK)
-            .send({
-              message: "User details fetched successfully",
-              data: foundUser,
-            });
-        },
-      });
   }
 }
