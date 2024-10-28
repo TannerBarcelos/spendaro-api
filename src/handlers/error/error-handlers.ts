@@ -1,7 +1,7 @@
 import type { FastifyError, FastifyReply, FastifyRequest } from "fastify";
 
 import { hasZodFastifySchemaValidationErrors, isResponseSerializationError } from "fastify-type-provider-zod";
-import { getReasonPhrase, StatusCodes } from "http-status-codes";
+import { getReasonPhrase } from "http-status-codes";
 import pg from "postgres";
 
 import { env } from "@/env";

@@ -2,7 +2,7 @@ import type { FastifyCookieOptions } from "@fastify/cookie";
 import type { RateLimitPluginOptions } from "@fastify/rate-limit";
 
 import config from "config";
-import { getReasonPhrase, StatusCodes } from "http-status-codes";
+import { StatusCodes } from "http-status-codes";
 import { z } from "zod";
 
 import { env } from "@/env";
