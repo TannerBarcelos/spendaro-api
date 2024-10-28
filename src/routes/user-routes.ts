@@ -7,7 +7,7 @@ import { UserService } from "@/services/user-service";
 export async function userRoutes(server: FastifyInstance) {
   server.addHook("onRequest", server.authenticate);
   const userRepo = new UserRepository(server.db);
-  const userService = new UserService(server, userRepo);
+  const userService = new UserService(userRepo);
   const userHandlers = new UserHandlers(userService);
   userHandlers.registerHandlers(server);
 }
