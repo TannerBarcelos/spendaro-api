@@ -1,7 +1,4 @@
-import type { FastifyInstance } from "fastify";
-
-import type { TFoundUserResult } from "@/handlers/auth/auth-schemas";
-import type { TUserToUpdate } from "@/handlers/user/user-schemas";
+import type * as user_schemas from "@/handlers/user/user-schemas";
 import type { IUserRepository } from "@/repositories";
 
 import { NotFoundError } from "@/utils/error";
@@ -9,7 +6,7 @@ import { NotFoundError } from "@/utils/error";
 export class UserService {
   constructor(private userRepo: IUserRepository) {}
 
-  async findUserById(id: number): Promise<TFoundUserResult> {
+  async findUserById(id: number): Promise<user_schemas.TFoundUserResult> {
     const foundUser = await this.userRepo.findUserById(id);
     if (!foundUser) {
       throw new NotFoundError("The requested user does not exist", [`User with id ${id} does not exist`]);
@@ -17,7 +14,7 @@ export class UserService {
     return foundUser;
   }
 
-  async updateUser(id: number, user_to_update: TUserToUpdate): Promise<TFoundUserResult> {
+  async updateUser(id: number, user_to_update: user_schemas.TUserToUpdate): Promise<user_schemas.TFoundUserResult> {
     const foundUser = await this.userRepo.findUserById(id);
     if (!foundUser) {
       throw new NotFoundError("The requested user does not exist", [`User with id ${id} does not exist`]);
@@ -26,7 +23,7 @@ export class UserService {
     return updatedUser;
   }
 
-  async deleteUser(user_id: number): Promise<TFoundUserResult> {
+  async deleteUser(user_id: number): Promise<user_schemas.TFoundUserResult> {
     const foundUser = await this.userRepo.findUserById(user_id);
     if (!foundUser) {
       throw new NotFoundError("The requested user does not exist", [`User with id ${user_id} does not exist`]);
