@@ -8,18 +8,6 @@ import fp from "fastify-plugin";
 
 import { ForbiddenError } from "@/utils/error";
 
-// Helper function to verify JWT
-export async function verifyJWT(request: FastifyRequest) {
-  try {
-    await request.jwtVerify(); // adds a user object to the request if the JWT is valid, containing the decoded JWT payload (which is just the user ID in our case since that's all we stored in the token when we signed it)
-  }
-  catch (err) {
-    if (err instanceof Error) {
-      throw new ForbiddenError(err.message, [err.message]);
-    }
-  }
-}
-
 const authenticate: FastifyPluginCallback = async (
   server: FastifyInstance,
 ) => {
@@ -27,7 +15,14 @@ const authenticate: FastifyPluginCallback = async (
   server.decorate(
     "authenticate",
     async (request: FastifyRequest) => {
-      await verifyJWT(request);
+      try {
+        await request.jwtVerify(); // adds a user object to the request if the JWT is valid, containing the decoded JWT payload (which is just the user ID in our case since that's all we stored in the token when we signed it)
+      }
+      catch (err) {
+        if (err instanceof Error) {
+          throw new ForbiddenError(err.message, [err.message]);
+        }
+      }
     },
   );
 };

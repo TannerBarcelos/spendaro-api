@@ -31,8 +31,7 @@ async function startServer() {
     return { status: getReasonPhrase(StatusCodes.OK) };
   });
 
-  server.register(routes, { prefix: `/api/${config.get("server.api.version")}` });
-
+  server.register(routes);
   await server.ready();
 
   try {

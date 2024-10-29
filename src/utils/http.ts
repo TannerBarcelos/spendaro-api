@@ -1,6 +1,4 @@
-import type { FastifyCookieOptions } from "@fastify/cookie";
 import type { RateLimitPluginOptions } from "@fastify/rate-limit";
-import type { FastifyInstance } from "fastify";
 
 import config from "config";
 import { StatusCodes } from "http-status-codes";
@@ -17,19 +15,6 @@ export const commonHttpResponseSchema = z.object({
   message: z.string(),
 });
 
-export function registerCookieConfig(server: FastifyInstance): FastifyCookieOptions {
-  return {
-    secret: server.env.COOKIE_SECRET,
-    parseOptions: {
-      httpOnly: server.env.NODE_ENV === "production",
-      secure: server.env.NODE_ENV === "production",
-      sameSite: "lax",
-      maxAge: 15 * 60 * 1000, // 15 minutes (matches the access token expiry)
-      path: "/",
-    },
-  };
-}
-
 export const corsConfig = {
   origin: "*",
   methods: ALLOWED_METHODS,
@@ -42,13 +27,6 @@ export const rateLimiterConfig: RateLimitPluginOptions = {
   allowList: config.get<Array<string>>("server.rate_limit.allow_list") ?? [],
   keyGenerator: request => request.user?.user_id ?? request.ip, // Rate limit by user ID if authenticated, otherwise by IP
   errorResponseBuilder(_, context) {
-    // return {
-    //   statusCode: StatusCodes.TOO_MANY_REQUESTS,
-    //   error: getReasonPhrase(StatusCodes.TOO_MANY_REQUESTS),
-    //   message: `Uh-oh! The rate limit was exceeded. A maximum of ${context.max} requests per ${context.after} is allowed. Try again soon.`,
-    //   date: Date.now(),
-    //   expiresIn: context.ttl,
-    // };
     return new TooManyRequestError(`Uh-oh! The rate limit was exceeded. A maximum of ${context.max} requests per ${context.after} is allowed. Try again soon.`);
   },
 };

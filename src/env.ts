@@ -8,6 +8,5 @@ export const env = z.object({
   DB_PASSWORD: z.string().default(""),
   DB_NAME: z.string().default("postgres"),
   JWT_SECRET: z.string().default("supersecret"),
-  COOKIE_SECRET: z.string().default("supersecret"),
   UPLOADTHING_TOKEN: z.string(),
 });
