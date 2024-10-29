@@ -3,6 +3,7 @@ import type { FastifyInstance, FastifyRequest } from "fastify";
 
 import cookie from "@fastify/cookie";
 import cors from "@fastify/cors";
+import fastifyEnv from "@fastify/env";
 import mutipart from "@fastify/multipart";
 import limiter from "@fastify/rate-limit";
 import swagger from "@fastify/swagger";
@@ -21,6 +22,7 @@ import authenticate from "@/plugins/authenticate";
 import { routes } from "@/routes/index";
 import { cookieConfig, corsConfig, rateLimiterConfig } from "@/utils/http";
 
+import { env } from "./env";
 import cache from "./plugins/redis-cache";
 import { uploadRouter } from "./routes/uploadthing";
 import { bcryptSaltConfig } from "./utils/jwt";
@@ -55,6 +57,7 @@ registerServerPlugins(server).then(() => {
 });
 
 async function registerServerPlugins(server: FastifyInstance) {
+  await server.register(fastifyEnv);
   await server.register(swagger, swaggerConfig);
   await server.register(scalar, swaggerScalarConfig);
   await server.register(authenticate);
@@ -67,5 +70,9 @@ async function registerServerPlugins(server: FastifyInstance) {
   await server.register(cors, corsConfig);
   await server.register(createRouteHandler, {
     router: uploadRouter,
+    config: {
+      token: env.UPLOADTHING_TOKEN,
+      callbackUrl: "/api/v1/uploadthing/callback",
+    },
   });
 }
