@@ -32,7 +32,7 @@
   "security": {
     "jwt": {
       "salt_rounds": 10,
-      "expiry": "15m",
+      "expiry": "1m",
       "refresh_expiry": "7d"
     }
   }
