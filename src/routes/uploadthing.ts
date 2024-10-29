@@ -1,6 +1,8 @@
+/* eslint-disable no-console */
 import config from "config";
 import { createUploadthing, type FileRouter } from "uploadthing/fastify";
 
+import { verifyJWT } from "@/plugins/authenticate";
 import { ForbiddenError } from "@/utils/error";
 
 const uploadthing = createUploadthing();
@@ -13,11 +15,10 @@ export const uploadRouter: FileRouter = {
     },
   })
     .middleware(async ({ req }) => {
-      // get token from cookie called accessToken
-      const cookies = req.cookies;
-      console.log(cookies);
-
-      return { user_id: "me" };
+      // return { user_id: "me" };
+      await verifyJWT(req); // Use the verifyJWT function to verify the JWT
+      const user_id = req.user.user_id; // Extract the user_id from the verified JWT
+      return { user_id };
     })
     .onUploadComplete((data) => {
       console.log("MY ID", data.metadata.user_id);

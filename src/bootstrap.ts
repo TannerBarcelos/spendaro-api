@@ -48,6 +48,7 @@ export async function bootstrapServerPlugins(server: FastifyInstance) {
     await server.register(cors, corsConfig);
     await server.register(createRouteHandler, {
       router: uploadRouter,
+      logLevel: "error",
     });
   }
   catch (err) {
