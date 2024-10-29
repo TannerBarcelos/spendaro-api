@@ -12,5 +12,6 @@ export const signinUserSchema = signupUserSchema.pick({ email: true, password: t
 
 // Response serialization schemas
 export const authResponseSchema = z.object({
-  message: z.string(),
+  accessToken: z.string(),
+  refreshToken: z.string(),
 });

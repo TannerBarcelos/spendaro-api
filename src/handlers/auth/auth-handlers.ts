@@ -37,17 +37,10 @@ export class AuthHandlers {
           const accessToken = generateAccessToken(request.server.jwt, id);
           const refreshToken = generateRefreshToken(request.server.jwt, id);
           reply
-            .setCookie("accessToken", accessToken, {
-              httpOnly: true,
-              maxAge: 15 * 60, // 15 minutes (access token expiry is 15 minutes)
-            })
-            .setCookie("refreshToken", refreshToken, {
-              httpOnly: true,
-              maxAge: 60 * 60 * 24 * 7, // 7 days (refresh token expiry is 7 days)
-            })
             .code(STATUS_CODES.OK)
             .send({
-              message: "User created and signed in successfully",
+              accessToken,
+              refreshToken,
             });
         },
       });
@@ -77,17 +70,10 @@ export class AuthHandlers {
           const accessToken = generateAccessToken(request.server.jwt, foundUser.id);
           const refreshToken = generateRefreshToken(request.server.jwt, foundUser.id);
           reply
-            .setCookie("accessToken", accessToken, {
-              httpOnly: true,
-              maxAge: 15 * 60, // 15 minutes (access token expiry is 15 minutes)
-            })
-            .setCookie("refreshToken", refreshToken, {
-              httpOnly: true,
-              maxAge: 60 * 60 * 24 * 7, // 7 days (refresh token expiry is 7 days)
-            })
             .code(STATUS_CODES.OK)
             .send({
-              message: "User signed in successfully",
+              accessToken,
+              refreshToken,
             });
         },
       });
@@ -108,20 +94,20 @@ export class AuthHandlers {
           },
         },
         handler: async (request, reply) => {
-          const refreshToken = request.cookies.refreshToken;
+          const refreshToken = request.headers.authorization?.split(" ")[1]; // Bearer <token>
 
           if (!refreshToken) {
             throw new UnauthorizedError("Refresh token not found", ["Refresh token was not provided in the request"]);
           }
 
           const { user_id } = request.server.jwt.verify<{ user_id: number }>(refreshToken);
-          const token = generateAccessToken(request.server.jwt, user_id);
+          const accessToken = generateAccessToken(request.server.jwt, user_id);
           reply
-            .setCookie("accessToken", token, { httpOnly: true, maxAge: 15 * 60 })
             .code(STATUS_CODES.OK)
             .send(
               {
-                message: "Token refreshed successfully",
+                accessToken,
+                refreshToken,
               },
             );
         },
@@ -145,8 +131,6 @@ export class AuthHandlers {
         },
         handler: async (_, reply) => {
           reply
-            .clearCookie("accessToken")
-            .clearCookie("refreshToken")
             .code(STATUS_CODES.OK)
             .send({
               message: "User logged out successfully",
