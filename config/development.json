@@ -23,6 +23,10 @@
       "port": 6379,
       "connection_timeout": 5000,
       "max_retries": 3
+    },
+    "upload-thing": {
+      "max_file_size": "4mb",
+      "max_files": 1
     }
   },
   "security": {

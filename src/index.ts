@@ -12,7 +12,7 @@ import fastify from "fastify";
 import { fastifyBcrypt } from "fastify-bcrypt";
 import { serializerCompiler, validatorCompiler } from "fastify-type-provider-zod";
 import { getReasonPhrase, StatusCodes } from "http-status-codes";
-import { createRouteHandler, createUploadthing } from "uploadthing/fastify";
+import { createRouteHandler } from "uploadthing/fastify";
 
 import db from "@/db/index";
 import { ErrorHandlers } from "@/handlers/error/error-handlers";
@@ -22,7 +22,7 @@ import { routes } from "@/routes/index";
 import { cookieConfig, corsConfig, rateLimiterConfig } from "@/utils/http";
 
 import cache from "./plugins/redis-cache";
-import { UnauthorizedError } from "./utils/error";
+import { uploadRouter } from "./routes/uploadthing";
 import { bcryptSaltConfig } from "./utils/jwt";
 
 const server = fastify({
@@ -55,14 +55,17 @@ registerServerPlugins(server).then(() => {
 });
 
 async function registerServerPlugins(server: FastifyInstance) {
-  await server.register(mutipart);
   await server.register(swagger, swaggerConfig);
   await server.register(scalar, swaggerScalarConfig);
   await server.register(authenticate);
+  await server.register(mutipart);
   await server.register(cache);
   await server.register(db);
   await server.register(cookie, cookieConfig);
   await server.register(limiter, { redis: server.cache, ...rateLimiterConfig });
   await server.register(fastifyBcrypt, bcryptSaltConfig);
   await server.register(cors, corsConfig);
+  await server.register(createRouteHandler, {
+    router: uploadRouter,
+  });
 }
