@@ -8,6 +8,7 @@ import postgres from "postgres";
 import * as schema from "./schema";
 
 dotenv.config();
+
 const {
   DB_USER = "postgres",
   DB_PASSWORD = "",
@@ -15,6 +16,15 @@ const {
   DB_PORT = 5432,
   DB_NAME = "postgres",
 } = process.env;
+
+console.log("Database configuration for migration:");
+console.table({
+  DB_USER,
+  DB_PASSWORD: DB_PASSWORD ? "********" : "",
+  DB_HOST,
+  DB_PORT,
+  DB_NAME,
+});
 
 // Construct database URL, handling case without password
 const databaseUrl = DB_PASSWORD.length > 0
