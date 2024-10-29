@@ -1,3 +1,4 @@
+/* eslint-disable node/no-process-env */
 import type { FastifyInstance, FastifyPluginCallback } from "fastify";
 
 import { drizzle } from "drizzle-orm/postgres-js";
@@ -6,29 +7,32 @@ import postgres from "postgres";
 
 import * as schema from "./schema";
 
+const {
+  DB_USER = "postgres",
+  DB_PASSWORD = "",
+  DB_HOST = "localhost",
+  DB_PORT = 5432,
+  DB_NAME = "postgres",
+} = process.env;
+
+const databaseUrl
+  = `postgresql://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}`
+  || "postgresql://postgres@localhost:5432/postgres";
+
+if (!databaseUrl) {
+  throw new Error("DATABASE_URL must be set to connect to the database");
+}
+
+// Create a postgres client and a drizzle instance (from docs https://arc.net/l/quote/poktxass)
+const client = postgres(databaseUrl);
+export const db = drizzle(client, {
+  schema: { ...schema },
+});
+
 const postgresConnector: FastifyPluginCallback = async (fastify: FastifyInstance) => {
   try {
-    const databaseUrl
-      = `postgresql://${fastify.env.DB_USER}:${fastify.env.DB_PASSWORD}@${fastify.env.DB_HOST}:${fastify.env.DB_PORT}/${fastify.env.DB_NAME}`
-      || "postgresql://postgres@localhost:5432/postgres";
-
-    if (!databaseUrl) {
-      throw new Error("DATABASE_URL must be set to connect to the database");
-    }
-
-    // Create a postgres client and a drizzle instance (from docs https://arc.net/l/quote/poktxass)
-    const client = postgres(databaseUrl);
-    const db = drizzle(client, {
-      schema: { ...schema },
-    });
-
-    // Decorate the fastify instance with the database object so we can access it on the fastify instance in our repositories
     fastify.decorate<typeof db>("db", db);
-
     console.log("Connected to the database");
-
-    // Close the database connection when the server closes
-    // No need to put in .finally block as fastify will handle this for us
     fastify.addHook("onClose", async () => {
       await client.end();
     });

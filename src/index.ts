@@ -2,6 +2,7 @@
 import type { FastifyRequest } from "fastify";
 
 import config from "config";
+import dotenv from "dotenv";
 import fastify from "fastify";
 import { serializerCompiler, validatorCompiler } from "fastify-type-provider-zod";
 import { getReasonPhrase, StatusCodes } from "http-status-codes";
@@ -10,6 +11,8 @@ import { ErrorHandlers } from "@/handlers/error/error-handlers";
 import { routes } from "@/routes/index";
 
 import { bootstrapServerPlugins } from "./bootstrap";
+
+dotenv.config();
 
 const server = fastify({
   logger: {

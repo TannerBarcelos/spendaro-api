@@ -1,7 +1,10 @@
 /* eslint-disable no-console */
 import config from "config";
+import { eq } from "drizzle-orm";
 import { createUploadthing, type FileRouter } from "uploadthing/fastify";
 
+import { db } from "@/db";
+import * as schema from "@/db/schema";
 import { ForbiddenError } from "@/utils/error";
 
 const uploadthing = createUploadthing();
@@ -14,16 +17,25 @@ export const uploadRouter: FileRouter = {
     },
   })
     .middleware(async ({ req }) => {
-      // const token = await verifyJWT(req);
-      return { user_id: 1 };
+      const { authorization } = req.headers;
+      const token = authorization?.split(" ")[1];
+      if (!token) {
+        throw new ForbiddenError("Authorization token is required");
+      }
+      try {
+        await req.jwtVerify();
+      }
+      catch (error) {
+        throw new ForbiddenError("Invalid authorization token", [error]);
+      }
+      return { user_id: req.user.user_id };
     })
     .onUploadError(({ error }) => {
       console.log(error);
     })
-    .onUploadComplete((data) => {
-      console.log("MY ID", data.metadata.user_id);
-      const imageUrl = data.file.url;
-      console.log("upload completed", imageUrl);
+    .onUploadComplete(async (data) => {
+      const user_id = data.metadata.user_id;
+      await db.update(schema.users).set({ profileImage: data.file.url }).where(eq(schema.users.id, user_id));
     }),
 } satisfies FileRouter;
 
