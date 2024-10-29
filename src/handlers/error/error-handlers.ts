@@ -46,7 +46,7 @@ export class ErrorHandlers {
             issues: error.validation,
             method: request.method,
             url: request.url,
-            stack: env.NODE_ENV === "development" ? error.stack : undefined,
+            stack: request.server.env.NODE_ENV === "development" ? error.stack : undefined,
           },
         });
     }
@@ -60,7 +60,7 @@ export class ErrorHandlers {
           issues: error.cause.issues,
           method: error.method,
           url: error.url,
-          stack: env.NODE_ENV === "development" ? error.stack : undefined,
+          stack: request.server.env.NODE_ENV === "development" ? error.stack : undefined,
         },
       });
     }
@@ -76,7 +76,7 @@ export class ErrorHandlers {
               issues: [error.message],
               method: request.method,
               url: request.url,
-              stack: env.NODE_ENV === "development" ? error.stack : undefined,
+              stack: request.server.env.NODE_ENV === "development" ? error.stack : undefined,
             },
           });
         }
@@ -88,7 +88,7 @@ export class ErrorHandlers {
               issues: [error.message],
               method: request.method,
               url: request.url,
-              stack: env.NODE_ENV === "development" ? error.stack : undefined,
+              stack: request.server.env.NODE_ENV === "development" ? error.stack : undefined,
             },
           });
         }
@@ -100,7 +100,7 @@ export class ErrorHandlers {
               issues: [error.message],
               method: request.method,
               url: request.url,
-              stack: env.NODE_ENV === "development" ? error.stack : undefined,
+              stack: request.server.env.NODE_ENV === "development" ? error.stack : undefined,
             },
           });
         }
@@ -112,7 +112,7 @@ export class ErrorHandlers {
               issues: [error.message],
               method: request.method,
               url: request.url,
-              stack: env.NODE_ENV === "development" ? error.stack : undefined,
+              stack: request.server.env.NODE_ENV === "development" ? error.stack : undefined,
             },
           });
         }
@@ -124,7 +124,7 @@ export class ErrorHandlers {
               issues: [error.message],
               method: request.method,
               url: request.url,
-              stack: env.NODE_ENV === "development" ? error.stack : undefined,
+              stack: request.server.env.NODE_ENV === "development" ? error.stack : undefined,
             },
           });
       }
@@ -139,7 +139,7 @@ export class ErrorHandlers {
           issues: error.details,
           method: request.method,
           url: request.url,
-          stack: env.NODE_ENV === "development" ? error.stack : undefined,
+          stack: request.server.env.NODE_ENV === "development" ? error.stack : undefined,
         },
       });
     }
@@ -152,7 +152,7 @@ export class ErrorHandlers {
         issues: [error.message],
         method: request.method,
         url: request.url,
-        stack: env.NODE_ENV === "development" ? error.stack : undefined,
+        stack: request.server.env.NODE_ENV === "development" ? error.stack : undefined,
       },
     });
   }

@@ -1,11 +1,10 @@
 import type { FastifyCookieOptions } from "@fastify/cookie";
 import type { RateLimitPluginOptions } from "@fastify/rate-limit";
+import type { FastifyInstance } from "fastify";
 
 import config from "config";
 import { StatusCodes } from "http-status-codes";
 import { z } from "zod";
-
-import { env } from "@/env";
 
 import { TooManyRequestError } from "./error";
 
@@ -18,16 +17,18 @@ export const commonHttpResponseSchema = z.object({
   message: z.string(),
 });
 
-export const cookieConfig: FastifyCookieOptions = {
-  secret: env.COOKIE_SECRET,
-  parseOptions: {
-    httpOnly: env.NODE_ENV === "production",
-    secure: env.NODE_ENV === "production",
-    sameSite: "lax",
-    maxAge: 15 * 60 * 1000, // 15 minutes (matches the access token expiry)
-    path: "/",
-  },
-};
+export function registerCookieConfig(server: FastifyInstance): FastifyCookieOptions {
+  return {
+    secret: server.env.COOKIE_SECRET,
+    parseOptions: {
+      httpOnly: server.env.NODE_ENV === "production",
+      secure: server.env.NODE_ENV === "production",
+      sameSite: "lax",
+      maxAge: 15 * 60 * 1000, // 15 minutes (matches the access token expiry)
+      path: "/",
+    },
+  };
+}
 
 export const corsConfig = {
   origin: "*",

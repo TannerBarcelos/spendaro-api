@@ -1,33 +1,15 @@
 /* eslint-disable no-console */
-import type { FastifyInstance, FastifyRequest } from "fastify";
+import type { FastifyRequest } from "fastify";
 
-import cookie from "@fastify/cookie";
-import cors from "@fastify/cors";
-import fastifyEnv from "@fastify/env";
-import mutipart from "@fastify/multipart";
-import limiter from "@fastify/rate-limit";
-import swagger from "@fastify/swagger";
-import scalar from "@scalar/fastify-api-reference";
 import config from "config";
 import fastify from "fastify";
-import { fastifyBcrypt } from "fastify-bcrypt";
 import { serializerCompiler, validatorCompiler } from "fastify-type-provider-zod";
 import { getReasonPhrase, StatusCodes } from "http-status-codes";
-import { createRouteHandler } from "uploadthing/fastify";
-import { z } from "zod";
-import { zodToJsonSchema } from "zod-to-json-schema";
 
-import db from "@/db/index";
 import { ErrorHandlers } from "@/handlers/error/error-handlers";
-import { swaggerConfig, swaggerScalarConfig } from "@/open-api";
-import authenticate from "@/plugins/authenticate";
 import { routes } from "@/routes/index";
-import { cookieConfig, corsConfig, rateLimiterConfig } from "@/utils/http";
 
-import { env, myEnv } from "./env";
-import cache from "./plugins/redis-cache";
-import { uploadRouter } from "./routes/uploadthing";
-import { bcryptSaltConfig } from "./utils/jwt";
+import { bootstrapServerPlugins } from "./bootstrap";
 
 const server = fastify({
   logger: {
@@ -36,40 +18,8 @@ const server = fastify({
   },
 });
 
-async function registerServerPlugins(server: FastifyInstance) {
-  try {
-    await server.register(fastifyEnv, {
-      dotenv: true,
-      schema: zodToJsonSchema(myEnv),
-    });
-    await server.register(swagger, swaggerConfig);
-    await server.register(scalar, swaggerScalarConfig);
-    await server.register(authenticate);
-    await server.register(mutipart);
-    await server.register(cache);
-    await server.register(db);
-    await server.register(cookie, cookieConfig);
-    await server.register(limiter, { redis: server.cache, ...rateLimiterConfig });
-    await server.register(fastifyBcrypt, bcryptSaltConfig);
-    await server.register(cors, corsConfig);
-    await server.register(createRouteHandler, {
-      router: uploadRouter,
-      config: {
-        token: env.UPLOADTHING_TOKEN ?? "",
-        callbackUrl: "/api/v1/uploadthing/callback",
-      },
-    });
-
-    // await server.ready();
-  }
-  catch (err) {
-    console.error(err);
-    process.exit(1);
-  }
-}
-
 async function startServer() {
-  await registerServerPlugins(server);
+  await bootstrapServerPlugins(server);
 
   server.setValidatorCompiler(validatorCompiler);
   server.setSerializerCompiler(serializerCompiler);
@@ -87,7 +37,6 @@ async function startServer() {
     server.listen({ port: config.get("server.port") }, (err, addr) => {
       if (err)
         throw err;
-      console.log(server.getEnvs());
       console.log(`Server listening at ${addr}`);
     });
   }
