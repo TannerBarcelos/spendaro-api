@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /* eslint-disable node/no-process-env */
 import dotenv from "dotenv";
 import { drizzle } from "drizzle-orm/postgres-js";
@@ -6,16 +7,13 @@ import postgres from "postgres";
 
 import * as schema from "./schema";
 
-// Load environment variables from .env file
 dotenv.config();
-
-// Environment variables for PostgreSQL
 const {
-  DB_USER = "",
+  DB_USER = "postgres",
   DB_PASSWORD = "",
   DB_HOST = "localhost",
-  DB_PORT = "5432",
-  DB_NAME = "",
+  DB_PORT = 5432,
+  DB_NAME = "postgres",
 } = process.env;
 
 // Construct database URL, handling case without password
