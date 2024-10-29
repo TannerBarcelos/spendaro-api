@@ -33,6 +33,8 @@ async function startServer() {
 
   server.register(routes, { prefix: `/api/${config.get("server.api.version")}` });
 
+  await server.ready();
+
   try {
     server.listen({ port: config.get("server.port") }, (err, addr) => {
       if (err)

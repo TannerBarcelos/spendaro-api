@@ -8,7 +8,7 @@
       "level": "debug"
     },
     "rate_limit": {
-      "max": 3,
+      "max": 15,
       "time_window": 10000,
       "global": true,
       "allow_list": [

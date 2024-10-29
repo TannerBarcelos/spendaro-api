@@ -3,6 +3,7 @@ import type { FastifyInstance } from "fastify";
 import cookie from "@fastify/cookie";
 import cors from "@fastify/cors";
 import fastifyEnv from "@fastify/env";
+import jwt from "@fastify/jwt";
 import mutipart from "@fastify/multipart";
 import limiter from "@fastify/rate-limit";
 import swagger from "@fastify/swagger";
@@ -28,6 +29,13 @@ export async function bootstrapServerPlugins(server: FastifyInstance) {
       schema: zodToJsonSchema(env),
       confKey: "env", // used as the key to access the environment variables on the server instance - typed in the types.d.ts file - the name in the types.d.ts file should match the key here
     });
+    await server.register(jwt, {
+      secret: server.env.JWT_SECRET,
+      cookie: {
+        cookieName: "accessToken", // will look for a cookie named "accessToken" to get the JWT from (instead of the Authorization header)
+        signed: false,
+      },
+    });
     await server.register(swagger, swaggerConfig);
     await server.register(scalar, swaggerScalarConfig);
     await server.register(authenticate);
@@ -40,13 +48,7 @@ export async function bootstrapServerPlugins(server: FastifyInstance) {
     await server.register(cors, corsConfig);
     await server.register(createRouteHandler, {
       router: uploadRouter,
-      config: {
-        token: server.env.UPLOADTHING_TOKEN ?? "",
-        callbackUrl: "/api/v1/uploadthing/callback",
-      },
     });
-
-    // await server.ready();
   }
   catch (err) {
     console.error(err);
