@@ -14,6 +14,8 @@ import { fastifyBcrypt } from "fastify-bcrypt";
 import { serializerCompiler, validatorCompiler } from "fastify-type-provider-zod";
 import { getReasonPhrase, StatusCodes } from "http-status-codes";
 import { createRouteHandler } from "uploadthing/fastify";
+import { z } from "zod";
+import { zodToJsonSchema } from "zod-to-json-schema";
 
 import db from "@/db/index";
 import { ErrorHandlers } from "@/handlers/error/error-handlers";
@@ -22,7 +24,7 @@ import authenticate from "@/plugins/authenticate";
 import { routes } from "@/routes/index";
 import { cookieConfig, corsConfig, rateLimiterConfig } from "@/utils/http";
 
-import { env } from "./env";
+import { env, myEnv } from "./env";
 import cache from "./plugins/redis-cache";
 import { uploadRouter } from "./routes/uploadthing";
 import { bcryptSaltConfig } from "./utils/jwt";
@@ -34,7 +36,41 @@ const server = fastify({
   },
 });
 
-registerServerPlugins(server).then(() => {
+async function registerServerPlugins(server: FastifyInstance) {
+  try {
+    await server.register(fastifyEnv, {
+      dotenv: true,
+      schema: zodToJsonSchema(myEnv),
+    });
+    await server.register(swagger, swaggerConfig);
+    await server.register(scalar, swaggerScalarConfig);
+    await server.register(authenticate);
+    await server.register(mutipart);
+    await server.register(cache);
+    await server.register(db);
+    await server.register(cookie, cookieConfig);
+    await server.register(limiter, { redis: server.cache, ...rateLimiterConfig });
+    await server.register(fastifyBcrypt, bcryptSaltConfig);
+    await server.register(cors, corsConfig);
+    await server.register(createRouteHandler, {
+      router: uploadRouter,
+      config: {
+        token: env.UPLOADTHING_TOKEN ?? "",
+        callbackUrl: "/api/v1/uploadthing/callback",
+      },
+    });
+
+    // await server.ready();
+  }
+  catch (err) {
+    console.error(err);
+    process.exit(1);
+  }
+}
+
+async function startServer() {
+  await registerServerPlugins(server);
+
   server.setValidatorCompiler(validatorCompiler);
   server.setSerializerCompiler(serializerCompiler);
 
@@ -47,32 +83,18 @@ registerServerPlugins(server).then(() => {
 
   server.register(routes, { prefix: `/api/${config.get("server.api.version")}` });
 
-  server.listen({ port: config.get("server.port") }, (err, address) => {
-    if (err) {
-      console.error(err);
-      process.exit(1);
-    }
-    console.log(`Server listening at ${address}`);
-  });
-});
-
-async function registerServerPlugins(server: FastifyInstance) {
-  await server.register(fastifyEnv);
-  await server.register(swagger, swaggerConfig);
-  await server.register(scalar, swaggerScalarConfig);
-  await server.register(authenticate);
-  await server.register(mutipart);
-  await server.register(cache);
-  await server.register(db);
-  await server.register(cookie, cookieConfig);
-  await server.register(limiter, { redis: server.cache, ...rateLimiterConfig });
-  await server.register(fastifyBcrypt, bcryptSaltConfig);
-  await server.register(cors, corsConfig);
-  await server.register(createRouteHandler, {
-    router: uploadRouter,
-    config: {
-      token: env.UPLOADTHING_TOKEN,
-      callbackUrl: "/api/v1/uploadthing/callback",
-    },
-  });
+  try {
+    server.listen({ port: config.get("server.port") }, (err, addr) => {
+      if (err)
+        throw err;
+      console.log(server.getEnvs());
+      console.log(`Server listening at ${addr}`);
+    });
+  }
+  catch (err) {
+    console.error(err);
+    process.exit(1);
+  }
 }
+
+startServer();
