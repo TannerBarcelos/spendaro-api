@@ -27,8 +27,8 @@ export class AuthHandlers {
           tags: ["auth"],
           body: auth_schemas.signupUserSchema,
           response: {
-            [STATUS_CODES.CREATED]: auth_schemas.commonAuthResponseSchema,
-            [STATUS_CODES.CONFLICT]: auth_schemas.duplicateSignupUserSchema,
+            [STATUS_CODES.CREATED]: auth_schemas.authResponseSchema,
+            [STATUS_CODES.CONFLICT]: errorResponseSchema,
             "5xx": errorResponseSchema,
           },
         },
@@ -37,17 +37,10 @@ export class AuthHandlers {
           const accessToken = generateAccessToken(request.server.jwt, id);
           const refreshToken = generateRefreshToken(request.server.jwt, id);
           reply
-            .setCookie("accessToken", accessToken, {
-              httpOnly: true,
-              maxAge: 15 * 60, // 15 minutes (access token expiry is 15 minutes)
-            })
-            .setCookie("refreshToken", refreshToken, {
-              httpOnly: true,
-              maxAge: 60 * 60 * 24 * 7, // 7 days (refresh token expiry is 7 days)
-            })
             .code(STATUS_CODES.OK)
             .send({
-              message: "User created and signed in successfully",
+              accessToken,
+              refreshToken,
             });
         },
       });
@@ -62,8 +55,8 @@ export class AuthHandlers {
           tags: ["auth"],
           body: auth_schemas.signinUserSchema,
           response: {
-            [STATUS_CODES.OK]: auth_schemas.commonAuthResponseSchema,
-            "4xx": auth_schemas.signinResponseUnauthorizedSchema,
+            [STATUS_CODES.OK]: auth_schemas.authResponseSchema,
+            "4xx": errorResponseSchema,
             "5xx": errorResponseSchema,
           },
         },
@@ -77,17 +70,10 @@ export class AuthHandlers {
           const accessToken = generateAccessToken(request.server.jwt, foundUser.id);
           const refreshToken = generateRefreshToken(request.server.jwt, foundUser.id);
           reply
-            .setCookie("accessToken", accessToken, {
-              httpOnly: true,
-              maxAge: 15 * 60, // 15 minutes (access token expiry is 15 minutes)
-            })
-            .setCookie("refreshToken", refreshToken, {
-              httpOnly: true,
-              maxAge: 60 * 60 * 24 * 7, // 7 days (refresh token expiry is 7 days)
-            })
             .code(STATUS_CODES.OK)
             .send({
-              message: "User signed in successfully",
+              accessToken,
+              refreshToken,
             });
         },
       });
@@ -102,55 +88,28 @@ export class AuthHandlers {
           description: "Refresh the user's access token using the refresh token. Often used after a client requests a resource and receives a 401 Unauthorized response.",
           tags: ["auth"],
           response: {
-            [STATUS_CODES.OK]: auth_schemas.commonAuthResponseSchema,
-            "4xx": auth_schemas.signinResponseUnauthorizedSchema,
+            [STATUS_CODES.OK]: auth_schemas.authResponseSchema,
+            "4xx": errorResponseSchema,
             "5xx": errorResponseSchema,
           },
         },
         handler: async (request, reply) => {
-          const refreshToken = request.cookies.refreshToken;
+          const refreshToken = request.headers.authorization?.split(" ")[1]; // Bearer <token>
 
           if (!refreshToken) {
             throw new UnauthorizedError("Refresh token not found", ["Refresh token was not provided in the request"]);
           }
 
           const { user_id } = request.server.jwt.verify<{ user_id: number }>(refreshToken);
-          const token = generateAccessToken(request.server.jwt, user_id);
+          const accessToken = generateAccessToken(request.server.jwt, user_id);
           reply
-            .setCookie("accessToken", token, { httpOnly: true, maxAge: 15 * 60 })
             .code(STATUS_CODES.OK)
             .send(
               {
-                message: "Token refreshed successfully",
+                accessToken,
+                refreshToken,
               },
             );
-        },
-      });
-
-    server
-      .withTypeProvider<ZodTypeProvider>()
-      .route({
-        preHandler: server.authenticate,
-        url: "/user-details",
-        method: "GET",
-        schema: {
-          summary: "Get user details",
-          description: "Get the details of the currently authenticated user",
-          tags: ["auth"],
-          response: {
-            [STATUS_CODES.OK]: auth_schemas.userDetailsResponseSchema,
-            "4xx": auth_schemas.userNotFoundResponseSchema,
-            "5xx": errorResponseSchema,
-          },
-        },
-        handler: async (request, reply) => {
-          const foundUser = await this.authService.findUserById(request.user.user_id);
-          reply
-            .code(STATUS_CODES.OK)
-            .send({
-              message: "User details fetched successfully",
-              data: foundUser,
-            });
         },
       });
 
@@ -172,8 +131,6 @@ export class AuthHandlers {
         },
         handler: async (_, reply) => {
           reply
-            .clearCookie("accessToken")
-            .clearCookie("refreshToken")
             .code(STATUS_CODES.OK)
             .send({
               message: "User logged out successfully",

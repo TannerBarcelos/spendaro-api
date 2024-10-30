@@ -1,10 +1,18 @@
-import type { TFoundUserResult, TUserToCreate } from "@/handlers/auth/auth-schemas";
 import type * as budget_schemas from "@/handlers/budget/budget-schemas";
+import type * as user_schemas from "@/handlers/user/user-schemas";
 
-export interface IAuthRepository {
-  createUser: (user: TUserToCreate) => Promise<TFoundUserResult>;
-  findUserByEmail: (email: string) => Promise<TFoundUserResult | undefined>;
-  findUserById: (id: number) => Promise<TFoundUserResult | undefined>;
+interface CommonMethods {
+  findUserById: (user_id: number) => Promise<user_schemas.TFoundUserResult | undefined>;
+}
+
+export interface IAuthRepository extends CommonMethods {
+  createUser: (user_to_create: user_schemas.TUserToCreate) => Promise<user_schemas.TFoundUserResult>;
+  findUserByEmail: (user_email: string) => Promise<user_schemas.TFoundUserResult | undefined>;
+}
+
+export interface IUserRepository extends CommonMethods {
+  updateUser: (user_id: number, user_to_update: user_schemas.TUserToUpdate) => Promise<user_schemas.TFoundUserResult>;
+  deleteUser: (user_id: number) => Promise<user_schemas.TFoundUserResult>;
 }
 
 export interface IBudgetRepository {

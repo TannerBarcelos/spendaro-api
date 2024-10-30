@@ -14,6 +14,17 @@ declare module "fastify" {
       reply: FastifyReply
     ) => Promise<void>;
     cache: Redis;
+    env: {
+      NODE_ENV: string;
+      DB_HOST: string;
+      DB_PORT: number;
+      DB_USER: string;
+      DB_PASSWORD: string;
+      DB_NAME: string;
+      JWT_SECRET: string;
+      COOKIE_SECRET: string;
+      UPLOADTHING_TOKEN: string;
+    };
   }
 }
 

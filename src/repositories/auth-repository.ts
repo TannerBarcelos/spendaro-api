@@ -2,7 +2,7 @@ import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 
 import { eq } from "drizzle-orm";
 
-import type { TFoundUserResult, TUserToCreate } from "@/handlers/auth/auth-schemas";
+import type { TFoundUserResult, TUserToCreate } from "@/handlers/user/user-schemas";
 
 import * as schema from "@/db/schema";
 

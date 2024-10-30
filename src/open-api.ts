@@ -32,6 +32,10 @@ export const swaggerConfig: SwaggerOptions = {
         description: "Authentication and Authorization",
       },
       {
+        name: "users",
+        description: "View and manage user accounts",
+      },
+      {
         name: "transactions",
         description:
           "Full CRUD operations for Transactions (add transaction, get transaction, update transaction, delete transaction)",

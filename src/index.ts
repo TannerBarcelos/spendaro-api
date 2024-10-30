@@ -1,26 +1,18 @@
 /* eslint-disable no-console */
-import type { FastifyInstance, FastifyRequest } from "fastify";
+import type { FastifyRequest } from "fastify";
 
-import cookie from "@fastify/cookie";
-import cors from "@fastify/cors";
-import limiter from "@fastify/rate-limit";
-import swagger from "@fastify/swagger";
-import scalar from "@scalar/fastify-api-reference";
 import config from "config";
+import dotenv from "dotenv";
 import fastify from "fastify";
-import { fastifyBcrypt } from "fastify-bcrypt";
 import { serializerCompiler, validatorCompiler } from "fastify-type-provider-zod";
 import { getReasonPhrase, StatusCodes } from "http-status-codes";
 
-import db from "@/db/index";
 import { ErrorHandlers } from "@/handlers/error/error-handlers";
-import { swaggerConfig, swaggerScalarConfig } from "@/open-api";
-import authenticate from "@/plugins/authenticate";
 import { routes } from "@/routes/index";
-import { cookieConfig, corsConfig, rateLimiterConfig } from "@/utils/http";
 
-import cache from "./plugins/redis-cache";
-import { bcryptSaltConfig } from "./utils/jwt";
+import { bootstrapServerPlugins } from "./bootstrap";
+
+dotenv.config();
 
 const server = fastify({
   logger: {
@@ -29,7 +21,9 @@ const server = fastify({
   },
 });
 
-registerServerPlugins(server).then(() => {
+async function startServer() {
+  await bootstrapServerPlugins(server);
+
   server.setValidatorCompiler(validatorCompiler);
   server.setSerializerCompiler(serializerCompiler);
 
@@ -40,25 +34,20 @@ registerServerPlugins(server).then(() => {
     return { status: getReasonPhrase(StatusCodes.OK) };
   });
 
-  server.register(routes, { prefix: `/api/${config.get("server.api.version")}` });
+  server.register(routes);
+  await server.ready();
 
-  server.listen({ port: config.get("server.port") }, (err, address) => {
-    if (err) {
-      console.error(err);
-      process.exit(1);
-    }
-    console.log(`Server listening at ${address}`);
-  });
-});
-
-async function registerServerPlugins(server: FastifyInstance) {
-  await server.register(swagger, swaggerConfig);
-  await server.register(scalar, swaggerScalarConfig);
-  await server.register(authenticate);
-  await server.register(cache);
-  await server.register(db);
-  await server.register(cookie, cookieConfig);
-  await server.register(limiter, { redis: server.cache, ...rateLimiterConfig });
-  await server.register(fastifyBcrypt, bcryptSaltConfig);
-  await server.register(cors, corsConfig);
+  try {
+    server.listen({ port: config.get("server.port") }, (err, addr) => {
+      if (err)
+        throw err;
+      console.log(`Server listening at ${addr}`);
+    });
+  }
+  catch (err) {
+    console.error(err);
+    process.exit(1);
+  }
 }
+
+startServer();

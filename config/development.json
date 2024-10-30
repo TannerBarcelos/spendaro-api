@@ -8,7 +8,7 @@
       "level": "debug"
     },
     "rate_limit": {
-      "max": 3,
+      "max": 15,
       "time_window": 10000,
       "global": true,
       "allow_list": [
@@ -23,6 +23,10 @@
       "port": 6379,
       "connection_timeout": 5000,
       "max_retries": 3
+    },
+    "upload-thing": {
+      "max_file_size": "4mb",
+      "max_files": 1
     }
   },
   "security": {

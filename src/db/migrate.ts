@@ -1,15 +1,35 @@
+/* eslint-disable no-console */
+/* eslint-disable node/no-process-env */
+import dotenv from "dotenv";
 import { drizzle } from "drizzle-orm/postgres-js";
 import { migrate } from "drizzle-orm/postgres-js/migrator";
 import postgres from "postgres";
 
-import { env } from "@/env";
-
 import * as schema from "./schema";
 
-// Handles url with no password (default PostgreSQL setup)
-const databaseUrl = env.DB_PASSWORD.length > 0
-  ? `postgresql://${env.DB_USER}:${env.DB_PASSWORD}@${env.DB_HOST}:${env.DB_PORT}/${env.DB_NAME}`
-  : `postgresql://${env.DB_USER}@${env.DB_HOST}:${env.DB_PORT}/${env.DB_NAME}`;
+dotenv.config();
+
+const {
+  DB_USER = "postgres",
+  DB_PASSWORD = "",
+  DB_HOST = "localhost",
+  DB_PORT = 5432,
+  DB_NAME = "postgres",
+} = process.env;
+
+console.log("Database configuration for migration:");
+console.table({
+  DB_USER,
+  DB_PASSWORD: DB_PASSWORD ? "********" : "",
+  DB_HOST,
+  DB_PORT,
+  DB_NAME,
+});
+
+// Construct database URL, handling case without password
+const databaseUrl = DB_PASSWORD.length > 0
+  ? `postgresql://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}`
+  : `postgresql://${DB_USER}@${DB_HOST}:${DB_PORT}/${DB_NAME}`;
 
 if (!databaseUrl) {
   throw new Error("DATABASE_URL must be set to connect to the database");
