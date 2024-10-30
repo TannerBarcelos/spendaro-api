@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import config from "config";
 import { eq } from "drizzle-orm";
 import { createUploadthing, type FileRouter } from "uploadthing/fastify";
@@ -31,11 +30,12 @@ export const uploadRouter: FileRouter = {
       return { user_id: req.user.user_id };
     })
     .onUploadError(({ error }) => {
-      console.log(error);
+      throw error;
     })
     .onUploadComplete(async (data) => {
       const user_id = data.metadata.user_id;
       await db.update(schema.users).set({ profileImage: data.file.url }).where(eq(schema.users.id, user_id));
+      return { message: "Profile image uploaded successfully" };
     }),
 } satisfies FileRouter;
 
