@@ -1,5 +1,5 @@
 import { relations } from "drizzle-orm";
-import { date, integer, pgTable, serial, text, timestamp, varchar } from "drizzle-orm/pg-core";
+import { boolean, date, integer, pgTable, serial, text, timestamp, varchar } from "drizzle-orm/pg-core";
 
 // This table is used to store the users of the application
 export const users = pgTable("users", {
@@ -23,6 +23,7 @@ export const budgets = pgTable("budgets", {
   budget_name: text("budget_name").notNull(),
   budget_description: text("budget_description").default(""),
   amount: integer("amount").default(0),
+  isFavorited: boolean("is_favorited").default(false),
   createdAt: timestamp("created_at")
     .$defaultFn(() => new Date()),
   updatedAt: timestamp("updated_at").$onUpdateFn(() => new Date()),
