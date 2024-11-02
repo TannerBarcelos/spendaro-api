@@ -1,7 +1,6 @@
 import type { FastifyInstance } from "fastify";
 
 import cors from "@fastify/cors";
-import fastifyEnv from "@fastify/env";
 import jwt from "@fastify/jwt";
 import mutipart from "@fastify/multipart";
 import limiter from "@fastify/rate-limit";
@@ -22,7 +21,6 @@ import { bcryptSaltConfig } from "./utils/jwt";
 
 export async function bootstrapServerPlugins(server: FastifyInstance) {
   try {
-    await server.register(fastifyEnv);
     await server.register(jwt, {
       secret: env.JWT_SECRET,
     });
