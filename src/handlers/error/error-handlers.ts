@@ -4,7 +4,6 @@ import { hasZodFastifySchemaValidationErrors, isResponseSerializationError } fro
 import { getReasonPhrase } from "http-status-codes";
 import pg from "postgres";
 
-import { env } from "@/env";
 import { SpendaroError } from "@/utils/error";
 import { STATUS_CODES } from "@/utils/http";
 
@@ -35,6 +34,8 @@ export class ErrorHandlers {
   ) {
     request.log.error(error); // send to Sentry or similar service to monitor errors
 
+    const includeStack = process.env.NODE_ENV === "development" ? error.stack : undefined;
+
     // Handle schema validation errors
     if (hasZodFastifySchemaValidationErrors(error)) {
       return reply
@@ -46,7 +47,7 @@ export class ErrorHandlers {
             issues: error.validation,
             method: request.method,
             url: request.url,
-            stack: request.server.env.NODE_ENV === "development" ? error.stack : undefined,
+            stack: includeStack,
           },
         });
     }
@@ -60,7 +61,7 @@ export class ErrorHandlers {
           issues: error.cause.issues,
           method: error.method,
           url: error.url,
-          stack: request.server.env.NODE_ENV === "development" ? error.stack : undefined,
+          stack: includeStack,
         },
       });
     }
@@ -76,7 +77,7 @@ export class ErrorHandlers {
               issues: [error.message],
               method: request.method,
               url: request.url,
-              stack: request.server.env.NODE_ENV === "development" ? error.stack : undefined,
+              stack: includeStack,
             },
           });
         }
@@ -88,7 +89,7 @@ export class ErrorHandlers {
               issues: [error.message],
               method: request.method,
               url: request.url,
-              stack: request.server.env.NODE_ENV === "development" ? error.stack : undefined,
+              stack: includeStack,
             },
           });
         }
@@ -100,7 +101,7 @@ export class ErrorHandlers {
               issues: [error.message],
               method: request.method,
               url: request.url,
-              stack: request.server.env.NODE_ENV === "development" ? error.stack : undefined,
+              stack: includeStack,
             },
           });
         }
@@ -112,7 +113,7 @@ export class ErrorHandlers {
               issues: [error.message],
               method: request.method,
               url: request.url,
-              stack: request.server.env.NODE_ENV === "development" ? error.stack : undefined,
+              stack: includeStack,
             },
           });
         }
@@ -124,7 +125,7 @@ export class ErrorHandlers {
               issues: [error.message],
               method: request.method,
               url: request.url,
-              stack: request.server.env.NODE_ENV === "development" ? error.stack : undefined,
+              stack: includeStack,
             },
           });
       }
@@ -139,7 +140,7 @@ export class ErrorHandlers {
           issues: error.details,
           method: request.method,
           url: request.url,
-          stack: request.server.env.NODE_ENV === "development" ? error.stack : undefined,
+          stack: includeStack,
         },
       });
     }
@@ -152,7 +153,7 @@ export class ErrorHandlers {
         issues: [error.message],
         method: request.method,
         url: request.url,
-        stack: request.server.env.NODE_ENV === "development" ? error.stack : undefined,
+        stack: includeStack,
       },
     });
   }

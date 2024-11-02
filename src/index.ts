@@ -4,10 +4,8 @@ import type { FastifyRequest } from "fastify";
 import config from "config";
 import dotenv from "dotenv";
 import fastify from "fastify";
-import { serializerCompiler, validatorCompiler } from "fastify-type-provider-zod";
 import { getReasonPhrase, StatusCodes } from "http-status-codes";
 
-import { ErrorHandlers } from "@/handlers/error/error-handlers";
 import { routes } from "@/routes/index";
 
 import { bootstrapServerPlugins } from "./bootstrap";
@@ -21,14 +19,8 @@ const server = fastify({
   },
 });
 
-async function startServer() {
+(async function startServer() {
   await bootstrapServerPlugins(server);
-
-  server.setValidatorCompiler(validatorCompiler);
-  server.setSerializerCompiler(serializerCompiler);
-
-  server.setErrorHandler(ErrorHandlers.handleError);
-  server.setNotFoundHandler({ preHandler: server.rateLimit() }, ErrorHandlers.handleNotFoundError);
 
   server.get("/healthz", async (_: FastifyRequest) => {
     return { status: getReasonPhrase(StatusCodes.OK) };
@@ -48,6 +40,4 @@ async function startServer() {
     console.error(err);
     process.exit(1);
   }
-}
-
-startServer();
+})();

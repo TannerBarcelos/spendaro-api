@@ -6,6 +6,19 @@ import Redis from "ioredis";
 
 import * as schema from "./src/db/schema.ts";
 
+namespace NodeJS {
+  interface ProcessEnv {
+    DB_USER: string;
+    DB_PASSWORD: string;
+    DB_HOST: string;
+    DB_PORT: string;
+    DB_NAME: string;
+    JWT_SECRET: string;
+    COOKIE_SECRET: string;
+    UPLOADTHING_TOKEN: string;
+  }
+}
+
 declare module "fastify" {
   interface FastifyInstance {
     db: PostgresJsDatabase<typeof schema>;
@@ -14,17 +27,6 @@ declare module "fastify" {
       reply: FastifyReply
     ) => Promise<void>;
     cache: Redis;
-    env: {
-      NODE_ENV: string;
-      DB_HOST: string;
-      DB_PORT: number;
-      DB_USER: string;
-      DB_PASSWORD: string;
-      DB_NAME: string;
-      JWT_SECRET: string;
-      COOKIE_SECRET: string;
-      UPLOADTHING_TOKEN: string;
-    };
   }
 }
 

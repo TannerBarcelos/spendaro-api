@@ -1,12 +1,7 @@
+import { createEnv } from "@t3-oss/env-core";
 import { z } from "zod";
 
-export const env = z.object({
-  NODE_ENV: z.string().default("development"),
-  DB_HOST: z.string().default("localhost"),
-  DB_PORT: z.string().default("5432"),
-  DB_USER: z.string().default("postgres"),
-  DB_PASSWORD: z.string().default(""),
-  DB_NAME: z.string().default("postgres"),
-  JWT_SECRET: z.string().default("supersecret"),
-  UPLOADTHING_TOKEN: z.string(),
+export const env = createEnv({
+  server: { NODE_ENV: z.string(), DB_HOST: z.string(), DB_PORT: z.number(), DB_USER: z.string(), DB_PASSWORD: z.string(), DB_NAME: z.string(), JWT_SECRET: z.string(), UPLOADTHING_TOKEN: z.string() },
+  runtimeEnv: process.env,
 });

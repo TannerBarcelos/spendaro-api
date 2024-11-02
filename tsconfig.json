@@ -4,7 +4,7 @@
     "target": "ESNext",
     "moduleDetection": "force",
     "baseUrl": ".",
-    "module": "Preserve",
+    "module": "ESNext",
     "moduleResolution": "Bundler",
     "paths": {
       "@/*": ["src/*"]
