@@ -2,15 +2,12 @@
 import type { FastifyRequest } from "fastify";
 
 import config from "config";
-import dotenv from "dotenv";
 import fastify from "fastify";
 import { getReasonPhrase, StatusCodes } from "http-status-codes";
 
 import { routes } from "@/routes/index";
 
 import { bootstrapServerPlugins } from "./bootstrap";
-
-dotenv.config();
 
 const server = fastify({
   logger: {

@@ -1,13 +1,10 @@
 /* eslint-disable no-console */
 
-import dotenv from "dotenv";
 import { migrate } from "drizzle-orm/postgres-js/migrator";
 
 import { env as dbCredentials } from "@/env";
 
 import { client, db } from ".";
-
-dotenv.config();
 
 console.log("Database configuration for migration:");
 console.table(dbCredentials);
