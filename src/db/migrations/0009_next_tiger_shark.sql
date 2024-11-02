@@ -1,0 +1,1 @@
+ALTER TABLE "budgets" RENAME COLUMN "is_favorited" TO "is_favorite";
