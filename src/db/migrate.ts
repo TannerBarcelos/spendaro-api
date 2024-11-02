@@ -9,15 +9,6 @@ import { client, db } from ".";
 console.log("Database configuration for migration:");
 console.table(dbCredentials);
 
-// Construct database URL, handling case without password
-const databaseUrl = dbCredentials.DB_PASSWORD.length > 0
-  ? `postgresql://${dbCredentials.DB_USER}:${dbCredentials.DB_PASSWORD}@${dbCredentials.DB_HOST}:${dbCredentials.DB_PORT}/${dbCredentials.DB_NAME}`
-  : `postgresql://${dbCredentials.DB_USER}@${dbCredentials.DB_HOST}:${dbCredentials.DB_PORT}/${dbCredentials.DB_NAME}`;
-
-if (!databaseUrl) {
-  throw new Error("DATABASE_URL must be set to connect to the database");
-}
-
 async function main() {
   console.log("Migration started");
   try {
