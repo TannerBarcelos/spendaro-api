@@ -24,6 +24,7 @@ export const budgets = pgTable("budgets", {
   budget_description: text("budget_description").default(""),
   amount: integer("amount").default(0),
   isFavorited: boolean("is_favorited").default(false),
+  isActive: boolean("is_active").default(true),
   createdAt: timestamp("created_at")
     .$defaultFn(() => new Date()),
   updatedAt: timestamp("updated_at").$onUpdateFn(() => new Date()),

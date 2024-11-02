@@ -50,6 +50,20 @@
       "when": 1730247040854,
       "tag": "0006_tense_switch",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1730582600964,
+      "tag": "0007_free_human_torch",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1730582670299,
+      "tag": "0008_youthful_punisher",
+      "breakpoints": true
     }
   ]
 }

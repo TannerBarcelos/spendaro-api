@@ -1,0 +1,1 @@
+ALTER TABLE "budgets" ADD COLUMN "is_archived" boolean DEFAULT false;
