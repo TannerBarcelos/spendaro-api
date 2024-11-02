@@ -10,6 +10,7 @@ import { STATUS_CODES } from "@/utils/http";
 
 import type { TBudgetCategoryItemToCreate, TBudgetCategoryToCreate, TBudgetToCreate, TTransactionToCreate, TTransactionTypeToCreate } from "./budget-schemas";
 
+import { errorResponseSchema } from "../error/error-schemas";
 import * as budget_schemas from "./budget-schemas";
 
 export class BudgetHandlers {
@@ -27,7 +28,9 @@ export class BudgetHandlers {
           summary: "Get all budgets",
           tags: ["budgets"],
           response: {
-            [STATUS_CODES.OK]: budget_schemas.foundBudgetsResponseSchema,
+            [STATUS_CODES.OK]: budget_schemas.foundBudgetsResponse,
+            "4xx": errorResponseSchema,
+            "5xx": errorResponseSchema,
           },
         },
         handler: async (request, reply) => {
@@ -54,7 +57,8 @@ export class BudgetHandlers {
           }),
           response: {
             [STATUS_CODES.OK]: budget_schemas.foundBudgetResponseSchema,
-            [STATUS_CODES.NOT_FOUND]: budget_schemas.budgetNotFoundResponseSchema,
+            "4xx": errorResponseSchema,
+            "5xx": errorResponseSchema,
           },
         },
         handler: async (request, reply) => {
@@ -112,7 +116,8 @@ export class BudgetHandlers {
           body: budget_schemas.updateBudgetSchema,
           response: {
             [STATUS_CODES.OK]: budget_schemas.updatedBudgetResponseSchema,
-            [STATUS_CODES.NOT_FOUND]: budget_schemas.budgetNotFoundResponseSchema,
+            "4xx": errorResponseSchema,
+            "5xx": errorResponseSchema,
           },
         },
         handler: async (request, reply) => {
@@ -139,7 +144,8 @@ export class BudgetHandlers {
           }),
           response: {
             [STATUS_CODES.OK]: budget_schemas.deletedBudgetResponseSchema,
-            [STATUS_CODES.NOT_FOUND]: budget_schemas.budgetNotFoundResponseSchema,
+            "4xx": errorResponseSchema,
+            "5xx": errorResponseSchema,
           },
         },
         handler: async (request, reply) => {
@@ -169,7 +175,8 @@ export class BudgetHandlers {
           }),
           response: {
             [STATUS_CODES.OK]: budget_schemas.foundBudgetCategoriesResponseSchema,
-            [STATUS_CODES.NOT_FOUND]: budget_schemas.budgetCategoryNotFoundResponseSchema,
+            "4xx": errorResponseSchema,
+            "5xx": errorResponseSchema,
           },
         },
         handler: async (request, reply) => {
@@ -197,7 +204,8 @@ export class BudgetHandlers {
           }),
           response: {
             [STATUS_CODES.OK]: budget_schemas.foundBudgetCategoryResponseSchema,
-            [STATUS_CODES.NOT_FOUND]: budget_schemas.budgetCategoryNotFoundResponseSchema,
+            "4xx": errorResponseSchema,
+            "5xx": errorResponseSchema,
           },
         },
         handler: async (request, reply) => {
@@ -257,7 +265,8 @@ export class BudgetHandlers {
           body: budget_schemas.updateBudgetCategorySchema,
           response: {
             [STATUS_CODES.OK]: budget_schemas.updatedBudgetCategoryResponseSchema,
-            [STATUS_CODES.NOT_FOUND]: budget_schemas.budgetCategoryNotFoundResponseSchema,
+            "4xx": errorResponseSchema,
+            "5xx": errorResponseSchema,
           },
         },
         handler: async (request, reply) => {
@@ -285,7 +294,8 @@ export class BudgetHandlers {
           }),
           response: {
             [STATUS_CODES.OK]: budget_schemas.deletedBudgetCategoryResponseSchema,
-            [STATUS_CODES.NOT_FOUND]: budget_schemas.budgetCategoryNotFoundResponseSchema,
+            "4xx": errorResponseSchema,
+            "5xx": errorResponseSchema,
           },
         },
         handler: async (request, reply) => {
@@ -313,7 +323,8 @@ export class BudgetHandlers {
           }),
           response: {
             [STATUS_CODES.OK]: budget_schemas.foundBudgetCategoryItemsResponseSchema,
-            [STATUS_CODES.NOT_FOUND]: budget_schemas.budgetCategoryItemNotFoundResponseSchema,
+            "4xx": errorResponseSchema,
+            "5xx": errorResponseSchema,
           },
         },
         handler: async (request, reply) => {
@@ -342,7 +353,8 @@ export class BudgetHandlers {
           }),
           response: {
             [STATUS_CODES.OK]: budget_schemas.foundBudgetCategoryItemResponseSchema,
-            [STATUS_CODES.NOT_FOUND]: budget_schemas.budgetCategoryItemNotFoundResponseSchema,
+            "4xx": errorResponseSchema,
+            "5xx": errorResponseSchema,
           },
         },
         handler: async (request, reply) => {
@@ -405,7 +417,8 @@ export class BudgetHandlers {
           body: budget_schemas.updateBudgetCategoryItemSchema,
           response: {
             [STATUS_CODES.OK]: budget_schemas.updatedBudgetCategoryItemResponseSchema,
-            [STATUS_CODES.NOT_FOUND]: budget_schemas.budgetCategoryItemNotFoundResponseSchema,
+            "4xx": errorResponseSchema,
+            "5xx": errorResponseSchema,
           },
         },
         handler: async (request, reply) => {
@@ -434,7 +447,8 @@ export class BudgetHandlers {
           }),
           response: {
             [STATUS_CODES.OK]: budget_schemas.deletedBudgetCategoryItemResponseSchema,
-            [STATUS_CODES.NOT_FOUND]: budget_schemas.budgetCategoryItemNotFoundResponseSchema,
+            "4xx": errorResponseSchema,
+            "5xx": errorResponseSchema,
           },
         },
         handler: async (request, reply) => {
@@ -462,7 +476,8 @@ export class BudgetHandlers {
           }),
           response: {
             [STATUS_CODES.OK]: budget_schemas.deletedAllBudgetCategoryItemResponseSchema,
-            [STATUS_CODES.NOT_FOUND]: budget_schemas.budgetCategoryItemNotFoundResponseSchema,
+            "4xx": errorResponseSchema,
+            "5xx": errorResponseSchema,
           },
         },
         handler: async (request, reply) => {
@@ -516,7 +531,8 @@ export class BudgetHandlers {
           }),
           response: {
             [STATUS_CODES.OK]: budget_schemas.foundTransactionResponseSchema,
-            [STATUS_CODES.NOT_FOUND]: budget_schemas.transactionNotFoundResponseSchema,
+            "4xx": errorResponseSchema,
+            "5xx": errorResponseSchema,
           },
         },
         handler: async (request, reply) => {
@@ -576,7 +592,8 @@ export class BudgetHandlers {
           body: budget_schemas.updateTransactionSchema, // Omit the budget_id field from the schema as it is not required in the request body (used from the request params)
           response: {
             [STATUS_CODES.OK]: budget_schemas.updatedTransactionResponseSchema,
-            [STATUS_CODES.NOT_FOUND]: budget_schemas.transactionNotFoundResponseSchema,
+            "4xx": errorResponseSchema,
+            "5xx": errorResponseSchema,
           },
         },
         handler: async (request, reply) => {
@@ -604,7 +621,8 @@ export class BudgetHandlers {
           }),
           response: {
             [STATUS_CODES.OK]: budget_schemas.deletedTransactionResponseSchema,
-            [STATUS_CODES.NOT_FOUND]: budget_schemas.transactionNotFoundResponseSchema,
+            "4xx": errorResponseSchema,
+            "5xx": errorResponseSchema,
           },
         },
         handler: async (request, reply) => {
@@ -658,7 +676,8 @@ export class BudgetHandlers {
           }),
           response: {
             [STATUS_CODES.OK]: budget_schemas.foundTransactionTypeResponseSchema,
-            [STATUS_CODES.NOT_FOUND]: budget_schemas.transactionTypeNotFoundResponseSchema,
+            "4xx": errorResponseSchema,
+            "5xx": errorResponseSchema,
           },
         },
         handler: async (request, reply) => {
@@ -718,7 +737,8 @@ export class BudgetHandlers {
           body: budget_schemas.updateTransactionTypeSchema,
           response: {
             [STATUS_CODES.OK]: budget_schemas.updatedTransactionTypeResponseSchema,
-            [STATUS_CODES.NOT_FOUND]: budget_schemas.transactionTypeNotFoundResponseSchema,
+            "4xx": errorResponseSchema,
+            "5xx": errorResponseSchema,
           },
         },
         handler: async (request, reply) => {
@@ -746,7 +766,8 @@ export class BudgetHandlers {
           }),
           response: {
             [STATUS_CODES.OK]: budget_schemas.deletedTransactionTypeResponseSchema,
-            [STATUS_CODES.NOT_FOUND]: budget_schemas.transactionTypeNotFoundResponseSchema,
+            "4xx": errorResponseSchema,
+            "5xx": errorResponseSchema,
           },
         },
         handler: async (request, reply) => {
