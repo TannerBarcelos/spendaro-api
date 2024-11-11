@@ -72,10 +72,11 @@ export class ErrorHandlers {
         case "23505": {
           return reply.code(STATUS_CODES.CONFLICT).send({
             error: getReasonPhrase(STATUS_CODES.CONFLICT),
-            message: error.detail ?? "The requested resource already exists",
+            message: "This record already exists. Please try again.",
             details: {
-              issues: [error.message],
+              issues: [error.detail, error.message],
               method: request.method,
+
               url: request.url,
               stack: includeStack,
             },

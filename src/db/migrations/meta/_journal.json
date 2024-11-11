@@ -71,6 +71,13 @@
       "when": 1730583886466,
       "tag": "0009_next_tiger_shark",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1731360399439,
+      "tag": "0010_rapid_may_parker",
+      "breakpoints": true
     }
   ]
 }
