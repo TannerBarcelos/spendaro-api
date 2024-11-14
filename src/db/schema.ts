@@ -22,6 +22,8 @@ export const budgets = pgTable("budgets", {
   }).notNull(), // when a user is deleted, all their budgets should be deleted as well
   budget_name: text("budget_name").notNull().unique(),
   budget_description: text("budget_description").default(""),
+  budget_color: text("budget_color").default("#6F95DD"), // store the hex color code of the budget - black if no color, will be set to a default color in the frontend
+  budget_icon: text("budget_icon").default(""),
   amount: integer("amount").default(0),
   is_favorite: boolean("is_favorite").default(false),
   is_active: boolean("is_active").default(true),
