@@ -23,7 +23,6 @@ export const budgets = pgTable("budgets", {
   budget_name: text("budget_name").notNull().unique(),
   budget_description: text("budget_description").default(""),
   budget_color: text("budget_color").default("#006eff"), // store the hex color code of the budget - black if no color, will be set to a default color in the frontend
-  budget_icon: text("budget_icon").default("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGNsYXNzPSJsdWNpZGUgbHVjaWRlLWxheW91dC1saXN0Ij48cmVjdCB3aWR0aD0iNyIgaGVpZ2h0PSI3IiB4PSIzIiB5PSIzIiByeD0iMSIvPjxyZWN0IHdpZHRoPSI3IiBoZWlnaHQ9IjciIHg9IjMiIHk9IjE0IiByeD0iMSIvPjxwYXRoIGQ9Ik0xNCA0aDciLz48cGF0aCBkPSJNMTQgOWg3Ii8+PHBhdGggZD0iTTE0IDE1aDciLz48cGF0aCBkPSJNMTQgMjBoNyIvPjwvc3ZnPg=="),
   amount: integer("amount").default(0),
   is_favorite: boolean("is_favorite").default(false),
   is_active: boolean("is_active").default(true),
