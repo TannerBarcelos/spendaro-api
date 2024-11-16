@@ -16,7 +16,6 @@ export const uploadRouter: FileRouter = {
     },
   })
     .middleware(async ({ req }) => {
-      console.log("COOKIES", req.cookies);
       const { authorization } = req.headers;
       const token = authorization?.split(" ")[1];
       if (!token) {
