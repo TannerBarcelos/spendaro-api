@@ -18,7 +18,6 @@ export const commonHttpResponseSchema = z.object({
 
 const allowedOrigins = [
   "http://localhost:5173", // Local development
-  // TODO: Change these to the actual domains once they are known
   "https://your-production-domain.com", // Production
   "https://your-staging-domain.com", // Staging
 ];
@@ -33,7 +32,6 @@ export const corsConfig: FastifyCorsOptions = {
     }
   },
   methods: ALLOWED_METHODS,
-  credentials: true,
 };
 
 export const rateLimiterConfig: RateLimitPluginOptions = {
