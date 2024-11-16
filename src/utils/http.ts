@@ -1,3 +1,4 @@
+import type { FastifyCorsOptions } from "@fastify/cors";
 import type { RateLimitPluginOptions } from "@fastify/rate-limit";
 
 import config from "config";
@@ -15,9 +16,24 @@ export const commonHttpResponseSchema = z.object({
   message: z.string(),
 });
 
-export const corsConfig = {
-  origin: "*",
+const allowedOrigins = [
+  "http://localhost:5173", // Local development
+  // TODO: Change these to the actual domains once they are known
+  "https://your-production-domain.com", // Production
+  "https://your-staging-domain.com", // Staging
+];
+
+export const corsConfig: FastifyCorsOptions = {
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true); // Allow requests with matching origin
+    }
+    else {
+      callback(new Error("Not allowed by CORS"), false);
+    }
+  },
   methods: ALLOWED_METHODS,
+  credentials: true,
 };
 
 export const rateLimiterConfig: RateLimitPluginOptions = {
