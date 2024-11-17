@@ -13,7 +13,6 @@ export const env = createEnv({
     DB_USER: z.string(),
     DB_PASSWORD: z.string(),
     DB_NAME: z.string(),
-    JWT_SECRET: z.string(),
     UPLOADTHING_TOKEN: z.string(),
   },
   runtimeEnv: process.env,

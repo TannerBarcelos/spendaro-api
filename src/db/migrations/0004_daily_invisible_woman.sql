@@ -1,1 +1,0 @@
-ALTER TABLE "transaction_types" ALTER COLUMN "transaction_type" SET NOT NULL;
