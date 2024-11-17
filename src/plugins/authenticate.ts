@@ -1,9 +1,11 @@
+import type { User } from "@clerk/fastify";
 import type {
   FastifyInstance,
   FastifyPluginCallback,
   FastifyRequest,
 } from "fastify";
 
+import { clerkClient, getAuth } from "@clerk/fastify";
 import fp from "fastify-plugin";
 
 import { ForbiddenError } from "@/utils/error";
@@ -11,18 +13,15 @@ import { ForbiddenError } from "@/utils/error";
 const authenticate: FastifyPluginCallback = async (
   server: FastifyInstance,
 ) => {
-  // Decorate the fastify instance with an authenticate method which we can call that uses this plugin to verify the JWT
   server.decorate(
     "authenticate",
     async (request: FastifyRequest) => {
-      try {
-        await request.jwtVerify(); // adds a user object to the request if the JWT is valid, containing the decoded JWT payload (which is just the user ID in our case since that's all we stored in the token when we signed it)
+      const { userId } = getAuth(request);
+      if (!userId) {
+        throw new ForbiddenError("Access denied. Authentication required.");
       }
-      catch (err) {
-        if (err instanceof Error) {
-          throw new ForbiddenError(err.message, [err.message]);
-        }
-      }
+      const user = await clerkClient.users.getUser(userId);
+      request.user = user;
     },
   );
 };

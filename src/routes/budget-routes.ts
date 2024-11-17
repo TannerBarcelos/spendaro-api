@@ -1,5 +1,7 @@
 import type { FastifyInstance } from "fastify";
 
+import { clerkClient, clerkPlugin, getAuth } from "@clerk/fastify";
+
 import { BudgetHandlers } from "@/handlers/budget/budget-handlers";
 import { BudgetRepository } from "@/repositories/budget-repository";
 import { BudgetService } from "@/services/budget-service";

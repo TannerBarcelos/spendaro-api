@@ -1,8 +1,6 @@
 import type { FastifyInstance } from "fastify";
 
-import cookies from "@fastify/cookie";
 import cors from "@fastify/cors";
-import jwt from "@fastify/jwt";
 import mutipart from "@fastify/multipart";
 import limiter from "@fastify/rate-limit";
 import swagger from "@fastify/swagger";
@@ -22,14 +20,6 @@ import { bcryptSaltConfig } from "./utils/jwt";
 
 export async function bootstrapServerPlugins(server: FastifyInstance) {
   try {
-    await server.register(cookies, {
-      secret: env.JWT_SECRET, // for cookies signature
-      hook: "onRequest", // set to false to disable cookie autoparsing or set autoparsing on any of the following hooks: 'onRequest', 'preParsing', 'preHandler', 'preValidation'. default: 'onRequest'
-      parseOptions: {}, // options for parsing cookies
-    });
-    await server.register(jwt, {
-      secret: env.JWT_SECRET,
-    });
     await server.register(swagger, swaggerConfig);
     await server.register(scalar, swaggerScalarConfig);
     await server.register(authenticate);

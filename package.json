@@ -16,9 +16,8 @@
     "db:seed": "src/db/seed.ts"
   },
   "dependencies": {
-    "@fastify/cookie": "^11.0.1",
+    "@clerk/fastify": "^2.0.16",
     "@fastify/cors": "^10.0.1",
-    "@fastify/jwt": "^9.0.1",
     "@fastify/multipart": "^9.0.1",
     "@fastify/rate-limit": "^10.1.1",
     "@fastify/swagger": "^9.1.0",
