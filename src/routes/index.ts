@@ -9,7 +9,7 @@ import { userRoutes } from "./user-routes";
 
 export async function routes(server: FastifyInstance) {
   const commonPrefix = `/api/${config.get("server.api.version")}`;
-
+  // await server.register(webhooks, { prefix: "/webhooks" });
   await server.register(budgetRoutes, { prefix: `${commonPrefix}/budgets` });
   await server.register(userRoutes, { prefix: `${commonPrefix}/user` });
   await server
