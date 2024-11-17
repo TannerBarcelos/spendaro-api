@@ -6,7 +6,14 @@ import type * as user_schemas from "@/handlers/user/user-schemas";
 
 import * as schema from "@/db/schema";
 
-import type { IUserRepository } from ".";
+interface CommonMethods {
+  findUserById: (user_id: string) => Promise<user_schemas.TFoundUserResult | undefined>;
+}
+
+export interface IUserRepository extends CommonMethods {
+  updateUser: (user_id: string, user_to_update: user_schemas.TUserToUpdate) => Promise<user_schemas.TFoundUserResult>;
+  deleteUser: (user_id: string) => Promise<user_schemas.TFoundUserResult>;
+}
 
 export class UserRepository implements IUserRepository {
   constructor(private db: PostgresJsDatabase<typeof schema>) {

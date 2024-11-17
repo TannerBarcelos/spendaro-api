@@ -1,5 +1,5 @@
 import type * as user_schemas from "@/handlers/user/user-schemas";
-import type { IUserRepository } from "@/repositories";
+import type { IUserRepository } from "@/repositories/user-repository";
 
 import { NotFoundError } from "@/utils/error";
 
