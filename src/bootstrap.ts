@@ -1,5 +1,6 @@
 import type { FastifyInstance } from "fastify";
 
+import { clerkPlugin } from "@clerk/fastify";
 import cors from "@fastify/cors";
 import mutipart from "@fastify/multipart";
 import limiter from "@fastify/rate-limit";
@@ -29,6 +30,7 @@ export async function bootstrapServerPlugins(server: FastifyInstance) {
     await server.register(limiter, { redis: server.cache, ...rateLimiterConfig });
     await server.register(fastifyBcrypt, bcryptSaltConfig);
     await server.register(cors, corsConfig);
+    await server.register(clerkPlugin);
 
     setJsonSchemaSerdes(server);
     setErrorHandlers(server);

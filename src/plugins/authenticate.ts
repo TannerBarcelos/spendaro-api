@@ -1,4 +1,3 @@
-import type { User } from "@clerk/fastify";
 import type {
   FastifyInstance,
   FastifyPluginCallback,
@@ -25,5 +24,7 @@ const authenticate: FastifyPluginCallback = async (
     },
   );
 };
+
+// If anything fails in the above method, the global error handler will catch it
 
 export default fp(authenticate);
