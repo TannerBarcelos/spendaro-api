@@ -1,7 +1,6 @@
 import type { FastifyInstance } from "fastify";
 import type { ZodTypeProvider } from "fastify-type-provider-zod";
 
-import { getAuth } from "@clerk/fastify";
 import { z } from "zod";
 
 import type { BudgetService } from "@/services/budget-service";
@@ -35,7 +34,7 @@ export class BudgetHandlers {
           },
         },
         handler: async (request, reply) => {
-          const user = request.user; // Get the user_id from the authenticated user, which is available via the fastify/jwt plugin as the plugin protects the routes and sends the user object to the request object if the user is authenticated
+          const user = request.user;
           const budgets = await this.budgetService.getBudgets(user.id);
           reply
             .code(STATUS_CODES.OK)

@@ -6,7 +6,7 @@ import type * as budget_types from "@/handlers/budget/budget-schemas";
 
 import * as schema from "@/db/schema";
 
-interface IBudgetRepository {
+export interface IBudgetRepository {
   getBudgets: (user_id: string) => Promise<Array<budget_types.TBudgetResult>>;
   getBudgetById: (user_id: string, budget_id: number) => Promise<budget_types.TBudgetResult>;
   createBudget: (budget: budget_types.TBudgetToCreate) => Promise<budget_types.TBudgetResult>;

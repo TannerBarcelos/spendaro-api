@@ -31,7 +31,7 @@ export class UserHandlers {
           },
         },
         handler: async (request, reply) => {
-          const foundUser = await this.userService.findUserById(request.user.user_id);
+          const foundUser = await this.userService.findUserById(request.user.id);
           reply
             .code(STATUS_CODES.OK)
             .send({
@@ -57,7 +57,7 @@ export class UserHandlers {
         },
       },
       handler: async (request, reply) => {
-        const updatedUser = await this.userService.updateUser(request.user.user_id, request.body);
+        const updatedUser = await this.userService.updateUser(request.user.id, request.body);
         reply
           .code(STATUS_CODES.OK)
           .send({
@@ -82,7 +82,7 @@ export class UserHandlers {
         },
       },
       handler: async (request, reply) => {
-        await this.userService.deleteUser(request.user.user_id);
+        await this.userService.deleteUser(request.user.id);
         reply
           .code(STATUS_CODES.OK)
           .send({
