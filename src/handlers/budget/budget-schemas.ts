@@ -4,8 +4,6 @@ import z from "zod";
 import * as schema from "@/db/schema";
 import { commonHttpResponseSchema } from "@/utils/http";
 
-import { errorResponseSchema } from "../error/error-schemas";
-
 const commonFields = {
   id: true as const,
   createdAt: true as const,
