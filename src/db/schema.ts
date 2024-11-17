@@ -17,7 +17,7 @@ export const users = pgTable("users", {
 // This table is used to store the budgets that belong to a user
 export const budgets = pgTable("budgets", {
   id: serial("id").primaryKey(),
-  user_id: integer("user_id").references(() => users.id, {
+  user_id: text("user_id").references(() => users.id, {
     onDelete: "cascade",
   }).notNull(), // when a user is deleted, all their budgets should be deleted as well
   budget_name: text("budget_name").notNull().unique(),

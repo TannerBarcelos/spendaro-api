@@ -2,7 +2,7 @@ import type * as budget_schemas from "@/handlers/budget/budget-schemas";
 import type * as user_schemas from "@/handlers/user/user-schemas";
 
 interface CommonMethods {
-  findUserById: (user_id: number) => Promise<user_schemas.TFoundUserResult | undefined>;
+  findUserById: (user_id: string) => Promise<user_schemas.TFoundUserResult | undefined>;
 }
 
 export interface IAuthRepository extends CommonMethods {
@@ -11,16 +11,16 @@ export interface IAuthRepository extends CommonMethods {
 }
 
 export interface IUserRepository extends CommonMethods {
-  updateUser: (user_id: number, user_to_update: user_schemas.TUserToUpdate) => Promise<user_schemas.TFoundUserResult>;
-  deleteUser: (user_id: number) => Promise<user_schemas.TFoundUserResult>;
+  updateUser: (user_id: string, user_to_update: user_schemas.TUserToUpdate) => Promise<user_schemas.TFoundUserResult>;
+  deleteUser: (user_id: string) => Promise<user_schemas.TFoundUserResult>;
 }
 
 export interface IBudgetRepository {
-  getBudgets: (user_id: number) => Promise<Array<budget_schemas.TBudgetResult>>;
-  getBudgetById: (user_id: number, budget_id: number) => Promise<budget_schemas.TBudgetResult>;
+  getBudgets: (user_id: string) => Promise<Array<budget_schemas.TBudgetResult>>;
+  getBudgetById: (user_id: string, budget_id: number) => Promise<budget_schemas.TBudgetResult>;
   createBudget: (budget: budget_schemas.TBudgetToCreate) => Promise<budget_schemas.TBudgetResult>;
-  updateBudget: (user_id: number, budget_id: number, budget_to_update: budget_schemas.TBudgetToUpdate) => Promise<budget_schemas.TBudgetResult>;
-  deleteBudget: (user_id: number, budget_id: number) => Promise<budget_schemas.TBudgetResult>;
+  updateBudget: (user_id: string, budget_id: number, budget_to_update: budget_schemas.TBudgetToUpdate) => Promise<budget_schemas.TBudgetResult>;
+  deleteBudget: (user_id: string, budget_id: number) => Promise<budget_schemas.TBudgetResult>;
   getBudgetCategories: (budget_id: number) => Promise<Array<budget_schemas.TBudgetCategoryResult>>;
   getBudgetCategoryById: (budget_category_id: number, category_id: number) => Promise<budget_schemas.TBudgetCategoryResult>;
   createBudgetCategory: (category: budget_schemas.TBudgetCategoryToCreate) => Promise<budget_schemas.TBudgetCategoryResult>;

@@ -16,11 +16,9 @@ const authenticate: FastifyPluginCallback = async (
     "authenticate",
     async (request: FastifyRequest) => {
       const { userId } = getAuth(request);
-      if (!userId) {
+      if (!userId)
         throw new ForbiddenError("Access denied. Authentication required.");
-      }
-      const user = await clerkClient.users.getUser(userId);
-      request.user = user;
+      request.user = await clerkClient.users.getUser(userId);
     },
   );
 };

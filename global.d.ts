@@ -9,6 +9,9 @@ import * as schema from "./src/db/schema.ts";
 
 // declaration merging - add properties to existing types for Fastify
 declare module "fastify" {
+  interface FastifyRequest {
+    user: User;
+  }
   interface FastifyInstance {
     db: PostgresJsDatabase<typeof schema>;
     authenticate: (
@@ -16,8 +19,5 @@ declare module "fastify" {
       reply: FastifyReply
     ) => Promise<void>;
     cache: Redis;
-  }
-  interface FastifyRequest {
-    user: User;
   }
 }

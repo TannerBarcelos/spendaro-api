@@ -13,7 +13,7 @@ export class BudgetRepository implements IBudgetRepository {
     this.db = db;
   }
 
-  async getBudgets(user_id: number) {
+  async getBudgets(user_id: string) {
     return await this.db
       .select()
       .from(schema.budgets)
@@ -21,7 +21,7 @@ export class BudgetRepository implements IBudgetRepository {
   }
 
   async getBudgetById(
-    user_id: number,
+    user_id: string,
     budget_id: number,
   ) {
     const [budget]: Array<budget_types.TBudgetResult> = await this.db
@@ -44,7 +44,7 @@ export class BudgetRepository implements IBudgetRepository {
     return newBudget;
   }
 
-  async updateBudget(user_id: number, budget_id: number, budget_to_update: budget_types.TBudgetToUpdate) {
+  async updateBudget(user_id: string, budget_id: number, budget_to_update: budget_types.TBudgetToUpdate) {
     const [updatedBudget]: Array<budget_types.TBudgetResult> = await this.db
       .update(schema.budgets)
       .set(budget_to_update)
@@ -59,7 +59,7 @@ export class BudgetRepository implements IBudgetRepository {
   }
 
   async deleteBudget(
-    user_id: number,
+    user_id: string,
     budget_id: number,
   ) {
     const [deletedBudget]: Array<budget_types.TBudgetResult> = await this.db
