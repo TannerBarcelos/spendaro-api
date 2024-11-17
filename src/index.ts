@@ -1,7 +1,8 @@
-/* eslint-disable no-console */
 import type { FastifyRequest } from "fastify";
 
 import config from "config";
+/* eslint-disable no-console */
+import "dotenv/config";
 import fastify from "fastify";
 import { getReasonPhrase, StatusCodes } from "http-status-codes";
 
