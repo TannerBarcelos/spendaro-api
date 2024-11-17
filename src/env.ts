@@ -2,7 +2,6 @@ import { createEnv } from "@t3-oss/env-core";
 import dotenv from "dotenv";
 import { z } from "zod";
 
-// load .env file into process.env - leverage t3-env to validate the env vars and make them available
 dotenv.config();
 
 export const env = createEnv({
@@ -14,6 +13,8 @@ export const env = createEnv({
     DB_PASSWORD: z.string(),
     DB_NAME: z.string(),
     UPLOADTHING_TOKEN: z.string(),
+    CLERK_PUBLISHABLE_KEY: z.string(),
+    CLERK_SECRET_KEY: z.string(),
   },
   runtimeEnv: process.env,
 });

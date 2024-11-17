@@ -11,13 +11,13 @@ import { serializerCompiler, validatorCompiler } from "fastify-type-provider-zod
 import { swaggerConfig, swaggerScalarConfig } from "@/open-api";
 import { corsConfig, rateLimiterConfig } from "@/utils/http";
 
+import { env } from "./env";
 import { ErrorHandlers } from "./handlers/error/error-handlers";
 import database from "./plugins/db";
 import cache from "./plugins/redis-cache";
 
 export async function bootstrapServerPlugins(server: FastifyInstance) {
   try {
-    await server.register(clerkPlugin);
     await server.register(swagger, swaggerConfig);
     await server.register(scalar, swaggerScalarConfig);
     await server.register(mutipart);
@@ -25,6 +25,10 @@ export async function bootstrapServerPlugins(server: FastifyInstance) {
     await server.register(database);
     await server.register(limiter, { redis: server.cache, ...rateLimiterConfig });
     await server.register(cors, corsConfig);
+    await server.register(clerkPlugin, {
+      publishableKey: env.CLERK_PUBLISHABLE_KEY,
+      secretKey: env.CLERK_SECRET_KEY,
+    });
 
     setJsonSchemaSerdes(server);
     setErrorHandlers(server);
