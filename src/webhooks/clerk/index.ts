@@ -21,12 +21,12 @@ export async function clerkWebhooks(fastify: FastifyInstance) {
       },
       handler: async (request, reply) => {
         request.log.info("User created webhook received. Creating new user with basic info");
-        const { id, first_name, last_name, profile_image_url } = request.body.data;
+        const { id, first_name, last_name, image_url } = request.body.data;
         const newUser: TUserToCreate = {
           user_id: id,
           firstName: first_name,
           lastName: last_name,
-          profileImage: profile_image_url,
+          profileImage: image_url,
         };
         await fastify.db.insert(users).values(newUser).execute();
         request.log.info(`User created webhook processed successfully. User with id ${newUser.user_id} created`);

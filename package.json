@@ -37,6 +37,7 @@
     "http-status-codes": "^2.3.0",
     "ioredis": "^5.4.1",
     "postgres": "^3.4.4",
+    "ts-to-zod": "^3.13.0",
     "tsconfig-paths": "^4.2.0",
     "uploadthing": "^7.2.0",
     "zod": "^3.23.8"
