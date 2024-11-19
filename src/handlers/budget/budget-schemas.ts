@@ -10,6 +10,10 @@ const commonFields = {
   updatedAt: true as const,
 };
 
+// User schemas
+export const createUserSchema = createInsertSchema(schema.users).omit(commonFields);
+export type TUserToCreate = z.infer<typeof createUserSchema>;
+
 // Budget schemas
 export const createBudgetSchema = createInsertSchema(schema.budgets).omit(commonFields);
 export type TBudgetToCreate = z.infer<typeof createBudgetSchema>;
