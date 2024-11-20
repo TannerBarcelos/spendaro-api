@@ -15,6 +15,13 @@
       "when": 1732139866626,
       "tag": "0001_tense_thunderbird",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1732139975594,
+      "tag": "0002_uneven_random",
+      "breakpoints": true
     }
   ]
 }
