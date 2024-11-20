@@ -52,13 +52,7 @@ CREATE TABLE IF NOT EXISTS "transactions" (
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "users" (
-	"id" serial PRIMARY KEY NOT NULL,
 	"user_id" text NOT NULL,
-	"first_name" text NOT NULL,
-	"last_name" text NOT NULL,
-	"profile_image_url" text DEFAULT '',
-	"created_at" timestamp,
-	"updated_at" timestamp,
 	CONSTRAINT "users_user_id_unique" UNIQUE("user_id")
 );
 --> statement-breakpoint

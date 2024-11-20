@@ -5,22 +5,8 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1731803654009,
-      "tag": "0000_grey_daredevil",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1732139866626,
-      "tag": "0001_tense_thunderbird",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1732139975594,
-      "tag": "0002_uneven_random",
+      "when": 1732140115429,
+      "tag": "0000_adorable_captain_stacy",
       "breakpoints": true
     }
   ]
