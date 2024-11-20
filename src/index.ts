@@ -1,13 +1,14 @@
-/* eslint-disable no-console */
 import type { FastifyRequest } from "fastify";
 
 import config from "config";
+/* eslint-disable no-console */
+import "dotenv/config";
 import fastify from "fastify";
 import { getReasonPhrase, StatusCodes } from "http-status-codes";
 
-import { routes } from "@/routes/index";
-
 import { bootstrapServerPlugins } from "./bootstrap";
+import { routes } from "./routes";
+import { webhooks } from "./webhooks";
 
 const server = fastify({
   logger: {
@@ -23,7 +24,9 @@ const server = fastify({
     return { status: getReasonPhrase(StatusCodes.OK) };
   });
 
+  server.register(webhooks);
   server.register(routes);
+
   await server.ready();
 
   try {

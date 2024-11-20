@@ -1,7 +1,5 @@
-import pg from "postgres";
-
 import type { TBudgetCategoryItemToCreate, TBudgetCategoryItemToUpdate, TBudgetCategoryToCreate, TBudgetCategoryToUpdate, TBudgetToCreate, TBudgetToUpdate, TTransactionToCreate, TTransactionToUpdate, TTransactionTypeToCreate, TTransactionTypeToUpdate } from "@/handlers/budget/budget-schemas";
-import type { IBudgetRepository } from "@/repositories";
+import type { IBudgetRepository } from "@/repositories/budget-repository";
 
 import { NotFoundError } from "@/utils/error";
 
@@ -12,12 +10,12 @@ export class BudgetService {
     this.budget_repo = budget_repo;
   }
 
-  async getBudgets(user_id: number) {
+  async getBudgets(user_id: string) {
     const budgets = await this.budget_repo.getBudgets(user_id);
     return budgets;
   }
 
-  async getBudgetById(user_id: number, budget_id: number) {
+  async getBudgetById(user_id: string, budget_id: number) {
     const budget = await this.budget_repo.getBudgetById(user_id, budget_id);
     if (!budget) {
       throw new NotFoundError("Budget not found", [`budget with id ${budget_id} could not be found`]);
@@ -29,7 +27,7 @@ export class BudgetService {
     return await this.budget_repo.createBudget(budget);
   }
 
-  async updateBudget(user_id: number, budget_id: number, budget_to_update: TBudgetToUpdate) {
+  async updateBudget(user_id: string, budget_id: number, budget_to_update: TBudgetToUpdate) {
     const budget = await this.getBudgetById(user_id, budget_id);
 
     if (!budget) {
@@ -40,7 +38,7 @@ export class BudgetService {
     return updatedBudget;
   }
 
-  async deleteBudget(user_id: number, budget_id: number) {
+  async deleteBudget(user_id: string, budget_id: number) {
     const budget = await this.getBudgetById(user_id, budget_id);
 
     if (!budget) {
@@ -50,7 +48,7 @@ export class BudgetService {
     return deletedBudget;
   }
 
-  async getBudgetCategories(user_id: number, budget_id: number) {
+  async getBudgetCategories(user_id: string, budget_id: number) {
     const budget = await this.getBudgetById(user_id, budget_id);
     if (!budget) {
       throw new NotFoundError("Budget not found", [`budget with id ${budget_id} could not be found`]);
@@ -59,7 +57,7 @@ export class BudgetService {
     return categories;
   }
 
-  async getBudgetCategoryById(user_id: number, budget_id: number, category_id: number) {
+  async getBudgetCategoryById(user_id: string, budget_id: number, category_id: number) {
     const budget = await this.getBudgetById(user_id, budget_id);
 
     if (!budget) {
@@ -75,7 +73,7 @@ export class BudgetService {
     return budgetCategory;
   }
 
-  async createBudgetCategory(user_id: number, category: TBudgetCategoryToCreate) {
+  async createBudgetCategory(user_id: string, category: TBudgetCategoryToCreate) {
     const budget = await this.getBudgetById(user_id, category.budget_id);
     if (!budget) {
       throw new NotFoundError("Budget category not found", [`budget with id ${category.budget_id} could not be found`]);
@@ -84,7 +82,7 @@ export class BudgetService {
     return createdCategory;
   }
 
-  async updateBudgetCategory(user_id: number, budget_id: number, category_id: number, category: TBudgetCategoryToUpdate) {
+  async updateBudgetCategory(user_id: string, budget_id: number, category_id: number, category: TBudgetCategoryToUpdate) {
     const budget = await this.getBudgetById(user_id, budget_id);
     if (!budget) {
       throw new NotFoundError("Budget not found", [`budget with id ${budget_id} could not be found`]);
@@ -97,7 +95,7 @@ export class BudgetService {
     return updatedCategory;
   }
 
-  async deleteBudgetCategory(user_id: number, budget_id: number, category_id: number) {
+  async deleteBudgetCategory(user_id: string, budget_id: number, category_id: number) {
     const budget = await this.getBudgetById(user_id, budget_id);
     if (!budget) {
       throw new NotFoundError("Budget not found", [`budget with id ${budget_id} could not be found`]);
@@ -110,7 +108,7 @@ export class BudgetService {
     return deletedCategory;
   }
 
-  async getBudgetCategoryItems(user_id: number, budget_id: number, category_id: number) {
+  async getBudgetCategoryItems(user_id: string, budget_id: number, category_id: number) {
     const budget = await this.getBudgetById(user_id, budget_id);
     if (!budget) {
       throw new NotFoundError("Budget not found", [`budget with id ${budget_id} could not be found`]);
@@ -123,7 +121,7 @@ export class BudgetService {
     return items;
   }
 
-  async getBudgetCategoryItemById(user_id: number, budget_id: number, category_id: number, item_id: number) {
+  async getBudgetCategoryItemById(user_id: string, budget_id: number, category_id: number, item_id: number) {
     const budget = await this.getBudgetById(user_id, budget_id);
     if (!budget) {
       throw new NotFoundError("Budget not found", [`budget with id ${budget_id} could not be found`]);
@@ -139,7 +137,7 @@ export class BudgetService {
     return item;
   }
 
-  async createBudgetCategoryItem(user_id: number, budget_id: number, category_id: number, item: TBudgetCategoryItemToCreate) {
+  async createBudgetCategoryItem(user_id: string, budget_id: number, category_id: number, item: TBudgetCategoryItemToCreate) {
     const budget = await this.getBudgetById(user_id, budget_id);
     if (!budget) {
       throw new NotFoundError("Budget not found", [`budget with id ${budget_id} could not be found`]);
@@ -152,7 +150,7 @@ export class BudgetService {
     return createdItem;
   }
 
-  async updateBudgetCategoryItem(user_id: number, budget_id: number, category_id: number, item_id: number, item: TBudgetCategoryItemToUpdate) {
+  async updateBudgetCategoryItem(user_id: string, budget_id: number, category_id: number, item_id: number, item: TBudgetCategoryItemToUpdate) {
     const budget = await this.getBudgetById(user_id, budget_id);
     if (!budget) {
       throw new NotFoundError("Budget not found", [`budget with id ${budget_id} could not be found`]);
@@ -169,7 +167,7 @@ export class BudgetService {
     return updatedItem;
   }
 
-  async deleteBudgetCategoryItem(user_id: number, budget_id: number, category_id: number, item_id: number) {
+  async deleteBudgetCategoryItem(user_id: string, budget_id: number, category_id: number, item_id: number) {
     const budget = await this.getBudgetById(user_id, budget_id);
     if (!budget) {
       throw new NotFoundError("Budget not found", [`budget with id ${budget_id} could not be found`]);
@@ -186,7 +184,7 @@ export class BudgetService {
     return deletedItem;
   }
 
-  async deleteAllBudgetCategoryItems(user_id: number, budget_id: number, category_id: number) {
+  async deleteAllBudgetCategoryItems(user_id: string, budget_id: number, category_id: number) {
     const budget = await this.getBudgetById(user_id, budget_id);
     if (!budget) {
       throw new NotFoundError("Budget not found", [`budget with id ${budget_id} could not be found`]);
@@ -199,7 +197,7 @@ export class BudgetService {
     return deletedItems;
   }
 
-  async getTransactions(user_id: number, budget_id: number) {
+  async getTransactions(user_id: string, budget_id: number) {
     const budget = await this.getBudgetById(user_id, budget_id);
     if (!budget) {
       throw new NotFoundError("Budget not found", [`budget with id ${budget_id} could not be found`]);
@@ -208,7 +206,7 @@ export class BudgetService {
     return transactions;
   }
 
-  async getTransactionById(user_id: number, budget_id: number, transaction_id: number) {
+  async getTransactionById(user_id: string, budget_id: number, transaction_id: number) {
     const budget = await this.getBudgetById(user_id, budget_id);
     if (!budget) {
       throw new NotFoundError("Budget not found", [`budget with id ${budget_id} could not be found`]);
@@ -220,7 +218,7 @@ export class BudgetService {
     return transaction;
   }
 
-  async createTransaction(user_id: number, transaction: TTransactionToCreate) {
+  async createTransaction(user_id: string, transaction: TTransactionToCreate) {
     const budget = await this.getBudgetById(user_id, transaction.budget_id);
     if (!budget) {
       throw new NotFoundError("Budget not found", [`budget with id ${transaction.budget_id} could not be found`]);
@@ -229,7 +227,7 @@ export class BudgetService {
     return createdTransaction;
   }
 
-  async updateTransaction(user_id: number, budget_id: number, transaction_id: number, transaction: TTransactionToUpdate) {
+  async updateTransaction(user_id: string, budget_id: number, transaction_id: number, transaction: TTransactionToUpdate) {
     const budget = await this.getBudgetById(user_id, budget_id);
     if (!budget) {
       throw new NotFoundError("Budget not found", [`budget with id ${budget_id} could not be found`]);
@@ -242,7 +240,7 @@ export class BudgetService {
     return updatedTransaction;
   }
 
-  async deleteTransaction(user_id: number, budget_id: number, transaction_id: number) {
+  async deleteTransaction(user_id: string, budget_id: number, transaction_id: number) {
     const budget = await this.getBudgetById(user_id, budget_id);
     if (!budget) {
       throw new NotFoundError("Budget not found", [`budget with id ${budget_id} could not be found`]);
@@ -255,7 +253,7 @@ export class BudgetService {
     return deletedTransaction;
   }
 
-  async getTransactionTypes(user_id: number, budget_id: number) {
+  async getTransactionTypes(user_id: string, budget_id: number) {
     const budget = await this.getBudgetById(user_id, budget_id);
     if (!budget) {
       throw new NotFoundError("Budget not found", [`budget with id ${budget_id} could not be found`]);
@@ -264,7 +262,7 @@ export class BudgetService {
     return transaction_types;
   }
 
-  async getTransactionTypeById(user_id: number, budget_id: number, transaction_type_id: number) {
+  async getTransactionTypeById(user_id: string, budget_id: number, transaction_type_id: number) {
     const budget = await this.getBudgetById(user_id, budget_id);
     if (!budget) {
       throw new NotFoundError("Budget not found", [`budget with id ${budget_id} could not be found`]);
@@ -276,7 +274,7 @@ export class BudgetService {
     return transaction_type;
   }
 
-  async createTransactionType(user_id: number, transaction_type: TTransactionTypeToCreate) {
+  async createTransactionType(user_id: string, transaction_type: TTransactionTypeToCreate) {
     const budget = await this.getBudgetById(user_id, transaction_type.budget_id);
     if (!budget) {
       throw new NotFoundError("Budget not found", [`budget with id ${transaction_type.budget_id} could not be found`]);
@@ -285,7 +283,7 @@ export class BudgetService {
     return createdTransactionType;
   }
 
-  async updateTransactionType(user_id: number, budget_id: number, transaction_type_id: number, transaction_type: TTransactionTypeToUpdate) {
+  async updateTransactionType(user_id: string, budget_id: number, transaction_type_id: number, transaction_type: TTransactionTypeToUpdate) {
     const budget = await this.getBudgetById(user_id, budget_id);
     if (!budget) {
       throw new NotFoundError("Budget not found", [`budget with id ${budget_id} could not be found`]);
@@ -298,7 +296,7 @@ export class BudgetService {
     return updatedTransactionType;
   }
 
-  async deleteTransactionType(user_id: number, budget_id: number, transaction_id: number) {
+  async deleteTransactionType(user_id: string, budget_id: number, transaction_id: number) {
     const budget = await this.getBudgetById(user_id, budget_id);
     if (!budget) {
       throw new NotFoundError("Budget not found", [`budget with id ${budget_id} could not be found`]);

@@ -1,1 +1,0 @@
-ALTER TABLE "budgets" ADD COLUMN "is_favorited" boolean DEFAULT false;

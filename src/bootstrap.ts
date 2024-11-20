@@ -1,44 +1,34 @@
 import type { FastifyInstance } from "fastify";
 
-import cookies from "@fastify/cookie";
+import { clerkPlugin } from "@clerk/fastify";
 import cors from "@fastify/cors";
-import jwt from "@fastify/jwt";
 import mutipart from "@fastify/multipart";
 import limiter from "@fastify/rate-limit";
 import swagger from "@fastify/swagger";
 import scalar from "@scalar/fastify-api-reference";
-import { fastifyBcrypt } from "fastify-bcrypt";
 import { serializerCompiler, validatorCompiler } from "fastify-type-provider-zod";
 
-import { env } from "@/env";
 import { swaggerConfig, swaggerScalarConfig } from "@/open-api";
-import authenticate from "@/plugins/authenticate";
 import { corsConfig, rateLimiterConfig } from "@/utils/http";
 
+import { env } from "./env";
 import { ErrorHandlers } from "./handlers/error/error-handlers";
 import database from "./plugins/db";
 import cache from "./plugins/redis-cache";
-import { bcryptSaltConfig } from "./utils/jwt";
 
 export async function bootstrapServerPlugins(server: FastifyInstance) {
   try {
-    await server.register(cookies, {
-      secret: env.JWT_SECRET, // for cookies signature
-      hook: "onRequest", // set to false to disable cookie autoparsing or set autoparsing on any of the following hooks: 'onRequest', 'preParsing', 'preHandler', 'preValidation'. default: 'onRequest'
-      parseOptions: {}, // options for parsing cookies
-    });
-    await server.register(jwt, {
-      secret: env.JWT_SECRET,
-    });
     await server.register(swagger, swaggerConfig);
     await server.register(scalar, swaggerScalarConfig);
-    await server.register(authenticate);
     await server.register(mutipart);
     await server.register(cache);
     await server.register(database);
     await server.register(limiter, { redis: server.cache, ...rateLimiterConfig });
-    await server.register(fastifyBcrypt, bcryptSaltConfig);
     await server.register(cors, corsConfig);
+    await server.register(clerkPlugin, {
+      publishableKey: env.CLERK_PUBLISHABLE_KEY,
+      secretKey: env.CLERK_SECRET_KEY,
+    });
 
     setJsonSchemaSerdes(server);
     setErrorHandlers(server);

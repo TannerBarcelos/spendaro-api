@@ -4,13 +4,15 @@ import z from "zod";
 import * as schema from "@/db/schema";
 import { commonHttpResponseSchema } from "@/utils/http";
 
-import { errorResponseSchema } from "../error/error-schemas";
-
 const commonFields = {
   id: true as const,
   createdAt: true as const,
   updatedAt: true as const,
 };
+
+// User schemas
+export const createUserSchema = createInsertSchema(schema.users).omit(commonFields);
+export type TUserToCreate = z.infer<typeof createUserSchema>;
 
 // Budget schemas
 export const createBudgetSchema = createInsertSchema(schema.budgets).omit(commonFields);

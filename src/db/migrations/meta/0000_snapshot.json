@@ -1,5 +1,5 @@
 {
-  "id": "d197c11a-434b-4e95-bb5b-8be78209ad1b",
+  "id": "470ef74d-8d0a-41ba-8ab8-3693645aff47",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -14,17 +14,11 @@
           "primaryKey": true,
           "notNull": true
         },
-        "user_id": {
-          "name": "user_id",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true
-        },
         "budget_id": {
           "name": "budget_id",
           "type": "integer",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "category_name": {
           "name": "category_name",
@@ -54,19 +48,6 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "budget_categories_user_id_users_id_fk": {
-          "name": "budget_categories_user_id_users_id_fk",
-          "tableFrom": "budget_categories",
-          "tableTo": "users",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        },
         "budget_categories_budget_id_budgets_id_fk": {
           "name": "budget_categories_budget_id_budgets_id_fk",
           "tableFrom": "budget_categories",
@@ -94,17 +75,11 @@
           "primaryKey": true,
           "notNull": true
         },
-        "user_id": {
-          "name": "user_id",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true
-        },
         "category_id": {
           "name": "category_id",
           "type": "integer",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "budget_id": {
           "name": "budget_id",
@@ -147,19 +122,6 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "budget_category_items_user_id_users_id_fk": {
-          "name": "budget_category_items_user_id_users_id_fk",
-          "tableFrom": "budget_category_items",
-          "tableTo": "users",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        },
         "budget_category_items_category_id_budget_categories_id_fk": {
           "name": "budget_category_items_category_id_budget_categories_id_fk",
           "tableFrom": "budget_category_items",
@@ -202,7 +164,7 @@
         },
         "user_id": {
           "name": "user_id",
-          "type": "integer",
+          "type": "text",
           "primaryKey": false,
           "notNull": true
         },
@@ -219,12 +181,33 @@
           "notNull": false,
           "default": "''"
         },
+        "budget_color": {
+          "name": "budget_color",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'#006eff'"
+        },
         "amount": {
           "name": "amount",
           "type": "integer",
           "primaryKey": false,
           "notNull": false,
           "default": 0
+        },
+        "is_favorite": {
+          "name": "is_favorite",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
+        },
+        "is_active": {
+          "name": "is_active",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": true
         },
         "created_at": {
           "name": "created_at",
@@ -241,22 +224,30 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "budgets_user_id_users_id_fk": {
-          "name": "budgets_user_id_users_id_fk",
+        "budgets_user_id_users_user_id_fk": {
+          "name": "budgets_user_id_users_user_id_fk",
           "tableFrom": "budgets",
           "tableTo": "users",
           "columnsFrom": [
             "user_id"
           ],
           "columnsTo": [
-            "id"
+            "user_id"
           ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {
+        "budgets_budget_name_unique": {
+          "name": "budgets_budget_name_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "budget_name"
+          ]
+        }
+      }
     },
     "public.transaction_types": {
       "name": "transaction_types",
@@ -268,8 +259,8 @@
           "primaryKey": true,
           "notNull": true
         },
-        "user_id": {
-          "name": "user_id",
+        "budget_id": {
+          "name": "budget_id",
           "type": "integer",
           "primaryKey": false,
           "notNull": true
@@ -278,7 +269,7 @@
           "name": "transaction_type",
           "type": "text",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "created_at": {
           "name": "created_at",
@@ -295,12 +286,12 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "transaction_types_user_id_users_id_fk": {
-          "name": "transaction_types_user_id_users_id_fk",
+        "transaction_types_budget_id_budgets_id_fk": {
+          "name": "transaction_types_budget_id_budgets_id_fk",
           "tableFrom": "transaction_types",
-          "tableTo": "users",
+          "tableTo": "budgets",
           "columnsFrom": [
-            "user_id"
+            "budget_id"
           ],
           "columnsTo": [
             "id"
@@ -322,17 +313,11 @@
           "primaryKey": true,
           "notNull": true
         },
-        "user_id": {
-          "name": "user_id",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true
-        },
         "budget_id": {
           "name": "budget_id",
           "type": "integer",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "transaction_amount": {
           "name": "transaction_amount",
@@ -374,19 +359,6 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "transactions_user_id_users_id_fk": {
-          "name": "transactions_user_id_users_id_fk",
-          "tableFrom": "transactions",
-          "tableTo": "users",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        },
         "transactions_budget_id_budgets_id_fk": {
           "name": "transactions_budget_id_budgets_id_fk",
           "tableFrom": "transactions",
@@ -427,6 +399,12 @@
           "primaryKey": true,
           "notNull": true
         },
+        "user_id": {
+          "name": "user_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
         "first_name": {
           "name": "first_name",
           "type": "text",
@@ -439,17 +417,12 @@
           "primaryKey": false,
           "notNull": true
         },
-        "email": {
-          "name": "email",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "password_hash": {
-          "name": "password_hash",
+        "profile_image_url": {
+          "name": "profile_image_url",
           "type": "text",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false,
+          "default": "''"
         },
         "created_at": {
           "name": "created_at",
@@ -468,11 +441,11 @@
       "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
-        "users_email_unique": {
-          "name": "users_email_unique",
+        "users_user_id_unique": {
+          "name": "users_user_id_unique",
           "nullsNotDistinct": false,
           "columns": [
-            "email"
+            "user_id"
           ]
         }
       }

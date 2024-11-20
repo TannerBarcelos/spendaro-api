@@ -34,8 +34,8 @@ export class BudgetHandlers {
           },
         },
         handler: async (request, reply) => {
-          const userId = request.user.user_id; // Get the user_id from the authenticated user, which is available via the fastify/jwt plugin as the plugin protects the routes and sends the user object to the request object if the user is authenticated
-          const budgets = await this.budgetService.getBudgets(userId);
+          const user = request.user;
+          const budgets = await this.budgetService.getBudgets(user.id);
           reply
             .code(STATUS_CODES.OK)
             .send({
@@ -63,7 +63,7 @@ export class BudgetHandlers {
         },
         handler: async (request, reply) => {
           const { budget_id } = request.params;
-          const budget = await this.budgetService.getBudgetById(request.user.user_id, Number.parseInt(budget_id));
+          const budget = await this.budgetService.getBudgetById(request.user.id, Number.parseInt(budget_id));
           if (!budget) {
             throw new NotFoundError("Budget not found", [`budget with id ${budget_id} could not be found`]);
           }
@@ -91,7 +91,7 @@ export class BudgetHandlers {
         handler: async (request, reply) => {
           const budget: TBudgetToCreate = {
             ...request.body,
-            user_id: request.user.user_id,
+            user_id: request.user.id,
           };
           const createdBudget = await this.budgetService.createBudget(budget);
           reply
@@ -122,7 +122,7 @@ export class BudgetHandlers {
         },
         handler: async (request, reply) => {
           const { budget_id } = request.params;
-          const updatedBudget = await this.budgetService.updateBudget(request.user.user_id, Number.parseInt(budget_id), request.body);
+          const updatedBudget = await this.budgetService.updateBudget(request.user.id, Number.parseInt(budget_id), request.body);
           reply
             .code(STATUS_CODES.OK)
             .send({
@@ -150,7 +150,7 @@ export class BudgetHandlers {
         },
         handler: async (request, reply) => {
           const { budget_id } = request.params;
-          const deletedBudget = await this.budgetService.deleteBudget(request.user.user_id, Number.parseInt(budget_id));
+          const deletedBudget = await this.budgetService.deleteBudget(request.user.id, Number.parseInt(budget_id));
           if (!deletedBudget) {
             throw new NotFoundError("Budget not found", [`budget with id ${budget_id} could not be found`]);
           }
@@ -181,7 +181,7 @@ export class BudgetHandlers {
         },
         handler: async (request, reply) => {
           const { budget_id } = request.params;
-          const categories = await this.budgetService.getBudgetCategories(request.user.user_id, Number.parseInt(budget_id));
+          const categories = await this.budgetService.getBudgetCategories(request.user.id, Number.parseInt(budget_id));
           reply
             .code(STATUS_CODES.OK)
             .send({
@@ -210,7 +210,7 @@ export class BudgetHandlers {
         },
         handler: async (request, reply) => {
           const { budget_id, category_id } = request.params;
-          const category = await this.budgetService.getBudgetCategoryById(request.user.user_id, Number.parseInt(budget_id), Number.parseInt(category_id));
+          const category = await this.budgetService.getBudgetCategoryById(request.user.id, Number.parseInt(budget_id), Number.parseInt(category_id));
           reply
             .code(STATUS_CODES.OK)
             .send({
@@ -241,7 +241,7 @@ export class BudgetHandlers {
             ...request.body,
             budget_id: Number.parseInt(budget_id),
           };
-          const createdCategory = await this.budgetService.createBudgetCategory(request.user.user_id, category);
+          const createdCategory = await this.budgetService.createBudgetCategory(request.user.id, category);
           reply
             .code(STATUS_CODES.CREATED)
             .send({
@@ -271,7 +271,7 @@ export class BudgetHandlers {
         },
         handler: async (request, reply) => {
           const { budget_id, category_id } = request.params;
-          const updatedCategory = await this.budgetService.updateBudgetCategory(request.user.user_id, Number.parseInt(budget_id), Number.parseInt(category_id), request.body);
+          const updatedCategory = await this.budgetService.updateBudgetCategory(request.user.id, Number.parseInt(budget_id), Number.parseInt(category_id), request.body);
           reply
             .code(STATUS_CODES.OK)
             .send({
@@ -300,7 +300,7 @@ export class BudgetHandlers {
         },
         handler: async (request, reply) => {
           const { budget_id, category_id } = request.params;
-          const deletedCategory = await this.budgetService.deleteBudgetCategory(request.user.user_id, Number.parseInt(budget_id), Number.parseInt(category_id));
+          const deletedCategory = await this.budgetService.deleteBudgetCategory(request.user.id, Number.parseInt(budget_id), Number.parseInt(category_id));
           reply
             .code(STATUS_CODES.OK)
             .send({
@@ -329,7 +329,7 @@ export class BudgetHandlers {
         },
         handler: async (request, reply) => {
           const { budget_id, category_id } = request.params;
-          const items = await this.budgetService.getBudgetCategoryItems(request.user.user_id, Number.parseInt(budget_id), Number.parseInt(category_id));
+          const items = await this.budgetService.getBudgetCategoryItems(request.user.id, Number.parseInt(budget_id), Number.parseInt(category_id));
           reply
             .code(STATUS_CODES.OK)
             .send({
@@ -359,7 +359,7 @@ export class BudgetHandlers {
         },
         handler: async (request, reply) => {
           const { budget_id, category_id, item_id } = request.params;
-          const item = await this.budgetService.getBudgetCategoryItemById(request.user.user_id, Number.parseInt(budget_id), Number.parseInt(category_id), Number.parseInt(item_id));
+          const item = await this.budgetService.getBudgetCategoryItemById(request.user.id, Number.parseInt(budget_id), Number.parseInt(category_id), Number.parseInt(item_id));
           reply
             .code(STATUS_CODES.OK)
             .send({
@@ -392,7 +392,7 @@ export class BudgetHandlers {
             category_id: Number.parseInt(category_id),
             budget_id: Number.parseInt(budget_id),
           };
-          const createdItem = await this.budgetService.createBudgetCategoryItem(request.user.user_id, Number.parseInt(budget_id), Number.parseInt(category_id), item);
+          const createdItem = await this.budgetService.createBudgetCategoryItem(request.user.id, Number.parseInt(budget_id), Number.parseInt(category_id), item);
           reply
             .code(STATUS_CODES.CREATED)
             .send({
@@ -423,7 +423,7 @@ export class BudgetHandlers {
         },
         handler: async (request, reply) => {
           const { budget_id, category_id, item_id } = request.params;
-          const updatedItem = await this.budgetService.updateBudgetCategoryItem(request.user.user_id, Number.parseInt(budget_id), Number.parseInt(category_id), Number.parseInt(item_id), request.body);
+          const updatedItem = await this.budgetService.updateBudgetCategoryItem(request.user.id, Number.parseInt(budget_id), Number.parseInt(category_id), Number.parseInt(item_id), request.body);
           reply
             .code(STATUS_CODES.OK)
             .send({
@@ -453,7 +453,7 @@ export class BudgetHandlers {
         },
         handler: async (request, reply) => {
           const { budget_id, category_id, item_id } = request.params;
-          const deletedItem = await this.budgetService.deleteBudgetCategoryItem(request.user.user_id, Number.parseInt(budget_id), Number.parseInt(category_id), Number.parseInt(item_id));
+          const deletedItem = await this.budgetService.deleteBudgetCategoryItem(request.user.id, Number.parseInt(budget_id), Number.parseInt(category_id), Number.parseInt(item_id));
           reply
             .code(STATUS_CODES.OK)
             .send({
@@ -482,7 +482,7 @@ export class BudgetHandlers {
         },
         handler: async (request, reply) => {
           const { budget_id, category_id } = request.params;
-          const deletedItems = await this.budgetService.deleteAllBudgetCategoryItems(request.user.user_id, Number.parseInt(budget_id), Number.parseInt(category_id));
+          const deletedItems = await this.budgetService.deleteAllBudgetCategoryItems(request.user.id, Number.parseInt(budget_id), Number.parseInt(category_id));
           reply
             .code(STATUS_CODES.OK)
             .send({
@@ -508,7 +508,7 @@ export class BudgetHandlers {
         },
         handler: async (request, reply) => {
           const { budget_id } = request.params;
-          const transactions = await this.budgetService.getTransactions(request.user.user_id, Number.parseInt(budget_id));
+          const transactions = await this.budgetService.getTransactions(request.user.id, Number.parseInt(budget_id));
           reply
             .code(STATUS_CODES.OK)
             .send({
@@ -537,7 +537,7 @@ export class BudgetHandlers {
         },
         handler: async (request, reply) => {
           const { budget_id, transaction_id } = request.params;
-          const transaction = await this.budgetService.getTransactionById(request.user.user_id, Number.parseInt(budget_id), Number.parseInt(transaction_id));
+          const transaction = await this.budgetService.getTransactionById(request.user.id, Number.parseInt(budget_id), Number.parseInt(transaction_id));
           reply
             .code(STATUS_CODES.OK)
             .send({
@@ -568,7 +568,7 @@ export class BudgetHandlers {
             ...request.body,
             budget_id: Number.parseInt(budget_id),
           };
-          const createdTransaction = await this.budgetService.createTransaction(request.user.user_id, transaction);
+          const createdTransaction = await this.budgetService.createTransaction(request.user.id, transaction);
           reply
             .code(STATUS_CODES.CREATED)
             .send({
@@ -598,7 +598,7 @@ export class BudgetHandlers {
         },
         handler: async (request, reply) => {
           const { budget_id, transaction_id } = request.params;
-          const updatedTransaction = await this.budgetService.updateTransaction(request.user.user_id, Number.parseInt(budget_id), Number.parseInt(transaction_id), request.body);
+          const updatedTransaction = await this.budgetService.updateTransaction(request.user.id, Number.parseInt(budget_id), Number.parseInt(transaction_id), request.body);
           reply
             .code(STATUS_CODES.OK)
             .send({
@@ -627,7 +627,7 @@ export class BudgetHandlers {
         },
         handler: async (request, reply) => {
           const { budget_id, transaction_id } = request.params;
-          const deletedTransaction = await this.budgetService.deleteTransaction(request.user.user_id, Number.parseInt(budget_id), Number.parseInt(transaction_id));
+          const deletedTransaction = await this.budgetService.deleteTransaction(request.user.id, Number.parseInt(budget_id), Number.parseInt(transaction_id));
           reply
             .code(STATUS_CODES.OK)
             .send({
@@ -653,7 +653,7 @@ export class BudgetHandlers {
         },
         handler: async (request, reply) => {
           const { budget_id } = request.params;
-          const transactionTypes = await this.budgetService.getTransactionTypes(request.user.user_id, Number.parseInt(budget_id));
+          const transactionTypes = await this.budgetService.getTransactionTypes(request.user.id, Number.parseInt(budget_id));
           reply
             .code(STATUS_CODES.OK)
             .send({
@@ -682,7 +682,7 @@ export class BudgetHandlers {
         },
         handler: async (request, reply) => {
           const { budget_id, transaction_type_id } = request.params;
-          const transactionType = await this.budgetService.getTransactionTypeById(request.user.user_id, Number.parseInt(budget_id), Number.parseInt(transaction_type_id));
+          const transactionType = await this.budgetService.getTransactionTypeById(request.user.id, Number.parseInt(budget_id), Number.parseInt(transaction_type_id));
           reply
             .code(STATUS_CODES.OK)
             .send({
@@ -713,7 +713,7 @@ export class BudgetHandlers {
             ...request.body,
             budget_id: Number.parseInt(budget_id),
           };
-          const createdTransactionType = await this.budgetService.createTransactionType(request.user.user_id, transactionType);
+          const createdTransactionType = await this.budgetService.createTransactionType(request.user.id, transactionType);
           reply
             .code(STATUS_CODES.CREATED)
             .send({
@@ -743,7 +743,7 @@ export class BudgetHandlers {
         },
         handler: async (request, reply) => {
           const { budget_id, transaction_type_id } = request.params;
-          const updatedTransactionType = await this.budgetService.updateTransactionType(request.user.user_id, Number.parseInt(budget_id), Number.parseInt(transaction_type_id), request.body);
+          const updatedTransactionType = await this.budgetService.updateTransactionType(request.user.id, Number.parseInt(budget_id), Number.parseInt(transaction_type_id), request.body);
           reply
             .code(STATUS_CODES.OK)
             .send({
@@ -772,7 +772,7 @@ export class BudgetHandlers {
         },
         handler: async (request, reply) => {
           const { budget_id, transaction_type_id } = request.params;
-          const deletedTransactionType = await this.budgetService.deleteTransactionType(request.user.user_id, Number.parseInt(budget_id), Number.parseInt(transaction_type_id));
+          const deletedTransactionType = await this.budgetService.deleteTransactionType(request.user.id, Number.parseInt(budget_id), Number.parseInt(transaction_type_id));
           reply
             .code(STATUS_CODES.OK)
             .send({

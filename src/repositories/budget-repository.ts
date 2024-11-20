@@ -6,14 +6,41 @@ import type * as budget_types from "@/handlers/budget/budget-schemas";
 
 import * as schema from "@/db/schema";
 
-import type { IBudgetRepository } from ".";
+export interface IBudgetRepository {
+  getBudgets: (user_id: string) => Promise<Array<budget_types.TBudgetResult>>;
+  getBudgetById: (user_id: string, budget_id: number) => Promise<budget_types.TBudgetResult>;
+  createBudget: (budget: budget_types.TBudgetToCreate) => Promise<budget_types.TBudgetResult>;
+  updateBudget: (user_id: string, budget_id: number, budget_to_update: budget_types.TBudgetToUpdate) => Promise<budget_types.TBudgetResult>;
+  deleteBudget: (user_id: string, budget_id: number) => Promise<budget_types.TBudgetResult>;
+  getBudgetCategories: (budget_id: number) => Promise<Array<budget_types.TBudgetCategoryResult>>;
+  getBudgetCategoryById: (budget_category_id: number, category_id: number) => Promise<budget_types.TBudgetCategoryResult>;
+  createBudgetCategory: (category: budget_types.TBudgetCategoryToCreate) => Promise<budget_types.TBudgetCategoryResult>;
+  updateBudgetCategory: (budget_id: number, category_id: number, category: budget_types.TBudgetCategoryToUpdate) => Promise<budget_types.TBudgetCategoryResult>;
+  deleteBudgetCategory: (budget_id: number, categoryId: number) => Promise<budget_types.TBudgetCategoryResult>;
+  getBudgetCategoryItems: (budget_id: number, category_id: number) => Promise<Array<budget_types.TBudgetCategoryItemResult>>;
+  getBudgetCategoryItemById: (category_id: number, item_id: number) => Promise<budget_types.TBudgetCategoryItemResult>;
+  createBudgetCategoryItem: (item: budget_types.TBudgetCategoryItemToCreate) => Promise<budget_types.TBudgetCategoryItemResult>;
+  updateBudgetCategoryItem: (item_id: number, item: budget_types.TBudgetCategoryItemToUpdate) => Promise<budget_types.TBudgetCategoryItemResult>;
+  deleteBudgetCategoryItem: (item_id: number) => Promise<budget_types.TBudgetCategoryItemResult>;
+  deleteAllBudgetCategoryItems: (category_id: number) => Promise<budget_types.TBudgetCategoryItemResult[]>;
+  getTransactions: (budget_id: number) => Promise<Array<budget_types.TTransactionResult>>;
+  getTransactionById: (budget_id: number, transaction_id: number) => Promise<budget_types.TTransactionResult>;
+  createTransaction: (transaction: budget_types.TTransactionToCreate) => Promise<budget_types.TTransactionResult>;
+  updateTransaction: (budget_id: number, transaction_id: number, transaction: budget_types.TTransactionToUpdate) => Promise<budget_types.TTransactionResult>;
+  deleteTransaction: (budget_id: number, transaction_id: number) => Promise<budget_types.TTransactionResult>;
+  getTransactionTypes: (budget_id: number) => Promise<Array<budget_types.TTransactionTypeResult>>;
+  getTransactionTypeById: (budget_id: number, transaction_type_id: number) => Promise<budget_types.TTransactionTypeResult>;
+  createTransactionType: (transaction_type: budget_types.TTransactionTypeToCreate) => Promise<budget_types.TTransactionTypeResult>;
+  updateTransactionType: (budget_id: number, type_id: number, transaction_type: budget_types.TTransactionTypeToUpdate) => Promise<budget_types.TTransactionTypeResult>;
+  deleteTransactionType: (budget_id: number, transaction_type_id: number) => Promise<budget_types.TTransactionTypeResult>;
+}
 
 export class BudgetRepository implements IBudgetRepository {
   constructor(private db: PostgresJsDatabase<typeof schema>) {
     this.db = db;
   }
 
-  async getBudgets(user_id: number) {
+  async getBudgets(user_id: string) {
     return await this.db
       .select()
       .from(schema.budgets)
@@ -21,7 +48,7 @@ export class BudgetRepository implements IBudgetRepository {
   }
 
   async getBudgetById(
-    user_id: number,
+    user_id: string,
     budget_id: number,
   ) {
     const [budget]: Array<budget_types.TBudgetResult> = await this.db
@@ -44,7 +71,7 @@ export class BudgetRepository implements IBudgetRepository {
     return newBudget;
   }
 
-  async updateBudget(user_id: number, budget_id: number, budget_to_update: budget_types.TBudgetToUpdate) {
+  async updateBudget(user_id: string, budget_id: number, budget_to_update: budget_types.TBudgetToUpdate) {
     const [updatedBudget]: Array<budget_types.TBudgetResult> = await this.db
       .update(schema.budgets)
       .set(budget_to_update)
@@ -59,7 +86,7 @@ export class BudgetRepository implements IBudgetRepository {
   }
 
   async deleteBudget(
-    user_id: number,
+    user_id: string,
     budget_id: number,
   ) {
     const [deletedBudget]: Array<budget_types.TBudgetResult> = await this.db
