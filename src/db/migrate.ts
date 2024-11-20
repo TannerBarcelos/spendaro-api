@@ -1,5 +1,6 @@
 /* eslint-disable no-console */
 
+import "dotenv/config"; // inject .env variables into process.env for env() library to load in
 import { migrate } from "drizzle-orm/postgres-js/migrator";
 
 import { client, db } from ".";
