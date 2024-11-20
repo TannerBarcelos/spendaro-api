@@ -11,7 +11,7 @@ const commonFields = {
 };
 
 // User schemas
-export const createUserSchema = createInsertSchema(schema.users).omit(commonFields);
+export const createUserSchema = createInsertSchema(schema.users);
 export type TUserToCreate = z.infer<typeof createUserSchema>;
 
 // Budget schemas

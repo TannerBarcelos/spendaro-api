@@ -12,6 +12,7 @@ export const env = createEnv({
     UPLOADTHING_TOKEN: z.string(),
     CLERK_PUBLISHABLE_KEY: z.string(),
     CLERK_SECRET_KEY: z.string(),
+    CLERK_USER_CREATED_WEBHOOK_SECRET: z.string(),
   },
   runtimeEnv: process.env,
 });

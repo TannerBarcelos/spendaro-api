@@ -2,12 +2,9 @@
 
 import { migrate } from "drizzle-orm/postgres-js/migrator";
 
-import { env as dbCredentials } from "@/env";
-
 import { client, db } from ".";
 
 console.log("Database configuration for migration:");
-console.table(dbCredentials);
 
 async function main() {
   console.log("Migration started");
