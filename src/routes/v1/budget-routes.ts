@@ -8,7 +8,7 @@ import { BudgetService } from "@/services/budget-service";
 import { ForbiddenError } from "@/utils/error";
 
 export async function budgetRoutes(instance: FastifyInstance) {
-  instance.addHook("preHandler", async (request, _) => {
+  instance.addHook("preHandler", async (request) => {
     const { userId } = getAuth(request); // Pass the request object instead of instance.server
     if (!userId) {
       throw new ForbiddenError("Access denied. Authentication required.");

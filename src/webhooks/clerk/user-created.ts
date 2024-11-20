@@ -1,5 +1,3 @@
-import type { FastifyReply, FastifyRequest } from "fastify";
-
 import { z } from "zod";
 
 // These types are directly pasted as json into zod schemas from the test-webhook payload in the Clerk dashboard.
@@ -56,23 +54,21 @@ import { z } from "zod";
 //       "type": "user.created"
 // }
 
-export const VerificationSchema = z.object({
-  status: z.string(),
-  strategy: z.string(),
-});
+// const VerificationSchema = z.object({
+//   status: z.string(),
+//   strategy: z.string(),
+// });
 
-export const MetadataSchema = z.object({});
-
-export const HTTPRequestSchema = z.object({
+const HTTPRequestSchema = z.object({
   client_ip: z.string(),
   user_agent: z.string(),
 });
 
-export const EventAttributesSchema = z.object({
+const EventAttributesSchema = z.object({
   http_request: HTTPRequestSchema,
 });
 
-export const DataSchema = z.object({
+const DataSchema = z.object({
   first_name: z.string(),
   id: z.string(),
   last_name: z.string(),
@@ -86,8 +82,3 @@ export const UserCreatedClerkPayloadSchema = z.object({
   timestamp: z.number(),
   type: z.string(),
 });
-
-export async function userCreated(request: FastifyRequest, reply: FastifyReply) {
-  request.log.info("webhook called: user-create. Creating new user with data: ");
-  reply.send("ok");
-}
