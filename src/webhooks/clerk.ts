@@ -25,7 +25,6 @@ export async function clerkWebhooks(fastify: FastifyInstance) {
           "svix-timestamp": z.string(),
           "svix-signature": z.string(),
         }),
-        body: z.string(), // serialized JSON string over the wire coming from Clerk
       },
       handler: async (request, reply) => {
         request.log.info("User created webhook received. Creating new user with basic info");
@@ -45,7 +44,7 @@ export async function clerkWebhooks(fastify: FastifyInstance) {
 
         // security check - ensure the webhook is from Clerk by headers sent against the webhook secret which was used to initially sign the webhook
         try {
-          userCreatedEvent = wh.verify(request.body, {
+          userCreatedEvent = wh.verify(JSON.stringify(request.body), {
             "svix-id": svix_id,
             "svix-timestamp": svix_timestamp,
             "svix-signature": svix_signature,
@@ -60,7 +59,7 @@ export async function clerkWebhooks(fastify: FastifyInstance) {
 
         const eventType = userCreatedEvent.type;
 
-        request.log.info(`Received webhook with ID ${userCreatedEvent.data} and event type of ${eventType}`);
+        request.log.info(`Received webhook with ID ${userCreatedEvent.data.id} and event type of ${eventType}`);
 
         if (userCreatedEvent.type === "user.created") {
           const userData = userCreatedEvent.data;
