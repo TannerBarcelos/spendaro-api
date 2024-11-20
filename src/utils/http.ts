@@ -1,11 +1,16 @@
 import type { FastifyCorsOptions } from "@fastify/cors";
 import type { RateLimitPluginOptions } from "@fastify/rate-limit";
 
+import { createClerkClient } from "@clerk/backend";
 import config from "config";
 import { StatusCodes } from "http-status-codes";
 import { z } from "zod";
 
+import { env } from "@/env";
+
 import { TooManyRequestError } from "./error";
+
+export const clerkClient = createClerkClient({ secretKey: env.CLERK_SECRET_KEY });
 
 export const ALLOWED_METHODS = ["GET", "POST", "PUT", "DELETE"];
 export const STATUS_CODES = StatusCodes;
