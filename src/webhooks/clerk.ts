@@ -11,31 +11,6 @@ import { users } from "@/db/schema";
 import { env } from "@/env";
 import { SpendaroError } from "@/utils/error";
 
-const HTTPRequestSchema = z.object({
-  client_ip: z.string(),
-  user_agent: z.string(),
-});
-
-const EventAttributesSchema = z.object({
-  http_request: HTTPRequestSchema,
-});
-
-const DataSchema = z.object({
-  first_name: z.string(),
-  id: z.string(),
-  last_name: z.string(),
-  image_url: z.string(),
-});
-
-export const UserCreatedClerkPayloadSchema = z.object({
-  data: DataSchema,
-  event_attributes: EventAttributesSchema,
-  object: z.string(),
-  timestamp: z.number(),
-  type: z.string(),
-});
-
-// clerk webhooks - full OpenAPI schema and implementation (types also inferred so type-safe code)
 export async function clerkWebhooks(fastify: FastifyInstance) {
   fastify
     .withTypeProvider<ZodTypeProvider>()
@@ -50,6 +25,7 @@ export async function clerkWebhooks(fastify: FastifyInstance) {
           "svix-timestamp": z.string(),
           "svix-signature": z.string(),
         }),
+        body: z.string(), // serialized JSON string over the wire coming from Clerk
       },
       handler: async (request, reply) => {
         request.log.info("User created webhook received. Creating new user with basic info");
@@ -66,10 +42,10 @@ export async function clerkWebhooks(fastify: FastifyInstance) {
         }
 
         let userCreatedEvent: WebhookEvent;
-        const payload = JSON.stringify(request.body);
 
+        // security check - ensure the webhook is from Clerk by headers sent against the webhook secret which was used to initially sign the webhook
         try {
-          userCreatedEvent = wh.verify(payload, {
+          userCreatedEvent = wh.verify(request.body, {
             "svix-id": svix_id,
             "svix-timestamp": svix_timestamp,
             "svix-signature": svix_signature,
@@ -82,10 +58,9 @@ export async function clerkWebhooks(fastify: FastifyInstance) {
           });
         }
 
-        const { id } = userCreatedEvent.data;
         const eventType = userCreatedEvent.type;
 
-        request.log.info(`Received webhook with ID ${id} and event type of ${eventType}`);
+        request.log.info(`Received webhook with ID ${userCreatedEvent.data} and event type of ${eventType}`);
 
         if (userCreatedEvent.type === "user.created") {
           const userData = userCreatedEvent.data;
