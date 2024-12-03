@@ -30,7 +30,7 @@ export async function clerkWebhooks(fastify: FastifyInstance) {
       handler: async (request, reply) => {
         request.log.info("User created webhook received. Creating new user with basic info");
 
-        const wh = new Webhook(env.CLERK_WEBHOOK_SECRET_KEY);
+        const wh = new Webhook(env.CLERK_WEBHOOK_CREATED_USER_KEY);
 
         const headers = request.headers;
         const svix_id = headers["svix-id"];
@@ -100,7 +100,7 @@ export async function clerkWebhooks(fastify: FastifyInstance) {
       handler: async (request, reply) => {
         request.log.info("User deleted webhook received. Deleting user now.");
 
-        const wh = new Webhook(env.CLERK_WEBHOOK_SECRET_KEY);
+        const wh = new Webhook(env.CLERK_WEBHOOK_DELETED_USER_KEY);
 
         const headers = request.headers;
         const svix_id = headers["svix-id"];
