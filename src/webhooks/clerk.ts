@@ -69,10 +69,11 @@ export async function clerkWebhooks(fastify: FastifyInstance) {
           };
           await fastify.db.insert(users).values(newUser);
 
+          request.log.info("Settings up user metadata with Clerk");
           // use the clerk client to update the users metadata with isOnboarded set to false
           await clerkClient.users.updateUserMetadata(newUser.user_id, {
             publicMetadata: {
-              isOnboarded: false,
+              isOnboarded: false, // users are not onboarded by default
             },
           });
 
