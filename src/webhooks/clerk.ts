@@ -2,6 +2,7 @@ import type { WebhookEvent } from "@clerk/fastify";
 import type { FastifyInstance } from "fastify";
 import type { ZodTypeProvider } from "fastify-type-provider-zod";
 
+import { clerkClient } from "@clerk/clerk-sdk-node";
 import { Webhook } from "svix";
 import { z } from "zod";
 
@@ -67,6 +68,14 @@ export async function clerkWebhooks(fastify: FastifyInstance) {
             user_id: userData.id,
           };
           await fastify.db.insert(users).values(newUser);
+
+          // use the clerk client to update the users metadata with isOnboarded set to false
+          await clerkClient.users.updateUserMetadata(newUser.user_id, {
+            publicMetadata: {
+              isOnboarded: false,
+            },
+          });
+
           request.log.info(`User created webhook processed successfully. User with id ${newUser.user_id} created`);
         }
         reply.send({ message: "User created webhook processed successfully" });
