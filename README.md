@@ -57,7 +57,7 @@ To get started with the Spendaro API, follow these steps:
      UPLOADTHING_TOKEN=<retrieve from uploadthing>
      CLERK_PUBLISHABLE_KEY=<retrieve from clerk>
      CLERK_SECRET_KEY=<retrieve from clerk>
-     CLERK_USER_CREATED_WEBHOOK_SECRET=<retrieve from clerk; create a webhook listening for user.created events>
+     CLERK_WEBHOOK_SECRET_KEY=<retrieve from clerk; create a webhook listening for user.created events>
 
    ```
 

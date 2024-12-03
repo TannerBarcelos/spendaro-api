@@ -11,7 +11,7 @@ export const env = createEnv({
     DB_NAME: z.string(),
     CLERK_PUBLISHABLE_KEY: z.string(),
     CLERK_SECRET_KEY: z.string(),
-    CLERK_USER_CREATED_WEBHOOK_SECRET: z.string(),
+    CLERK_WEBHOOK_SECRET_KEY: z.string(),
   },
   runtimeEnv: process.env,
 });
