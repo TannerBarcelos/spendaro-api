@@ -3,6 +3,7 @@ import type { FastifyInstance } from "fastify";
 import type { ZodTypeProvider } from "fastify-type-provider-zod";
 
 import { clerkClient } from "@clerk/clerk-sdk-node";
+import { eq } from "drizzle-orm";
 import { Webhook } from "svix";
 import { z } from "zod";
 
@@ -134,10 +135,14 @@ export async function clerkWebhooks(fastify: FastifyInstance) {
 
         if (userDeletedEvent.type === "user.deleted") {
           const userData = userDeletedEvent.data;
-
-          await fastify.db.delete(users).where({ user_id: userData.id });
-
-          request.log.info(`User deleted webhook processed successfully. User with id ${userData.id} deleted`);
+          if (userData.id) {
+            await fastify.db.delete(users).where(eq(users.user_id, userData.id));
+            request.log.info(`User deleted webhook processed successfully. User with id ${userData.id} deleted`);
+          }
+          else {
+            request.log.error("User ID is undefined. Cannot delete user.");
+            reply.send({ message: "User ID is undefined. Cannot delete user." });
+          }
         }
         reply.send({ message: "User deleted webhook processed successfully. User has been removed from the db" });
       },
