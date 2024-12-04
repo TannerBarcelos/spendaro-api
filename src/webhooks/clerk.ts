@@ -13,6 +13,38 @@ import { users } from "@/db/schema";
 import { env } from "@/env";
 import { SpendaroError } from "@/utils/error";
 
+const WebhookHeaders = z.object({
+  "svix-id": z.string(),
+  "svix-timestamp": z.string(),
+  "svix-signature": z.string(),
+});
+
+function verifyWebhookHeaders(request: any, webhookKey: string): WebhookEvent {
+  const wh = new Webhook(webhookKey);
+
+  const headers = request.headers;
+  const svix_id = headers["svix-id"];
+  const svix_timestamp = headers["svix-timestamp"];
+  const svix_signature = headers["svix-signature"];
+
+  if (!svix_id || !svix_timestamp || !svix_signature) {
+    throw new SpendaroError("Error: Missing headers", 400, ["Missing required headers to process webhook event"]);
+  }
+
+  try {
+    return wh.verify(JSON.stringify(request.body), {
+      "svix-id": svix_id,
+      "svix-timestamp": svix_timestamp,
+      "svix-signature": svix_signature,
+    }) as WebhookEvent;
+  }
+  // Will be caught at the application level error handler
+  catch (err) {
+    console.error("Error: Could not verify webhook:", err);
+    throw new SpendaroError("Error: Verification error", 400, ["Verification error"]);
+  }
+}
+
 export async function clerkWebhooks(fastify: FastifyInstance) {
   fastify
     .withTypeProvider<ZodTypeProvider>()
@@ -22,46 +54,14 @@ export async function clerkWebhooks(fastify: FastifyInstance) {
       schema: {
         summary: "Handle user created webhook from Clerk",
         tags: ["webhooks"],
-        headers: z.object({
-          "svix-id": z.string(),
-          "svix-timestamp": z.string(),
-          "svix-signature": z.string(),
-        }),
+        headers: WebhookHeaders,
       },
       handler: async (request, reply) => {
         request.log.info("User created webhook received. Creating new user with basic info");
 
-        const wh = new Webhook(env.CLERK_WEBHOOK_CREATED_USER_KEY);
+        const userCreatedEvent = verifyWebhookHeaders(request, env.CLERK_WEBHOOK_CREATED_USER_KEY);
 
-        const headers = request.headers;
-        const svix_id = headers["svix-id"];
-        const svix_timestamp = headers["svix-timestamp"];
-        const svix_signature = headers["svix-signature"];
-
-        if (!svix_id || !svix_timestamp || !svix_signature) {
-          throw new SpendaroError("Error: Missing headers", 400, ["Missing required headers to process user.created webhook event"]);
-        }
-
-        let userCreatedEvent: WebhookEvent;
-
-        // security check - ensure the webhook is from Clerk by headers sent against the webhook secret which was used to initially sign the webhook
-        try {
-          userCreatedEvent = wh.verify(JSON.stringify(request.body), {
-            "svix-id": svix_id,
-            "svix-timestamp": svix_timestamp,
-            "svix-signature": svix_signature,
-          }) as WebhookEvent;
-        }
-        catch (err) {
-          console.error("Error: Could not verify webhook:", err);
-          return new Response("Error: Verification error", {
-            status: 400,
-          });
-        }
-
-        const eventType = userCreatedEvent.type;
-
-        request.log.info(`Received webhook with ID ${userCreatedEvent.data.id} and event type of ${eventType}`);
+        request.log.info(`Received webhook with ID ${userCreatedEvent.data.id} and event type of ${userCreatedEvent.type}`);
 
         if (userCreatedEvent.type === "user.created") {
           const userData = userCreatedEvent.data;
@@ -71,6 +71,7 @@ export async function clerkWebhooks(fastify: FastifyInstance) {
           await fastify.db.insert(users).values(newUser);
 
           request.log.info("Settings up user metadata with Clerk");
+
           // use the clerk client to update the users metadata with isOnboarded set to false
           await clerkClient.users.updateUserMetadata(newUser.user_id, {
             publicMetadata: {
@@ -92,46 +93,14 @@ export async function clerkWebhooks(fastify: FastifyInstance) {
       schema: {
         summary: "Handle user deleted webhook from Clerk",
         tags: ["webhooks"],
-        headers: z.object({
-          "svix-id": z.string(),
-          "svix-timestamp": z.string(),
-          "svix-signature": z.string(),
-        }),
+        headers: WebhookHeaders,
       },
       handler: async (request, reply) => {
         request.log.info("User deleted webhook received. Deleting user now.");
 
-        const wh = new Webhook(env.CLERK_WEBHOOK_DELETED_USER_KEY);
+        const userDeletedEvent = verifyWebhookHeaders(request, env.CLERK_WEBHOOK_CREATED_USER_KEY);
 
-        const headers = request.headers;
-        const svix_id = headers["svix-id"];
-        const svix_timestamp = headers["svix-timestamp"];
-        const svix_signature = headers["svix-signature"];
-
-        if (!svix_id || !svix_timestamp || !svix_signature) {
-          throw new SpendaroError("Error: Missing headers", 400, ["Missing required headers to process user.created webhook event"]);
-        }
-
-        let userDeletedEvent: WebhookEvent;
-
-        // security check - ensure the webhook is from Clerk by headers sent against the webhook secret which was used to initially sign the webhook
-        try {
-          userDeletedEvent = wh.verify(JSON.stringify(request.body), {
-            "svix-id": svix_id,
-            "svix-timestamp": svix_timestamp,
-            "svix-signature": svix_signature,
-          }) as WebhookEvent;
-        }
-        catch (err) {
-          console.error("Error: Could not verify webhook:", err);
-          return new Response("Error: Verification error", {
-            status: 400,
-          });
-        }
-
-        const eventType = userDeletedEvent.type;
-
-        request.log.info(`Received webhook with ID ${userDeletedEvent.data.id} and event type of ${eventType}`);
+        request.log.info(`Received webhook with ID ${userDeletedEvent.data.id} and event type of ${userDeletedEvent.type}`);
 
         if (userDeletedEvent.type === "user.deleted") {
           const userData = userDeletedEvent.data;

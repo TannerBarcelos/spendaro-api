@@ -1,12 +1,12 @@
+/* eslint-disable no-console */
 import type { FastifyRequest } from "fastify";
 
 import config from "config";
-/* eslint-disable no-console */
 import "dotenv/config";
 import fastify from "fastify";
 import { getReasonPhrase, StatusCodes } from "http-status-codes";
 
-import { bootstrapServerPlugins } from "./bootstrap";
+import { registerPlugins } from "./plugins";
 import { routes } from "./routes";
 import { webhooks } from "./webhooks";
 
@@ -18,7 +18,7 @@ const server = fastify({
 });
 
 (async function startServer() {
-  await bootstrapServerPlugins(server);
+  await registerPlugins(server);
 
   server.get("/healthz", async (_: FastifyRequest) => {
     return { status: getReasonPhrase(StatusCodes.OK) };
