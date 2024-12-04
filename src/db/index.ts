@@ -14,7 +14,13 @@ if (!databaseUrl) {
 }
 
 // Connect to the database
-export const client = postgres(databaseUrl);
+export const client = postgres(databaseUrl, {
+  prepare: false,
+  ssl: process.env.NODE_ENV === "production",
+  connection: {
+    application_name: "spendaro",
+  },
+});
 
 // Create a Drizzle instance using the database client
 export const db = drizzle(client, {
