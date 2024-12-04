@@ -19,7 +19,7 @@ const WebhookHeaders = z.object({
   "svix-signature": z.string(),
 });
 
-function verifyWebhookHeaders(request: any, webhookKey: string): WebhookEvent {
+function verifySvixHeaders(request: any, webhookKey: string): WebhookEvent {
   const wh = new Webhook(webhookKey);
 
   const headers = request.headers;
@@ -59,7 +59,7 @@ export async function clerkWebhooks(fastify: FastifyInstance) {
       handler: async (request, reply) => {
         request.log.info("User created webhook received. Creating new user with basic info");
 
-        const userCreatedEvent = verifyWebhookHeaders(request, env.CLERK_WEBHOOK_CREATED_USER_KEY);
+        const userCreatedEvent = verifySvixHeaders(request, env.CLERK_WEBHOOK_CREATED_USER_KEY);
 
         request.log.info(`Received webhook with ID ${userCreatedEvent.data.id} and event type of ${userCreatedEvent.type}`);
 
@@ -98,7 +98,7 @@ export async function clerkWebhooks(fastify: FastifyInstance) {
       handler: async (request, reply) => {
         request.log.info("User deleted webhook received. Deleting user now.");
 
-        const userDeletedEvent = verifyWebhookHeaders(request, env.CLERK_WEBHOOK_CREATED_USER_KEY);
+        const userDeletedEvent = verifySvixHeaders(request, env.CLERK_WEBHOOK_CREATED_USER_KEY);
 
         request.log.info(`Received webhook with ID ${userDeletedEvent.data.id} and event type of ${userDeletedEvent.type}`);
 
