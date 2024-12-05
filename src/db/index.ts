@@ -9,10 +9,6 @@ const databaseUrl
   = `postgresql://${env.DB_USER}:${env.DB_PASSWORD}@${env.DB_HOST}:${env.DB_PORT}/${env.DB_NAME}`
   || "postgresql://postgres@localhost:5432/postgres";
 
-if (!databaseUrl) {
-  throw new Error("DATABASE_URL must be set to connect to the database");
-}
-
 // Connect to the database
 export const client = postgres(databaseUrl, {
   prepare: false,

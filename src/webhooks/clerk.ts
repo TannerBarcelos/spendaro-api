@@ -20,6 +20,7 @@ const WebhookHeaders = z.object({
 });
 
 function verifySvixHeaders(request: any, webhookKey: string): WebhookEvent {
+  const requestBody = JSON.stringify(request.body);
   const wh = new Webhook(webhookKey);
 
   const headers = request.headers;
@@ -27,16 +28,14 @@ function verifySvixHeaders(request: any, webhookKey: string): WebhookEvent {
   const svix_timestamp = headers["svix-timestamp"];
   const svix_signature = headers["svix-signature"];
 
-  if (!svix_id || !svix_timestamp || !svix_signature) {
-    throw new SpendaroError("Error: Missing headers", 400, ["Missing required headers to process webhook event"]);
-  }
-
   try {
-    return wh.verify(JSON.stringify(request.body), {
+    const verifiedHeaders = wh.verify(requestBody, {
       "svix-id": svix_id,
       "svix-timestamp": svix_timestamp,
       "svix-signature": svix_signature,
     }) as WebhookEvent;
+
+    return verifiedHeaders;
   }
   // Will be caught at the application level error handler
   catch (err) {
