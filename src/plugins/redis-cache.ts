@@ -10,12 +10,13 @@ import { env } from "@/env";
 const redisConnector: FastifyPluginCallback = async (fastify: FastifyInstance) => {
   try {
     const cacheConfig: RedisOptions = {
-      connectionName: env.REDIS_DB,
+      username: env.REDIS_USER,
       host: env.REDIS_HOST,
       port: env.REDIS_PORT,
       password: env.REDIS_PASSWORD,
       connectTimeout: config.get("server.cache.connection_timeout"),
       maxRetriesPerRequest: config.get("server.cache.max_retries"),
+      tls: env.NODE_ENV === "production" ? {} : undefined,
     };
 
     const cache = new Redis(cacheConfig);

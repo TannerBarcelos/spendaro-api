@@ -23,7 +23,7 @@ export const env = createEnv({
     REDIS_PASSWORD: z.string(),
     REDIS_HOST: z.string(),
     REDIS_PORT: z.coerce.number(),
-    REDIS_DB: z.string(),
+    REDIS_USER: z.string(),
   },
   runtimeEnv: process.env,
 });
