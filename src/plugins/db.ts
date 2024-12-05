@@ -7,7 +7,7 @@ import { client, db } from "@/db";
 const postgresDbPlugin: FastifyPluginCallback = async (fastify: FastifyInstance) => {
   try {
     fastify.decorate<typeof db>("db", db);
-    console.log("Connected to the database");
+    fastify.log.info("Connected to the database");
     fastify.addHook("onClose", async () => {
       await client.end();
     });

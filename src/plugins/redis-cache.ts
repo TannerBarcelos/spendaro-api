@@ -5,12 +5,15 @@ import config from "config";
 import fp from "fastify-plugin";
 import Redis from "ioredis";
 
+import { env } from "@/env";
+
 const redisConnector: FastifyPluginCallback = async (fastify: FastifyInstance) => {
   try {
     const cacheConfig: RedisOptions = {
-      connectionName: config.get("server.cache.name"),
-      host: config.get("server.cache.host"),
-      port: config.get("server.cache.port"),
+      connectionName: env.REDIS_DB,
+      host: env.REDIS_HOST,
+      port: env.REDIS_PORT,
+      password: env.REDIS_PASSWORD,
       connectTimeout: config.get("server.cache.connection_timeout"),
       maxRetriesPerRequest: config.get("server.cache.max_retries"),
     };
@@ -19,7 +22,7 @@ const redisConnector: FastifyPluginCallback = async (fastify: FastifyInstance) =
 
     fastify.decorate<typeof cache>("cache", cache);
 
-    console.log("Connected to the redis store");
+    fastify.log.info("Connected to the redis store");
 
     fastify.addHook("onClose", async () => {
       await cache.quit();

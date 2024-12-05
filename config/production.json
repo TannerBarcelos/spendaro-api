@@ -1,0 +1,27 @@
+{
+  "server": {
+    "port": 8010,
+    "api": {
+      "version": "v1"
+    },
+    "logging": {
+      "level": "error"
+    },
+    "rate_limit": {
+      "max": 15,
+      "time_window": 10000,
+      "global": true,
+      "allow_list": [
+        "https://*.spendaro.com"
+      ]
+    },
+    "cache": {
+      "connection_timeout": 5000,
+      "max_retries": 3
+    },
+    "upload-thing": {
+      "max_file_size": "4mb",
+      "max_files": 1
+    }
+  }
+}
