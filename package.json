@@ -10,8 +10,7 @@
     "start": "node dist/server.js",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "db:generate-migration-dev": "drizzle-kit generate --config=drizzle-dev.config.ts",
-    "db:generate-migration-prod": "drizzle-kit generate --config=drizzle-prod.config.ts",
+    "db:gen-migration": "drizzle-kit generate",
     "db:migrate": "tsx src/db/migrate.ts",
     "db:seed": "src/db/seed.ts"
   },
