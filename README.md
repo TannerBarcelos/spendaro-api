@@ -47,13 +47,13 @@ To get started with the Spendaro API, follow these steps:
 
 4. **Set up environment variables:**
 
-- Rename the `.env.example` file to `.env` and update the values as needed.
+_Rename the `.env.example` file to `.env` and update the values as needed._
 
-  > [!NOTE]
-  >
-  > - All of the development environment variables are already pre-configured to connect to development instances of a Postgres DB and Redis store. You can update these values to connect to your own instances, or use them as is. Just ensure that the connection details are correct and match the instances you spin up.
-  > - For Clerk and UploadThing, you will need to create accounts with those services and extract the needed keys and secrets to set up the environment variables. \_Right now they are logged down as <your_value>
-  >   <br /> **Submit an issue if you need help setting up the environment variables.**
+> [!NOTE]
+>
+> - All of the development environment variables are already pre-configured to connect to development instances of a Postgres DB and Redis store. You can update these values to connect to your own instances, or use them as is. Just ensure that the connection details are correct and match the instances you spin up.
+> - For Clerk and UploadThing, you will need to create accounts with those services and extract the needed keys and secrets to set up the environment variables. \_Right now they are logged down as <your_value>
+>   <br /> **Submit an issue if you need help setting up the environment variables.**
 
 5. **Setup the database for local development**
 
