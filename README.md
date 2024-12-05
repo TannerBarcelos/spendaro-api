@@ -46,26 +46,14 @@ To get started with the Spendaro API, follow these steps:
    ```
 
 4. **Set up environment variables:**
-   Create a `.env` file in the root of the project and add the following environment variables:
 
-   ```env
-     NODE_ENV=development
-     DB_HOST=localhost
-     DB_USER=postgres
-     DB_PASSWORD=""
-     DB_NAME=postgres
-     UPLOADTHING_TOKEN=<retrieve from uploadthing>
-     CLERK_PUBLISHABLE_KEY=<retrieve from clerk>
-     CLERK_SECRET_KEY=<retrieve from clerk>
-     CLERK_WEBHOOK_CREATED_USER_KEY=<retrieve from clerk; create a webhook listening for user.created events>
-     CLERK_WEBHOOK_DELETED_USER_KEY=<retrieve from clerk; create a webhook listening for user.updated events>
-   ```
+- Rename the `.env.example` file to `.env` and update the values as needed.
 
-   > Note: Replace the values with your own database connection details.
-   >
-   > - You can use a local database or a cloud-hosted database like Supabase.
-   > - If you're using Supabase, you can find your database connection details in the "Settings" tab of your Supabase project.
-   > - **Docker support is coming soon so this can be automated**
+  > [!NOTE]
+  >
+  > - All of the development environment variables are already pre-configured to connect to development instances of a Postgres DB and Redis store. You can update these values to connect to your own instances, or use them as is. Just ensure that the connection details are correct and match the instances you spin up.
+  > - For Clerk and UploadThing, you will need to create accounts with those services and extract the needed keys and secrets to set up the environment variables. \_Right now they are logged down as <your_value>
+  >   <br /> **Submit an issue if you need help setting up the environment variables.**
 
 5. **Setup the database for local development**
 
