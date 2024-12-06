@@ -23,8 +23,7 @@ export const commonHttpResponseSchema = z.object({
 
 const allowedOrigins = [
   "http://localhost:5173", // Local development
-  "https://your-production-domain.com", // Production
-  "https://your-staging-domain.com", // Staging
+  "https://app.spendaro.com", // Production
 ];
 
 export const corsConfig: FastifyCorsOptions = {
