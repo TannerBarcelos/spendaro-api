@@ -30,7 +30,7 @@ const server = fastify({
   await server.ready();
 
   try {
-    server.listen({ port: config.get("server.port") }, (err, addr) => {
+    server.listen({ port: config.get("server.port"), host: "0.0.0.0" }, (err, addr) => {
       if (err)
         throw err;
       console.log(`Server listening at ${addr}`);
